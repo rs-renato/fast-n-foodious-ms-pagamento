@@ -10,11 +10,9 @@ import { WebhookPagamentoPagamentoValidoValidator } from 'src/application/pagame
 import { WebhookPagamentoPedidoValidoValidator } from 'src/application/pagamento/validation/webhook-pagamento-pedido-valido-validator.service';
 import { WebhookPagamentoTransacaoIdValidoValidator } from 'src/application/pagamento/validation/webhook-pagamento-transacao-id-valido.validator';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';
-import { BuscarPedidoPorIdUseCase, EditarPedidoUseCase } from 'src/application/pedido/usecase';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
-import { Pedido } from 'src/enterprise/pedido/model/pedido.model';
 import { IRepository } from 'src/enterprise/repository/repository';
-import { PagamentoConstants, PedidoConstants } from 'src/shared/constants';
+import { PagamentoConstants } from 'src/shared/constants';
 
 export const PagamentoProviders: Provider[] = [
    {
@@ -35,34 +33,18 @@ export const PagamentoProviders: Provider[] = [
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE,
-      inject: [
-         PagamentoConstants.IREPOSITORY,
-         PedidoConstants.EDITAR_PEDIDO_USECASE,
-         PedidoConstants.BUSCAR_PEDIDO_POR_ID_USECASE,
-         PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
-      ],
+      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
       useFactory: (
          repository: IRepository<Pagamento>,
-         editarPedidoUseCase: EditarPedidoUseCase,
-         buscarPedidoPorIdUseCase: BuscarPedidoPorIdUseCase,
          validators: WebhookPagamentoValidator[],
-      ): WebhookPagamentoPedidoUseCase =>
-         new WebhookPagamentoPedidoUseCase(repository, editarPedidoUseCase, buscarPedidoPorIdUseCase, validators),
+      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, validators),
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
-      inject: [
-         PagamentoConstants.IREPOSITORY,
-         PedidoConstants.IREPOSITORY,
-         PedidoConstants.BUSCAR_PEDIDO_POR_ID_USECASE,
-      ],
-      useFactory: (
-         repositoryPagamento: IRepository<Pagamento>,
-         repositoryPedido: IRepository<Pedido>,
-         buscarPedidoPorIdUseCase: BuscarPedidoPorIdUseCase,
-      ): WebhookPagamentoValidator[] => [
+      inject: [PagamentoConstants.IREPOSITORY],
+      useFactory: (repositoryPagamento: IRepository<Pagamento>): WebhookPagamentoValidator[] => [
          new WebhookPagamentoTransacaoIdValidoValidator(repositoryPagamento),
-         new WebhookPagamentoPedidoValidoValidator(repositoryPedido, repositoryPagamento, buscarPedidoPorIdUseCase),
+         new WebhookPagamentoPedidoValidoValidator(repositoryPagamento),
          new WebhookPagamentoPagamentoValidoValidator(repositoryPagamento),
       ],
    },

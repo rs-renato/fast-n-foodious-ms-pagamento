@@ -1,6 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { EstadoPedido } from 'src/enterprise/pedido/enum/estado-pedido.enum';
+// import { EstadoPedido } from 'src/enterprise/pedido/enum/estado-pedido.enum';
 import { MainModule } from 'src/main.module';
 import * as request from 'supertest';
 
@@ -29,7 +29,8 @@ describe('PagamentoRestApi (e2e)', () => {
          const salvarPedidoRequest = {
             clienteId: 1,
             dataInicio: '2023-06-24',
-            estadoPedido: EstadoPedido.PAGAMENTO_PENDENTE,
+            // TODO RODRIGO - precisa passar pagamento pendente?
+            // estadoPedido: EstadoPedido.PAGAMENTO_PENDENTE,
             ativo: true,
          };
          await request(app.getHttpServer())

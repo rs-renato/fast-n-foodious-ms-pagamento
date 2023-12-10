@@ -1,13 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';
-import { BuscarPedidoPorIdUseCase } from 'src/application/pedido/usecase';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
-import { EstadoPedido } from 'src/enterprise/pedido/enum/estado-pedido.enum';
-import { Pedido } from 'src/enterprise/pedido/model/pedido.model';
 import { IRepository } from 'src/enterprise/repository/repository';
-import { PagamentoConstants, PedidoConstants } from 'src/shared/constants';
+import { PagamentoConstants } from 'src/shared/constants';
 
 @Injectable()
 export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoValidator {
@@ -17,45 +14,28 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
 
    private logger: Logger = new Logger(WebhookPagamentoPedidoValidoValidator.name);
 
-   constructor(
-      @Inject(PedidoConstants.IREPOSITORY) private repositoryPedido: IRepository<Pedido>,
-      @Inject(PagamentoConstants.IREPOSITORY) private repositoryPagamento: IRepository<Pagamento>,
-      @Inject(PedidoConstants.BUSCAR_PEDIDO_POR_ID_USECASE)
-      private buscarPedidoPorIdUseCase: BuscarPedidoPorIdUseCase,
-   ) {}
+   constructor(@Inject(PagamentoConstants.IREPOSITORY) private repositoryPagamento: IRepository<Pagamento>) {}
 
    async validate(pagamentoParametro: Pagamento): Promise<boolean> {
       const pagamento = await this.buscarPagamento(pagamentoParametro.transacaoId);
-      const pedido = await this.buscarPedido(pagamento);
       this.logger.log(
-         `Inicializando validação ${WebhookPagamentoPedidoValidoValidator.name} para validar o estado do pedido id: ${pedido.id}`,
+         `Inicializando validação ${WebhookPagamentoPedidoValidoValidator.name} para validar o estado do pedido id: ${pagamento.pedidoId}`,
       );
 
-      await this.repositoryPedido.findBy({ id: pedido.id }).then((pedidos) => {
-         if (pedidos.length === 0) {
-            throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_INEXISTENTE_ERROR_MESSAGE);
-         }
-         if (pedidos[0].estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {
-            this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE, mas é ${pedidos[0].estadoPedido}`);
-            throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_JA_PAGO_ERROR_MESSAGE);
-         }
-      });
+      // TODO RODRIGO - substituir por chamada para o endpoint de buscar pedido por id
+      // await this.repositoryPedido.findBy({ id: pagamento.pedidoId }).then((pedidos) => {
+      //    if (pedidos.length === 0) {
+      //       throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_INEXISTENTE_ERROR_MESSAGE);
+      //    }
+      //    if (pedidos[0].estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {
+      //       this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE, mas é ${pedidos[0].estadoPedido}`);
+      //       throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_JA_PAGO_ERROR_MESSAGE);
+      //    }
+      // });
       return true;
    }
 
-   private async buscarPedido(pagamento: Pagamento): Promise<Pedido> {
-      const pedido = await this.buscarPedidoPorIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
-      if (pedido === undefined) {
-         this.logger.error(
-            `Nenhum pedido associado a transação ${pagamento.transacaoId} foi localizado no banco de dados`,
-         );
-         throw new ServiceException(
-            `Nenhum pedido associado a transação ${pagamento.transacaoId} foi localizado no banco de dados`,
-         );
-      }
-      return pedido;
-   }
-
+   //TODO RODRIGO - converter para usecase e reusar? duplicado em webhook-pagamento-pedido.usecase.ts
    private async buscarPagamento(transacaoId: string): Promise<Pagamento> {
       const pagamento = await this.repositoryPagamento
          .findBy({ transacaoId: transacaoId })
