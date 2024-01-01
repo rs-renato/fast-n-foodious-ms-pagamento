@@ -1,12 +1,8 @@
 ### Cria um produto
-POST http://localhost:3000/v1/produto
+POST http://localhost:3000/v1/pagamento/1/1
 Content-Type: application/json
 
 {
-  "nome": "Produto Teste",
-  "idCategoriaProduto": 1,
-  "descricao": "Descrição Produto Teste",
-  "preco": 100
 }
 
 ### Edita um produto

@@ -13,6 +13,8 @@ import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
+import { HttpService } from '@nestjs/axios';
+import { PedidoIntegration } from '../../../integration/pedido/pedido.integration';
 
 export const PagamentoProviders: Provider[] = [
    {
@@ -33,11 +35,12 @@ export const PagamentoProviders: Provider[] = [
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE,
-      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
+      inject: [PagamentoConstants.IREPOSITORY, PedidoIntegration, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
       useFactory: (
          repository: IRepository<Pagamento>,
+         pedidoIntegration: PedidoIntegration,
          validators: WebhookPagamentoValidator[],
-      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, validators),
+      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, pedidoIntegration, validators),
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
@@ -48,4 +51,14 @@ export const PagamentoProviders: Provider[] = [
          new WebhookPagamentoPagamentoValidoValidator(repositoryPagamento),
       ],
    },
+
+   // { provide: 'HttpService', useClass: HttpService },
+   //
+   // {
+   //    provide: 'PedidoIntegration',
+   //    inject: ['HttpService'],
+   //    useFactory: (httpService: HttpService): PedidoIntegration => new PedidoIntegration(httpService),
+   // },
+
+
 ];
