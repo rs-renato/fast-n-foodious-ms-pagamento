@@ -5,12 +5,10 @@ import { PagamentoProviders } from 'src/application/pagamento/providers/pagament
 import { PagamentoConstants } from 'src/shared/constants';
 import { HttpModule } from '@nestjs/axios';
 import { IntegrationProviders } from '../integration/providers/integration.providers';
-import { PedidoIntegration } from '../integration/pedido/pedido.integration';
 
 @Module({
    imports: [HttpModule],
-   providers: [ ...PagamentoProviders, PedidoIntegration],
-   // providers: [...IntegrationProviders, ...PagamentoProviders],
+   providers: [...IntegrationProviders, ...PagamentoProviders],
    exports: [{ provide: PagamentoConstants.ISERVICE, useClass: PagamentoService }],
 })
 export class ApplicationModule {}

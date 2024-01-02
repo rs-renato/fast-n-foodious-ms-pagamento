@@ -9,7 +9,6 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ValidatorUtils } from 'src/shared/validator.utils';
 import { PedidoIntegration } from '../../../integration/pedido/pedido.integration';
-import * as util from 'util';
 
 @Injectable()
 export class WebhookPagamentoPedidoUseCase {
@@ -18,7 +17,6 @@ export class WebhookPagamentoPedidoUseCase {
    constructor(
       @Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>,
       @Inject(PedidoIntegration) private pedidoIntegration: PedidoIntegration,
-      // @Inject('PedidoIntegration') private pedidoIntegration: PedidoIntegration,
       @Inject(PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR) private validators: WebhookPagamentoValidator[],
    ) {}
 
@@ -26,17 +24,11 @@ export class WebhookPagamentoPedidoUseCase {
       this.logger.log(`Webhook: ativado para transaçãoId = ${transacaoId} para estado = ${estadoPagamento}\n`);
 
       this.logger.log('Webhook: RODRIGO - INICIO\n');
-      // this.logger.log(`\n\n`);
-      // this.logger.log(`type: ${typeof this.pedidoIntegration}`);
-      // this.logger.log(`inspect: ${util.inspect(this.pedidoIntegration)}`);
-      //
-      // this.logger.log(`\n\n`);
 
-
-      const xpto =  await this.pedidoIntegration.getBitcoinPriceUSD();
-      this.logger.log(`valor = ${JSON.stringify(xpto)}`);
-      const xpto2 =  await this.pedidoIntegration.getCatFacts() ;
+      const xpto2 =  await this.pedidoIntegration.sample() ;
       this.logger.log(`valor2 = ${JSON.stringify(xpto2)}`);
+      const pedido =  await this.pedidoIntegration.getPedidoById(1);
+      this.logger.log(`valor = ${JSON.stringify(pedido)}`);
 
 
       this.logger.log('Webhook: RODRIGO - FIM\n');
