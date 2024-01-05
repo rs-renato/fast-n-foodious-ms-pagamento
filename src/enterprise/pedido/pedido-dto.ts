@@ -11,6 +11,4 @@ export class PedidoDto {
    static fromJson(json: any): PedidoDto {
       return new PedidoDto(json.clienteId, json.dataInicio, json.estadoPedido, json.ativo, json.id, json.total);
    }
-
 }
-

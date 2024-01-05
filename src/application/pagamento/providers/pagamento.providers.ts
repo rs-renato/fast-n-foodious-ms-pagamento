@@ -15,9 +15,7 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { BuscaPedidoIdUseCase } from 'src/application/pagamento/usecase/busca-pedido-id.usecase';
-import {
-   AtualizaPedidoComoRecebidoUseCase
-} from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
+import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 
 export const PagamentoProviders: Provider[] = [
    {
@@ -38,38 +36,47 @@ export const PagamentoProviders: Provider[] = [
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE,
-      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
+      inject: [
+         PagamentoConstants.IREPOSITORY,
+         PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,
+         PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
+         PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
+      ],
       useFactory: (
          repository: IRepository<Pagamento>,
          buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
          atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase,
          validators: WebhookPagamentoValidator[],
-      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, buscaPedidoIdUseCase, atualizaPedidoComoRecebidoUseCase, validators),
+      ): WebhookPagamentoPedidoUseCase =>
+         new WebhookPagamentoPedidoUseCase(
+            repository,
+            buscaPedidoIdUseCase,
+            atualizaPedidoComoRecebidoUseCase,
+            validators,
+         ),
    },
    {
       provide: PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,
       inject: [PedidoIntegration],
-      useFactory: (
-         pedidoIntegration: PedidoIntegration,
-      ): BuscaPedidoIdUseCase => new BuscaPedidoIdUseCase(pedidoIntegration),
+      useFactory: (pedidoIntegration: PedidoIntegration): BuscaPedidoIdUseCase =>
+         new BuscaPedidoIdUseCase(pedidoIntegration),
    },
    {
       provide: PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
       inject: [PedidoIntegration],
-      useFactory: (
-         pedidoIntegration: PedidoIntegration,
-      ): AtualizaPedidoComoRecebidoUseCase => new AtualizaPedidoComoRecebidoUseCase(pedidoIntegration),
+      useFactory: (pedidoIntegration: PedidoIntegration): AtualizaPedidoComoRecebidoUseCase =>
+         new AtualizaPedidoComoRecebidoUseCase(pedidoIntegration),
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
-      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,],
-      useFactory: (repositoryPagamento: IRepository<Pagamento>,
-                   buscaPedidoIdUseCase: BuscaPedidoIdUseCase): WebhookPagamentoValidator[] => [
+      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.BUSCA_PEDIDO_ID_USECASE],
+      useFactory: (
+         repositoryPagamento: IRepository<Pagamento>,
+         buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
+      ): WebhookPagamentoValidator[] => [
          new WebhookPagamentoTransacaoIdValidoValidator(repositoryPagamento),
          new WebhookPagamentoPedidoValidoValidator(repositoryPagamento, buscaPedidoIdUseCase),
          new WebhookPagamentoPagamentoValidoValidator(repositoryPagamento),
       ],
    },
-
-
 ];

@@ -35,3 +35,13 @@
             ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, pedidoIntegration, validators),
          },
       ```
+      
+* para adicionar nos testes unitários, modifique TestingModule da seguinte forma:
+
+```
+         const module: TestingModule = await Test.createTestingModule({
+         imports: [HttpModule], <-- adicionar HttpModule
+         providers: [ ...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
+                      ^^^^^^^^^^^^^^^^^^^^^^^
+      }).compile();
+```

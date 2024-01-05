@@ -18,8 +18,10 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
 
    private logger: Logger = new Logger(WebhookPagamentoPedidoValidoValidator.name);
 
-   constructor(@Inject(PagamentoConstants.IREPOSITORY) private repositoryPagamento: IRepository<Pagamento>,
-               @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase) {}
+   constructor(
+      @Inject(PagamentoConstants.IREPOSITORY) private repositoryPagamento: IRepository<Pagamento>,
+      @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
+   ) {}
 
    async validate(pagamentoParametro: Pagamento): Promise<boolean> {
       const pagamento = await this.buscarPagamento(pagamentoParametro.transacaoId);

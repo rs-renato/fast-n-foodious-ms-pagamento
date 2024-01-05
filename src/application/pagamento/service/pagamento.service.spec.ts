@@ -8,6 +8,8 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { RepositoryException } from 'src/infrastructure/exception/repository.exception';
 import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/providers/persistence-in-memory.providers';
 import { PagamentoConstants } from 'src/shared/constants';
+import { HttpModule } from '@nestjs/axios';
+import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 
 describe('PagamentoService', () => {
    let service: IPagamentoService;
@@ -46,7 +48,9 @@ describe('PagamentoService', () => {
    beforeEach(async () => {
       // Configuração do módulo de teste
       const module: TestingModule = await Test.createTestingModule({
+         imports: [HttpModule],
          providers: [
+            ...IntegrationProviders,
             ...PagamentoProviders,
             ...PersistenceInMemoryProviders,
             // Mock do serviço IRepository<Pagamento>

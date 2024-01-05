@@ -4,7 +4,7 @@
 start_path="src"
 
 # Define the component names
-components=("api" "service" "validator" "usecase" "repository")
+components=("api" "service" "validator" "usecase" "repository" "integration")
 
 # Iterate over the components
 for component in "${components[@]}"; do
