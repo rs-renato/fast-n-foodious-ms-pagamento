@@ -62,7 +62,7 @@ export class WebhookPagamentoPedidoUseCase {
          const pedido: PedidoDto =  await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
          this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
 
-         // TODO RODRIGO - inserir chamada para o endpoint editar o pedido
+         // TODO RODRIGO - inserir chamada para o endpoint atualizar o estado do pedido
          // // mudar status pedido para RECEBIDO
          // pedido.estadoPedido = EstadoPedido.RECEBIDO;
          // await this.editarPedidoUseCase.editarPedido(pedido);
