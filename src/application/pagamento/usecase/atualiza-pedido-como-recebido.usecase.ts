@@ -6,18 +6,19 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { ValidatorUtils } from 'src/shared/validator.utils';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
+import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
 
 @Injectable()
-export class BuscaPedidoIdUseCase {
-   private logger = new Logger(BuscaPedidoIdUseCase.name);
+export class AtualizaPedidoComoRecebidoUseCase {
+   private logger = new Logger(AtualizaPedidoComoRecebidoUseCase.name);
 
    constructor(@Inject(PedidoIntegration) private pedidoIntegration: PedidoIntegration) {}
 
-   async buscarPedidoPorId(idPedido: number): Promise<PedidoDto> {
-      this.logger.log(`buscarPedidoPorId: id = ${idPedido}`);
-      const pedidoDto = await this.pedidoIntegration.getPedidoById(idPedido);
-      this.logger.debug(`pedidoDto = ${JSON.stringify(pedidoDto)}`);
-      return pedidoDto;
+   async atualizarPedidoComoRecebido(pedidoDto: PedidoDto): Promise<void> {
+      this.logger.debug(`atualizarPedidoComoRecebido: pedidoDto = ${JSON.stringify(pedidoDto)}`);
+      pedidoDto.estadoPedido = EstadoPedido.RECEBIDO;
+      await this.pedidoIntegration.editarPedido(pedidoDto);
+      this.logger.debug(`Estado do pedido ${pedidoDto.id} modificado com sucesso para ${pedidoDto.estadoPedido}`);
    }
 
 }

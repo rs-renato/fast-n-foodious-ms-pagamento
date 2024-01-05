@@ -1,5 +1,5 @@
 import { Provider } from '@nestjs/common';
-import { PedidoIntegration } from '../pedido/pedido.integration';
+import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 
 export const IntegrationProviders: Provider[] = [
    {

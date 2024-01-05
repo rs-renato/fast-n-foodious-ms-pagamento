@@ -41,7 +41,7 @@ export class PagamentoTypeormRepository implements IRepository<Pagamento> {
    }
 
    async edit(pagamento: Pagamento): Promise<Pagamento> {
-      this.logger.debug(`Editando pagamento: ${pagamento}`);
+      this.logger.debug(`Editando pagamento: ${JSON.stringify(pagamento)}`);
 
       return this.repository
          .save(pagamento)

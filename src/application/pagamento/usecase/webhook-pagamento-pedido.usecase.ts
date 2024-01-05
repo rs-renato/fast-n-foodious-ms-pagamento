@@ -8,9 +8,11 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ValidatorUtils } from 'src/shared/validator.utils';
-import { PedidoIntegration } from '../../../integration/pedido/pedido.integration';
-import { PedidoDto } from '../../../integration/pedido/pedido-dto.integration';
+import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
+import {
+   AtualizaPedidoComoRecebidoUseCase
+} from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 
 @Injectable()
 export class WebhookPagamentoPedidoUseCase {
@@ -19,6 +21,7 @@ export class WebhookPagamentoPedidoUseCase {
    constructor(
       @Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>,
       @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
+      @Inject(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE) private atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase,
       @Inject(PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR) private validators: WebhookPagamentoValidator[],
    ) {}
 
@@ -32,13 +35,14 @@ export class WebhookPagamentoPedidoUseCase {
       // buscar pagamento associado a transaçãoID
       const pagamento = await this.buscarPagamento(transacaoId);
 
+      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
+      await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
+
       // mudar status pagamento para o estado CONFIRMADO
       pagamento.estadoPagamento = estadoPagamentoEnum;
       pagamento.dataHoraPagamento = pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? new Date() : null;
       await this.repository.edit(pagamento);
 
-      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
-      await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
 
       this.logger.log(`Webhook: finalizado para transaçãoId = ${transacaoId}\n`);
       return true;
@@ -57,15 +61,10 @@ export class WebhookPagamentoPedidoUseCase {
    private async mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum: EstadoPagamento,
                                                                     pagamento: Pagamento): Promise<void> {
       if (estadoPagamentoEnum === EstadoPagamento.CONFIRMADO) {
-
          // buscar pedido associado a transaçãoID
          const pedido: PedidoDto =  await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
          this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
-
-         // TODO RODRIGO - inserir chamada para o endpoint atualizar o estado do pedido
-         // // mudar status pedido para RECEBIDO
-         // pedido.estadoPedido = EstadoPedido.RECEBIDO;
-         // await this.editarPedidoUseCase.editarPedido(pedido);
+         await this.atualizaPedidoComoRecebidoUseCase.atualizarPedidoComoRecebido(pedido);
       }
    }
 

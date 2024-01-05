@@ -5,8 +5,9 @@ import { ValidationException } from 'src/enterprise/exception/validation.excepti
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
-import { BuscaPedidoIdUseCase } from '../usecase/busca-pedido-id.usecase';
-import { EstadoPedido, PedidoDto } from '../../../integration/pedido/pedido-dto.integration';
+import { BuscaPedidoIdUseCase } from 'src/application/pagamento/usecase/busca-pedido-id.usecase';
+import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
+import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
 
 @Injectable()
 export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoValidator {

@@ -1,56 +1,30 @@
 import { ForbiddenException, NotFoundException, ServiceUnavailableException, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { catchError, lastValueFrom, map } from 'rxjs';
-import { PedidoDto } from './pedido-dto.integration';
+import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
+import * as process from 'process';
 
 @Injectable()
 export class PedidoIntegration {
 
    private logger = new Logger(PedidoIntegration.name);
 
+   private MS_PEDIDO_URL = process.env.MS_PEDIDO_INTEGRATION_URL;
+
    constructor(private httpService: HttpService) {}
 
-   // async getBitcoinPriceUSD() {
-   //    return this.httpService
-   //       .get('https://api.coindesk.com/v1/bpi/currentprice.json')
-   //       .pipe(
-   //          map((res) => res.data?.bpi),
-   //          map((bpi) => bpi?.USD),
-   //          map((usd) => {
-   //             return usd?.rate;
-   //          }),
-   //       )
-   //       .pipe(
-   //          catchError(() => {
-   //             throw new ForbiddenException('API not available');
-   //          }),
-   //       );
-   // }
-
-   async sample() {
-      const request = this.httpService
-         .get('https://catfact.ninja/fact')
-         .pipe(map((res) => res.data))
-         .pipe(
-            catchError(() => {
-               throw new ForbiddenException('API not available');
-            }),
-         );
-
-      return await lastValueFrom(request);
-   }
-
    async getPedidoById(id: number): Promise<PedidoDto> {
+      this.logger.debug(`getPedidoById: invocando serviço de integração em http://${this.MS_PEDIDO_URL}/v1/pedido/${id}`);
       const request = this.httpService
-         .get(`http://localhost:3000/v1/pedido/${id}`)
+         .get(`http://${this.MS_PEDIDO_URL}/v1/pedido/${id}`)
          .pipe(map((res) => res.data))
          .pipe(
-            catchError((error ) => {
+            catchError((error) => {
                const statusError = error.response.status;
                if (statusError === 404) {
                  throw new NotFoundException(`Pedido ${id} não encontrado.`);
                }
-               throw new ServiceUnavailableException('Não foi possível realizar a integração com o MS de Pedido.');
+               throw new ServiceUnavailableException('Não foi possível realizar a integração com o MS de Pedido para buscar o pedido.');
             }),
          );
 
@@ -64,4 +38,27 @@ export class PedidoIntegration {
 
       return pedidoDto;
    }
+
+   async editarPedido(pedidoDto: PedidoDto): Promise<void> {
+
+      const pedidoModificadoParaRecebido = {
+        "clienteId": pedidoDto.clienteId,
+        "dataInicio": pedidoDto.dataInicio,
+        "estadoPedido": pedidoDto.estadoPedido,
+        "ativo": pedidoDto.ativo,
+      }
+
+      this.logger.debug(`editarPedido: invocando serviço de integração em http://${this.MS_PEDIDO_URL}/v1/pedido/${pedidoDto.id}`);
+      const request = this.httpService
+         .put(`http://${this.MS_PEDIDO_URL}/v1/pedido/${pedidoDto.id}`, pedidoModificadoParaRecebido)
+         .pipe(map((res) => res.data))
+         .pipe(
+            catchError((error) => {
+               throw new ServiceUnavailableException('Não foi possível realizar a integração com o MS de Pedido para editar o pedido.');
+            }),
+         );
+
+      await lastValueFrom(request);
+   }
+
 }
