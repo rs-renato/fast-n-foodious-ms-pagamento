@@ -15,6 +15,8 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { HttpService } from '@nestjs/axios';
 import { PedidoIntegration } from '../../../integration/pedido/pedido.integration';
+import { BuscaPedidoIdUseCase } from '../usecase/busca-pedido-id.usecase';
+import { BUSCA_PEDIDO_ID_USECASE } from '../../../shared/constants/pagamento';
 
 export const PagamentoProviders: Provider[] = [
    {
@@ -35,30 +37,30 @@ export const PagamentoProviders: Provider[] = [
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE,
-      inject: [PagamentoConstants.IREPOSITORY, PedidoIntegration, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
+      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.BUSCA_PEDIDO_ID_USECASE, PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR],
       useFactory: (
          repository: IRepository<Pagamento>,
-         pedidoIntegration: PedidoIntegration,
+         buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
          validators: WebhookPagamentoValidator[],
-      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, pedidoIntegration, validators),
+      ): WebhookPagamentoPedidoUseCase => new WebhookPagamentoPedidoUseCase(repository, buscaPedidoIdUseCase, validators),
+   },
+   {
+      provide: PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,
+      inject: [PedidoIntegration],
+      useFactory: (
+         pedidoIntegration: PedidoIntegration,
+      ): BuscaPedidoIdUseCase => new BuscaPedidoIdUseCase(pedidoIntegration),
    },
    {
       provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,
-      inject: [PagamentoConstants.IREPOSITORY],
-      useFactory: (repositoryPagamento: IRepository<Pagamento>): WebhookPagamentoValidator[] => [
+      inject: [PagamentoConstants.IREPOSITORY, PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,],
+      useFactory: (repositoryPagamento: IRepository<Pagamento>,
+                   buscaPedidoIdUseCase: BuscaPedidoIdUseCase): WebhookPagamentoValidator[] => [
          new WebhookPagamentoTransacaoIdValidoValidator(repositoryPagamento),
-         new WebhookPagamentoPedidoValidoValidator(repositoryPagamento),
+         new WebhookPagamentoPedidoValidoValidator(repositoryPagamento, buscaPedidoIdUseCase),
          new WebhookPagamentoPagamentoValidoValidator(repositoryPagamento),
       ],
    },
-
-   // { provide: 'HttpService', useClass: HttpService },
-   //
-   // {
-   //    provide: 'PedidoIntegration',
-   //    inject: ['HttpService'],
-   //    useFactory: (httpService: HttpService): PedidoIntegration => new PedidoIntegration(httpService),
-   // },
 
 
 ];

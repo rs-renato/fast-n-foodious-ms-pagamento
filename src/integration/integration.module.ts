@@ -7,6 +7,5 @@ import { PedidoIntegration } from './pedido/pedido.integration';
    imports: [HttpModule], // imported axios/HttpModule
    providers: [PedidoIntegration],
    exports: [PedidoIntegration],
-   // exports: [HttpModule, PedidoIntegration],
 })
 export class IntegrationModule {}
