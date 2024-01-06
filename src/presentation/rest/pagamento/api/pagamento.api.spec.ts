@@ -3,8 +3,8 @@ import { IPagamentoService } from 'src/application/pagamento/service/pagamento.s
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { PagamentoRestApi } from 'src/presentation/rest/pagamento/api/pagamento.api';
 import { PagamentoConstants } from 'src/shared/constants';
-import { BuscarEstadoPagamentoPedidoRequest } from '../request';
-import { BuscarEstadoPagamentoPedidoResponse } from '../response';
+import { BuscarEstadoPagamentoPedidoRequest } from 'src/presentation/rest/pagamento/request';
+import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response';
 
 describe('PagamentoRestApi', () => {
    let restApi: PagamentoRestApi;

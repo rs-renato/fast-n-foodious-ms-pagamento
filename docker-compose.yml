@@ -1,11 +1,11 @@
 version: '3.8'
 services:
-  fast-n-foodious:
+  fast-n-foodious-ms-pagamento:
     restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: fast-n-foodious
+    container_name: fast-n-foodious-ms-pagamento
     env_file:
       - ./envs/${NODE_ENV:-prod}.env
     ports:

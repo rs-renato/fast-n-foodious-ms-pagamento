@@ -7,7 +7,6 @@ import {
 import { WebhookPagamentoPedidoUseCase } from 'src/application/pagamento/usecase/webhook-pagamento-pedido.usecase';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
-import { Pedido } from 'src/enterprise/pedido/model/pedido.model';
 import { PagamentoConstants } from 'src/shared/constants';
 
 @Injectable()
@@ -25,8 +24,8 @@ export class PagamentoService implements IPagamentoService {
       return await this.consultaEstadoUsecase.buscaEstadoPagamento(pedidoId);
    }
 
-   async solicitarPagamentoPedido(pedido: Pedido): Promise<Pagamento> {
-      return await this.solicitarPagamentoPedidoUsecase.solicitaPagamento(pedido);
+   async solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<Pagamento> {
+      return await this.solicitarPagamentoPedidoUsecase.solicitaPagamento(pedidoId, totalPedido);
    }
 
    async webhookPagamentoPedido(transacaoId: string, estadoPagamento: number): Promise<boolean> {

@@ -1,15 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';
-import { BuscarPedidoPorIdUseCase, EditarPedidoUseCase } from 'src/application/pedido/usecase';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
 import { EstadoPagamento, getEstadoPagamentoFromValue } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
-import { EstadoPedido } from 'src/enterprise/pedido/enum/estado-pedido.enum';
-import { Pedido } from 'src/enterprise/pedido/model/pedido.model';
+
 import { IRepository } from 'src/enterprise/repository/repository';
-import { PagamentoConstants, PedidoConstants } from 'src/shared/constants';
+import { PagamentoConstants } from 'src/shared/constants';
 import { ValidatorUtils } from 'src/shared/validator.utils';
+import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
+import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
+import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 
 @Injectable()
 export class WebhookPagamentoPedidoUseCase {
@@ -17,15 +18,15 @@ export class WebhookPagamentoPedidoUseCase {
 
    constructor(
       @Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>,
-      @Inject(PedidoConstants.EDITAR_PEDIDO_USECASE)
-      private editarPedidoUseCase: EditarPedidoUseCase,
-      @Inject(PedidoConstants.BUSCAR_PEDIDO_POR_ID_USECASE)
-      private buscarPedidoPorIdUseCase: BuscarPedidoPorIdUseCase,
+      @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
+      @Inject(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE)
+      private atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase,
       @Inject(PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR) private validators: WebhookPagamentoValidator[],
    ) {}
 
    async webhook(transacaoId: string, estadoPagamento: number): Promise<boolean> {
       this.logger.log(`Webhook: ativado para transaçãoId = ${transacaoId} para estado = ${estadoPagamento}\n`);
+
       const estadoPagamentoEnum: EstadoPagamento = this.constroiEstadoPagamentoEnum(estadoPagamento);
       const pagamentoParaValidar = new Pagamento(undefined, transacaoId, undefined, undefined, undefined, undefined);
       await ValidatorUtils.executeValidators(this.validators, pagamentoParaValidar);
@@ -33,13 +34,13 @@ export class WebhookPagamentoPedidoUseCase {
       // buscar pagamento associado a transaçãoID
       const pagamento = await this.buscarPagamento(transacaoId);
 
+      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
+      await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
+
       // mudar status pagamento para o estado CONFIRMADO
       pagamento.estadoPagamento = estadoPagamentoEnum;
       pagamento.dataHoraPagamento = pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? new Date() : null;
       await this.repository.edit(pagamento);
-
-      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
-      await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento, transacaoId);
 
       this.logger.log(`Webhook: finalizado para transaçãoId = ${transacaoId}\n`);
       return true;
@@ -58,27 +59,13 @@ export class WebhookPagamentoPedidoUseCase {
    private async mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(
       estadoPagamentoEnum: EstadoPagamento,
       pagamento: Pagamento,
-      transacaoId: string,
    ): Promise<void> {
       if (estadoPagamentoEnum === EstadoPagamento.CONFIRMADO) {
          // buscar pedido associado a transaçãoID
-         const pedido = await this.buscarPedido(pagamento, transacaoId);
-
-         // mudar status pedido para RECEBIDO
-         pedido.estadoPedido = EstadoPedido.RECEBIDO;
-         await this.editarPedidoUseCase.editarPedido(pedido);
+         const pedido: PedidoDto = await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
+         this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
+         await this.atualizaPedidoComoRecebidoUseCase.atualizarPedidoComoRecebido(pedido);
       }
-   }
-
-   private async buscarPedido(pagamento: Pagamento, transacaoId: string): Promise<Pedido> {
-      const pedido = await this.buscarPedidoPorIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
-      if (pedido === undefined) {
-         this.logger.error(`Nenhum pedido associado a transação ${transacaoId} foi localizado no banco de dados`);
-         throw new ServiceException(
-            `Nenhum pedido associado a transação ${transacaoId} foi localizado no banco de dados`,
-         );
-      }
-      return pedido;
    }
 
    private async buscarPagamento(transacaoId: string): Promise<Pagamento> {

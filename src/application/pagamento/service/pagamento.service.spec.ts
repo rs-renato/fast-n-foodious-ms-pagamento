@@ -1,16 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
-import { PedidoProviders } from 'src/application/pedido/providers/pedido.providers';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
-import { EstadoPedido } from 'src/enterprise/pedido/enum/estado-pedido.enum';
-import { Pedido } from 'src/enterprise/pedido/model/pedido.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { RepositoryException } from 'src/infrastructure/exception/repository.exception';
 import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/providers/persistence-in-memory.providers';
 import { PagamentoConstants } from 'src/shared/constants';
+import { HttpModule } from '@nestjs/axios';
+import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 
 describe('PagamentoService', () => {
    let service: IPagamentoService;
@@ -37,15 +36,6 @@ describe('PagamentoService', () => {
       },
    ];
 
-   const pedido: Pedido = {
-      id: 1,
-      clienteId: 1,
-      dataInicio: '2023-06-18',
-      estadoPedido: EstadoPedido.PAGAMENTO_PENDENTE,
-      ativo: true,
-      total: 10,
-   };
-
    const pagamentoSolicitado: Pagamento = {
       dataHoraPagamento: new Date(),
       estadoPagamento: EstadoPagamento.PENDENTE,
@@ -58,16 +48,17 @@ describe('PagamentoService', () => {
    beforeEach(async () => {
       // Configuração do módulo de teste
       const module: TestingModule = await Test.createTestingModule({
+         imports: [HttpModule],
          providers: [
+            ...IntegrationProviders,
             ...PagamentoProviders,
-            ...PedidoProviders,
             ...PersistenceInMemoryProviders,
             // Mock do serviço IRepository<Pagamento>
             {
                provide: PagamentoConstants.IREPOSITORY,
                useValue: {
                   findBy: jest.fn(() => {
-                     // retorna vazio, simulando que não encontrou registros pelo atributos passados por parâmetro
+                     // retorna vazio, simulando que não encontrou registros pelos atributos passados por parâmetro
                      return Promise.resolve(pagamentos);
                   }),
                   save: jest.fn(() => {
@@ -111,15 +102,18 @@ describe('PagamentoService', () => {
 
    describe('solicitarPagamentoPedido', () => {
       it('deve solicitar pagamento corretamente', async () => {
-         await service.solicitarPagamentoPedido(pedido).then((pagamento) => {
-            expect(pagamento.id).toEqual(pedido.id);
+         const pedidoId = 1;
+         const totalPedido = 10;
+         await service.solicitarPagamentoPedido(pedidoId, totalPedido).then((pagamento) => {
+            expect(pagamento.pedidoId).toEqual(pedidoId);
          });
       });
       it('não deve fazer solicitação de pagamento quando houver erro de banco ', async () => {
          const error = new RepositoryException('Erro genérico de banco de dados');
          jest.spyOn(pagamentoRepository, 'save').mockRejectedValue(error);
-
-         await expect(service.solicitarPagamentoPedido(pedido)).rejects.toThrowError(ServiceException);
+         const pedidoId = 1;
+         const totalPedido = 10;
+         await expect(service.solicitarPagamentoPedido(pedidoId, totalPedido)).rejects.toThrowError(ServiceException);
       });
    });
 });

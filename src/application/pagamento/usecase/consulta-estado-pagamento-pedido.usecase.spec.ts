@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
-import { PedidoProviders } from 'src/application/pedido/providers/pedido.providers';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
-
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/providers/persistence-in-memory.providers';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ConsultaEstadoPagamentoPedidoUseCase } from './consulta-estado-pagamento-pedido.usecase';
+import { IntegrationProviders } from 'src/integration/providers/integration.providers';
+import { HttpModule } from '@nestjs/axios';
 
 describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
    let useCase: ConsultaEstadoPagamentoPedidoUseCase;
@@ -25,7 +25,8 @@ describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
 
    beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
-         providers: [...PedidoProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
+         imports: [HttpModule],
+         providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
       }).compile();
 
       // Desabilita a saída de log

@@ -1,6 +1,6 @@
 {
-  "name": "fast-n-foodious",
-  "version": "3.0.0",
+  "name": "fast-n-foodious-ms-pagamento",
+  "version": "1.0.0",
   "description": "",
   "author": "Fast & Foodious Coorporation",
   "private": true,
@@ -22,6 +22,7 @@
     "prebuild": "cp scripts/hooks/pre-commit scripts/hooks/pre-push .git/hooks/ && chmod +x .git/hooks/pre-commit .git/hooks/pre-push"
   },
   "dependencies": {
+    "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
@@ -84,10 +85,10 @@
     "coverageDirectory": "../coverage",
     "coverageThreshold": {
       "global": {
-        "branches": 70,
-        "functions": 70,
-        "lines": 70,
-        "statements": 70
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
       }
     },
     "testEnvironment": "node"

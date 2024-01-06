@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { PresentationModule } from 'src/presentation/presentation.module';
+import { IntegrationModule } from './integration/integration.module';
 
 @Module({
    imports: [
@@ -10,6 +11,7 @@ import { PresentationModule } from 'src/presentation/presentation.module';
       }),
       PresentationModule,
       InfrastructureModule,
+      IntegrationModule,
    ],
 })
 export class MainModule {}

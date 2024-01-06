@@ -1,6 +1,6 @@
 FROM node:18.16-alpine
 
-WORKDIR /fast-n-foodious
+WORKDIR /fast-n-foodious-ms-pagamento
 
 COPY package*.json ./
 
