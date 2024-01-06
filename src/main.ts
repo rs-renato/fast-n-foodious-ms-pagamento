@@ -9,9 +9,7 @@ async function bootstrap(): Promise<void> {
    const logger: Logger = new Logger(MainModule.name);
 
    // Configuração do servidor
-   // TODO INTEGRAÇÃO - descomentar linha abaixo porta do servidor
-   // const serverPort = process.env.SERVER_PORT || 3000;
-   const serverPort = 3001;
+   const serverPort = process.env.SERVER_PORT || 3000;
 
    const app = await NestFactory.create(MainModule);
 

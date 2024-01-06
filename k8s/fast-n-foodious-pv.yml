@@ -11,5 +11,5 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: fast-n-foodious-storage
   hostPath:
-     path: /tmp/lib/mysql
+     path: /Users/renatorodrigues/mysql
      type: DirectoryOrCreate

@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fast-n-foodious-svc
+  name: fast-n-foodious-ms-pagamento-svc
 spec:
   selector:
-    app: fast-n-foodious
+    app: fast-n-foodious-ms-pagamento
   type: LoadBalancer
   ports:
   - port: 80

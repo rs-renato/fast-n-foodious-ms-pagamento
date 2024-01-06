@@ -1,8 +1,8 @@
 namespace: default
 
 application:
-  name: fast-n-foodious
-  image: ottero/fast-n-foodious:latest
+  name: fast-n-foodious-ms-pagamento
+  image: ottero/fast-n-foodious-ms-pagamento:latest
   resources:
     limits:
       memory: "768Mi"
@@ -35,12 +35,16 @@ hpa:
     averageUtilization: 70
 
 pv:
+  name: fast-n-foodious-pv
   storage: 500Mi
-  hostPath: /tmp/lib/mysql
+  hostPath: /Users/renatorodrigues/mysql
 
 pvc:
+  name: fast-n-foodious-pvc
   requests:
       storage: 300Mi
+
+storageClassName: fast-n-foodious-storage
 
 secret:
   data:

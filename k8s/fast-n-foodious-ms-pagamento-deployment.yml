@@ -1,24 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.application.name }}
-  namespace: {{ .Values.namespace }}
+  name: fast-n-foodious-ms-pagamento
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.application.name }}
+      app: fast-n-foodious-ms-pagamento
   template:
     metadata:
       labels:
-        app: {{ .Values.application.name }}
+        app: fast-n-foodious-ms-pagamento
     spec:
       containers:
-      - name: {{ .Values.application.name }}
-        image: {{ .Values.application.image }}
+      - name: fast-n-foodious-ms-pagamento
+        image: ottero/fast-n-foodious-ms-pagamento:latest
         resources:
           limits:
-            memory: {{ .Values.application.resources.limits.memory }}
-            cpu: {{ .Values.application.resources.limits.cpu }}
+            memory: "512Mi"
+            cpu: "500m"
         livenessProbe:
           httpGet:
             port: 3000
@@ -39,40 +38,39 @@ spec:
         - containerPort: 3000
         envFrom:
           - configMapRef:
-              name: {{ .Values.application.name }}-env
+              name: fast-n-foodious-ms-pagamento-env
         env:
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.application.name }}-secret
+                name: fast-n-foodious-ms-pagamento-secret
                 key: MYSQL_PASSWORD
           - name: SERVER_PORT
             valueFrom:
               configMapKeyRef:
-                name: {{ .Values.application.name }}-env
+                name: fast-n-foodious-ms-pagamento-env
                 key: SERVER_PORT
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.mysql.name }}
-  namespace: {{ .Values.namespace }}
+  name: mysql
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.mysql.name }}
+      app: mysql
   template:
     metadata:
       labels:
-        app: {{ .Values.mysql.name }}
+        app: mysql
     spec:
       containers:
-      - name: {{ .Values.mysql.name }}
-        image: {{ .Values.mysql.image }}
+      - name: mysql
+        image: mysql:8.0
         resources:
           limits:
-            memory: {{ .Values.mysql.resources.limits.memory }}
-            cpu: {{ .Values.mysql.resources.limits.cpu }}
+            memory: "768Mi"
+            cpu: "500m"
         ports:
           - containerPort: 3306
         livenessProbe:
@@ -91,30 +89,30 @@ spec:
           failureThreshold: 3
         envFrom:
           - configMapRef:
-              name: {{ .Values.application.name }}-env
+              name: fast-n-foodious-ms-pagamento-env
         env:
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.application.name }}-secret
+                name: fast-n-foodious-ms-pagamento-secret
                 key: MYSQL_ROOT_PASSWORD
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.application.name }}-secret
+                name: fast-n-foodious-ms-pagamento-secret
                 key: MYSQL_PASSWORD
         volumeMounts:
           - name: mysql-init
             mountPath: /docker-entrypoint-initdb.d
-          - name: {{ .Values.application.name }}-volume
+          - name: fast-n-foodious-volume
             mountPath: /var/lib/mysql
       volumes:
-        - name: {{ .Values.application.name }}-volume
+        - name: fast-n-foodious-volume
           persistentVolumeClaim:
-            claimName: {{ .Values.application.name }}-pvc
+            claimName: fast-n-foodious-pvc
         - name: mysql-init
           configMap:
-            name: {{ .Values.mysql.name }}-env
+            name: mysql-env
             items:
               - key: init.sql
                 path: 1-init.sql
