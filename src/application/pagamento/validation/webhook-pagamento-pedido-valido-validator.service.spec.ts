@@ -82,7 +82,9 @@ describe('WebhookPagamentoPedidoValidoValidator', () => {
       it('should handle error from BuscaPedidoIdUseCase', async () => {
          buscaPedidoIdUseCaseMock.buscarPedidoPorId.mockRejectedValueOnce(new Error('Internal Server Error'));
 
-         await expect(validator.validate(mockedPagamento)).rejects.toThrowError('Ocorreu um erro ao realizar a integração');
+         await expect(validator.validate(mockedPagamento)).rejects.toThrowError(
+            'Ocorreu um erro ao realizar a integração',
+         );
       });
 
       it('should handle null or undefined payment', async () => {
@@ -98,7 +100,10 @@ describe('WebhookPagamentoPedidoValidoValidator', () => {
          //    return Promise.resolve(param.hasOwnProperty('pedidoId') ? [mockedPagamento] : []);
          // });
 
-         buscaPedidoIdUseCaseMock.buscarPedidoPorId.mockResolvedValueOnce({ ...mockedPedido, estadoPedido: EstadoPedido.FINALIZADO });
+         buscaPedidoIdUseCaseMock.buscarPedidoPorId.mockResolvedValueOnce({
+            ...mockedPedido,
+            estadoPedido: EstadoPedido.FINALIZADO,
+         });
          const pagamento: Pagamento = { ...mockedPagamento, transacaoId: undefined };
          await expect(validator.validate(pagamento)).rejects.toThrowError(ValidationException);
       });

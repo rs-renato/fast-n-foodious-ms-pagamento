@@ -63,7 +63,7 @@ describe('WebhookPagamentoPedidoUseCase', () => {
       repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
       buscaPedidoIdUseCase = module.get<BuscaPedidoIdUseCase>(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE);
       atualizaPedidoComoRecebidoUseCase = module.get<AtualizaPedidoComoRecebidoUseCase>(
-         PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE
+         PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
       );
    });
 
@@ -103,7 +103,6 @@ describe('WebhookPagamentoPedidoUseCase', () => {
          expect(mockedPagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
          expect(repository.edit).toHaveBeenCalledWith(mockedPagamento);
       });
-
    });
 });
 

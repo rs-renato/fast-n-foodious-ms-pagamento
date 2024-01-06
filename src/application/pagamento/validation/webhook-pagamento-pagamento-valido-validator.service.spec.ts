@@ -55,7 +55,6 @@ describe('WebhookPagamentoPagamentoValidoValidator', () => {
       });
 
       it('should throw a ValidationException if payment status is already confirmed', async () => {
-
          repository.findBy = jest.fn().mockImplementation(() => {
             return Promise.resolve([{ ...mockedPagamento, estadoPagamento: EstadoPagamento.CONFIRMADO }]);
          });
