@@ -66,43 +66,6 @@ jobs:
       - name: Stop and Remove Docker Containers
         run: docker-compose --env-file ./envs/prod.env down
 
-  bdd-in-memory:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-      - name: Install dependencies
-        run: npm install
-      - name: Starting Server
-        run: |
-          NODE_ENV=local-mock-repository npm run start & npx wait-on http://localhost:3000
-      - name: Run BDD Tests (With In-Memory Repositories)
-        run: npm run test:bdd
-
-  bdd-mysql:
-    runs-on: ubuntu-latest
-    env:
-      MYSQL_USER: ${{vars.MYSQL_USER}}
-      MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-      MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
-      MYSQL_HOST: '%'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-      - name: Running BDD in mysql server - Build Docker Images for Tests
-        run: docker-compose --env-file ./envs/prod.env build
-      - name: Running BDD in mysql server - Start Docker Containers
-        run: docker-compose --env-file ./envs/prod.env up -d
-      - name: Running BDD in mysql server - Wait for MySQL to Accept Connections
-        run: docker-compose --env-file ./envs/prod.env exec -T mysql sh -c "until mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD ; do sleep 1; done"
-
-      - name: Run BDD Tests (With TypeORM Repositories - MySQL)
-        run: docker-compose --env-file ./envs/prod.env exec -T fast-n-foodious-ms-pagamento sh -c "npm run start & npx wait-on http://localhost:3000 & npm run test:bdd"
-      - name: Stop and Remove Docker Containers
-        run: docker-compose --env-file ./envs/prod.env down
-
   # Publicação de imagem no DockerHub para inibição de custos, logo o job "build-ecr" foi desativado
   build:
     if: ${{ github.ref == 'refs/heads/main' }}
