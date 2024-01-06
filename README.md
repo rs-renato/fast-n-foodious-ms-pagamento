@@ -150,9 +150,9 @@ Inicia o container da aplicação e do mysql com as variáveis de produção, ut
 $ docker-compose --env-file ./envs/prod.env build
 $ docker-compose --env-file ./envs/prod.env up -d
 $ docker ps
-CONTAINER ID   IMAGE                        COMMAND                  CREATED         STATUS         PORTS                               NAMES
-2a0f11e4ffe3   fast-n-foodious-ms-pagamento   "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3000->3000/tcp              fast-n-foodious-ms-pagamento
-06ebf6b90fa7   mysql:8.0                    "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql
+CONTAINER ID   IMAGE                            COMMAND                  CREATED         STATUS         PORTS                               NAMES
+2a0f11e4ffe3   fast-n-foodious-ms-pagamento     "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3000->3000/tcp              fast-n-foodious-ms-pagamento
+06ebf6b90fa7   mysql:8.0                        "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql
 ```
 
 #### 💀 Docker (Modo Desbravador!)
@@ -171,9 +171,9 @@ $ docker run -d --rm --name fast-n-foodious-ms-pagamento -p 3000:3000 \
     ottero/fast-n-foodious-ms-pagamento:latest
 
 $ docker ps
-CONTAINER ID   IMAGE                                        COMMAND                  CREATED         STATUS         PORTS                               NAMES
-88bf7eae7e46   ottero/fast-n-foodious-ms-pagamento:latest     "docker-entrypoint.s…"   2 seconds ago   Up 1 second    0.0.0.0:3000->3000/tcp              fast-n-foodious-ms-pagamento
-8b0268d435a6   mysql:8.0                                    "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql
+CONTAINER ID   IMAGE                                            COMMAND                  CREATED         STATUS         PORTS                               NAMES
+88bf7eae7e46   ottero/fast-n-foodious-ms-pagamento:latest       "docker-entrypoint.s…"   2 seconds ago   Up 1 second    0.0.0.0:3000->3000/tcp              fast-n-foodious-ms-pagamento
+8b0268d435a6   mysql:8.0                                        "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql
 ```
 
 #### 🫧 Kubernetes (Modo Fácil!)
@@ -194,25 +194,25 @@ TEST SUITE: None
 
 $ kubectl get all
 
-NAME                                                READY   STATUS    RESTARTS        AGE
-pod/fast-n-foodious-ms-pagamento-5c6cbcbf76-v4bgd     1/1     Running   1 (2m29s ago)   3m28s
-pod/mysql-595c5c9d4f-x7grb                          1/1     Running   0               3m28s
+NAME                                                    READY   STATUS    RESTARTS        AGE
+pod/fast-n-foodious-ms-pagamento-5c6cbcbf76-v4bgd       1/1     Running   1 (2m29s ago)   3m28s
+pod/mysql-595c5c9d4f-x7grb                              1/1     Running   0               3m28s
 
-NAME                                            TYPE              CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
-service/fast-n-foodious-ms-pagamento-svc          LoadBalancer      10.97.158.122   localhost       80:30000/TCP   3m28s
-service/kubernetes                              ClusterIP         10.96.0.1       <none>          443/TCP        9d
-service/mysql                                   ClusterIP         10.109.101.116  <none>          3306/TCP       3m28s
+NAME                                                TYPE              CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
+service/fast-n-foodious-ms-pagamento-svc            LoadBalancer      10.97.158.122   localhost       80:30000/TCP   3m28s
+service/kubernetes                                  ClusterIP         10.96.0.1       <none>          443/TCP        9d
+service/mysql                                       ClusterIP         10.109.101.116  <none>          3306/TCP       3m28s
 
-NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/fast-n-foodious-ms-pagamento      1/1     1            1           3m28s
-deployment.apps/mysql                           1/1     1            1           3m28s
+NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/fast-n-foodious-ms-pagamento        1/1     1            1           3m28s
+deployment.apps/mysql                               1/1     1            1           3m28s
 
-NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/fast-n-foodious-ms-pagamento-5c6cbcbf76   1         1         1       3m28s
-replicaset.apps/mysql-595c5c9d4f                        1         1         1       3m28s
+NAME                                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/fast-n-foodious-ms-pagamento-5c6cbcbf76     1         1         1       3m28s
+replicaset.apps/mysql-595c5c9d4f                            1         1         1       3m28s
 
-NAME                                                                    REFERENCE                               TARGETS             MINPODS   MAXPODS   REPLICAS   AGE
-horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa      Deployment/fast-n-foodious-ms-pagamento   46%/70%, 0%/70%     1         3         1          3m28s
+NAME                                                                        REFERENCE                               TARGETS             MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa        Deployment/fast-n-foodious-ms-pagamento   46%/70%, 0%/70%     1         3         1          3m28s
 ```
 
 #### 💀 Kubernetes (Modo Desbravador!)
@@ -245,25 +245,25 @@ $ kubectl apply -f k8s/fast-n-foodious-ms-pagamento-hpa.yml
 horizontalpodautoscaler.autoscaling/fast-n-foodious-hpa created
 
 $ kubectl get all
-NAME                                                READY   STATUS    RESTARTS   AGE
-pod/fast-n-foodious-ms-pagamento-7fc6f95bdb-krcnm     1/1     Running   0          2m58s
-pod/mysql-595c5c9d4f-5vpj8                          1/1     Running   0          2m58s
+NAME                                                    READY   STATUS    RESTARTS   AGE
+pod/fast-n-foodious-ms-pagamento-7fc6f95bdb-krcnm       1/1     Running   0          2m58s
+pod/mysql-595c5c9d4f-5vpj8                              1/1     Running   0          2m58s
 
-NAME                                            TYPE            CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-service/fast-n-foodious-ms-pagamento-svc          LoadBalancer    10.110.74.44   localhost       80:30000/TCP     2m53s
-service/kubernetes                              ClusterIP       10.96.0.1       <none>        443/TCP          5m52s
-service/mysql                                   ClusterIP       10.108.3.249    <none>        3306/TCP         2m53s
+NAME                                                TYPE            CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+service/fast-n-foodious-ms-pagamento-svc            LoadBalancer    10.110.74.44   localhost       80:30000/TCP     2m53s
+service/kubernetes                                  ClusterIP       10.96.0.1       <none>        443/TCP          5m52s
+service/mysql                                       ClusterIP       10.108.3.249    <none>        3306/TCP         2m53s
 
-NAME                                            READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/fast-n-foodious-ms-pagamento      1/1     1            1           2m59s
-deployment.apps/mysql                           1/1     1            1           2m59s
+NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/fast-n-foodious-ms-pagamento        1/1     1            1           2m59s
+deployment.apps/mysql                               1/1     1            1           2m59s
 
-NAME                                                    DESIRED   CURRENT   READY   AGE
-replicaset.apps/fast-n-foodious-ms-pagamento-7fc6f95bdb   1         1         1       2m59s
-replicaset.apps/mysql-595c5c9d4f                        1         1         1       2m58s
+NAME                                                        DESIRED   CURRENT   READY   AGE
+replicaset.apps/fast-n-foodious-ms-pagamento-7fc6f95bdb     1         1         1       2m59s
+replicaset.apps/mysql-595c5c9d4f                            1         1         1       2m58s
 
-NAME                                                                    REFERENCE                               TARGETS           MINPODS   MAXPODS   REPLICAS   AGE
-horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa      fast-n-foodious-ms-pagamento-n-foodious   69%/80%, 0%/80%   1         3         1          2m48s 
+NAME                                                                        REFERENCE                                   TARGETS           MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa        fast-n-foodious-ms-pagamento-n-foodious     69%/80%, 0%/80%   1         3         1          2m48s 
 ```
 
 ## 🧾 Documentação da API (Swagger)
@@ -300,10 +300,10 @@ Deleted: sha256:f93cb6531dabccc23848e273402d3fbef0515206efab1a29ccc1be81bf273dea
 ```bash
 $ docker-compose --env-file ./envs/prod.env down -v
 [+] Running 4/4
- ✔ Container fast-n-foodious-ms-pagamento             Removed                                                                                           0.8s 
- ✔ Container mysql                                  Removed                                                                                           1.1s 
- ✔ Volume fast-n-foodious-ms-pagamento_mysql-data     Removed                                                                                           0.0s 
- ✔ Network fast-n-foodious_fast-n-foodious-network  Removed                                                                                           0.1s
+ ✔ Container fast-n-foodious-ms-pagamento              Removed                                                                                           0.8s 
+ ✔ Container mysql                                     Removed                                                                                           1.1s 
+ ✔ Volume fast-n-foodious-ms-pagamento_mysql-data      Removed                                                                                           0.0s 
+ ✔ Network fast-n-foodious_fast-n-foodious-network     Removed                                                                                           0.1s
 
 $ docker image rm fast-n-foodious-ms-pagamento-fast-n-foodious
 Untagged: fast-n-foodious-ms-pagamento-fast-n-foodious-ms-pagamento:latest
@@ -422,11 +422,11 @@ job.batch/k6-stress-job created
 configmap/k6-stress-env created
 
 $ kubectl get po
-NAME                                            READY   STATUS    RESTARTS        AGE
-fast-n-foodious-ms-pagamento-5c6cbcbf76-n5vn5     1/1     Running   1 (6m49s ago)   7m46s
-fast-n-foodious-ms-pagamento-5c6cbcbf76-q5q7t     1/1     Running   0               106s
-k6-stress-job-fkjv9                             1/1     Running   0               6s
-mysql-595c5c9d4f-chlrx                          1/1     Running   0               7m46s
+NAME                                                READY   STATUS    RESTARTS        AGE
+fast-n-foodious-ms-pagamento-5c6cbcbf76-n5vn5       1/1     Running   1 (6m49s ago)   7m46s
+fast-n-foodious-ms-pagamento-5c6cbcbf76-q5q7t       1/1     Running   0               106s
+k6-stress-job-fkjv9                                 1/1     Running   0               6s
+mysql-595c5c9d4f-chlrx                              1/1     Running   0               7m46s
 
 $ kubectl logs -f k6-stress-job-fkjv9
 
