@@ -1,0 +1,5 @@
+### Confirma um pagamento
+POST http://localhost:3001/v1/pagamento/863c99369e3d033aa1f080419d0502b226b3718945ba425481c9f565a85be8c8/1
+Content-Type: application/json
+
+{}

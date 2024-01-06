@@ -10,6 +10,7 @@ async function bootstrap(): Promise<void> {
 
    // Configuração do servidor
    const serverPort = process.env.SERVER_PORT || 3000;
+
    const app = await NestFactory.create(MainModule);
 
    // Configuração de validações global inputs request
