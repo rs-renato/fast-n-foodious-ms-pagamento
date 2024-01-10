@@ -47,6 +47,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
         * [Preparo de Pedidos](#preparo-de-pedidos)
         * [Entrega de Pedidos](#entrega-de-pedidos)
         * [Fluxo de etapas dos Pedidos](#fluxo-de-etapas-dos-pedidos)
+* [Links Externos](#links-externos)        
 
 ## Arquitetura de Solução (Cloud AWS)
 ![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-aws.png)
@@ -75,6 +76,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
             - fast-n-foodious-ci: e2e-mysql        - Execução de testes e2e com mysql (all green)
             - fast-n-foodious-ci: bdd-in-memory    - Execução de testes bdd com memória (all green)
             - fast-n-foodious-ci: bdd-in-mysql     - Execução de testes bdd com mysql (all green)
+            - fast-n-foodious-ci: sonarcloud       - Execução de análise de código no SonarCloud
             - fast-n-foodious-ci: build            - Build de imagens docker (AMD & ARM) e publicação no DockerHub
 
 ***Nota:** Nas instruções abaixo, se assume que o diretório onde os comandos serão executados será a posta raiz do projeto ~/fast-n-foodious-ms-pagamento*
@@ -499,7 +501,7 @@ test/                                   # Implementações de testes
 ├── api                                 # Testes de API (utilitário de desenvolvimento)
 ├── e2e                                 # Testes E2E
 └── stress                              # Testes de stress (k6 e/ou cluster k8s)
-````
+```
 
 ## Cloud AWS
 ### Cadastro de Clientes
@@ -537,3 +539,22 @@ test/                                   # Implementações de testes
 
 #### Fluxo de Etapas dos Pedidos
 ![Fluxo-De-Etapas-Do-Pedido](docs/ddd/Fluxo-De-Etapas-Do-Pedido.png)
+
+## Links Externos
+### Micro Serviços
+- [fast-n-foodious-ms-produto](https://github.com/rodrigo-ottero/fast-n-foodious-ms-produto)
+- [fast-n-foodious-ms-pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento)
+- [fast-n-foodious-ms-pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento)
+
+### IaC
+- [fast-n-foodious-iac-network](https://github.com/rodrigo-ottero/fast-n-foodious-iac-network)
+- [fast-n-foodious-iac-storage](https://github.com/rodrigo-ottero/fast-n-foodious-iac-storage)
+- [fast-n-foodious-iac-compute](https://github.com/rodrigo-ottero/fast-n-foodious-iac-compute)
+
+### Sonar
+- [fast-n-foodious-ms-produto](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_ms-produto)
+- [fast-n-foodious-ms-pagamento](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_fast-n-foodious-ms-pagamento)
+- [fast-n-foodious-ms-pedido](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_fast-n-foodious-ms-pagamento)
+
+### Monday
+- [Monday](https://fast-n-foodious.monday.com/workspaces/4361241)
