@@ -8,24 +8,24 @@ import { IRepository } from 'src/enterprise/repository/repository';
 
 @Injectable()
 export class ConsultaEstadoPagamentoPedidoUseCase {
-   private logger = new Logger(ConsultaEstadoPagamentoPedidoUseCase.name);
+  private logger = new Logger(ConsultaEstadoPagamentoPedidoUseCase.name);
 
-   constructor(@Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>) {}
+  constructor(@Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>) {}
 
-   async buscaEstadoPagamento(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento } | undefined> {
-      return await this.repository
-         .findBy({ pedidoId })
-         .then((pagamentos) => {
-            if (pagamentos.length > 0) {
-               const { estadoPagamento } = pagamentos[0];
-               return {
-                  estadoPagamento,
-               };
-            }
-         })
-         .catch((error) => {
-            this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
-            throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
-         });
-   }
+  async buscaEstadoPagamento(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento } | undefined> {
+    return await this.repository
+      .findBy({ pedidoId })
+      .then((pagamentos) => {
+        if (pagamentos.length > 0) {
+          const { estadoPagamento } = pagamentos[0];
+          return {
+            estadoPagamento,
+          };
+        }
+      })
+      .catch((error) => {
+        this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
+        throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
+      });
+  }
 }

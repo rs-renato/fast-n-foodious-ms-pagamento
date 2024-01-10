@@ -11,53 +11,53 @@ import { IntegrationProviders } from 'src/integration/providers/integration.prov
 import { HttpModule } from '@nestjs/axios';
 
 describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
-   let useCase: ConsultaEstadoPagamentoPedidoUseCase;
-   let repository: IRepository<Pagamento>;
+  let useCase: ConsultaEstadoPagamentoPedidoUseCase;
+  let repository: IRepository<Pagamento>;
 
-   const mockedPagamento: Pagamento = {
-      dataHoraPagamento: new Date(),
-      estadoPagamento: EstadoPagamento.CONFIRMADO,
-      pedidoId: 1,
-      total: 10,
-      transacaoId: '1',
-      id: 1,
-   };
+  const mockedPagamento: Pagamento = {
+    dataHoraPagamento: new Date(),
+    estadoPagamento: EstadoPagamento.CONFIRMADO,
+    pedidoId: 1,
+    total: 10,
+    transacaoId: '1',
+    id: 1,
+  };
 
-   beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-         imports: [HttpModule],
-         providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
-      }).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
+      providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
+    }).compile();
 
-      // Desabilita a saída de log
-      module.useLogger(false);
+    // Desabilita a saída de log
+    module.useLogger(false);
 
-      useCase = module.get<ConsultaEstadoPagamentoPedidoUseCase>(PagamentoConstants.CONSULTA_ESTADO_PAGAMENTO_USECASE);
-      repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
-   });
+    useCase = module.get<ConsultaEstadoPagamentoPedidoUseCase>(PagamentoConstants.CONSULTA_ESTADO_PAGAMENTO_USECASE);
+    repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
+  });
 
-   describe('buscarEstadoPedidoPorId', () => {
-      it('deve buscar o estado de um pagamento por ID do pedido com sucesso', async () => {
-         jest.spyOn(repository, 'findBy').mockResolvedValue([mockedPagamento]);
+  describe('buscarEstadoPedidoPorId', () => {
+    it('deve buscar o estado de um pagamento por ID do pedido com sucesso', async () => {
+      jest.spyOn(repository, 'findBy').mockResolvedValue([mockedPagamento]);
 
-         const result = await useCase.buscaEstadoPagamento(1);
+      const result = await useCase.buscaEstadoPagamento(1);
 
-         expect(result).toEqual({ estadoPagamento: mockedPagamento.estadoPagamento });
-      });
+      expect(result).toEqual({ estadoPagamento: mockedPagamento.estadoPagamento });
+    });
 
-      it('deve retornar undefined quando o pagamento não for encontrado', async () => {
-         jest.spyOn(repository, 'findBy').mockResolvedValue([]);
+    it('deve retornar undefined quando o pagamento não for encontrado', async () => {
+      jest.spyOn(repository, 'findBy').mockResolvedValue([]);
 
-         const result = await useCase.buscaEstadoPagamento(2);
+      const result = await useCase.buscaEstadoPagamento(2);
 
-         expect(result).toBeUndefined();
-      });
+      expect(result).toBeUndefined();
+    });
 
-      it('deve lançar uma ServiceException em caso de erro no repositório', async () => {
-         const error = new Error('Erro no repositório');
-         jest.spyOn(repository, 'findBy').mockRejectedValue(error);
+    it('deve lançar uma ServiceException em caso de erro no repositório', async () => {
+      const error = new Error('Erro no repositório');
+      jest.spyOn(repository, 'findBy').mockRejectedValue(error);
 
-         await expect(useCase.buscaEstadoPagamento(3)).rejects.toThrowError(ServiceException);
-      });
-   });
+      await expect(useCase.buscaEstadoPagamento(3)).rejects.toThrowError(ServiceException);
+    });
+  });
 });

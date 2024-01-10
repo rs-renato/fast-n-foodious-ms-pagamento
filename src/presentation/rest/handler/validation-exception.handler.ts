@@ -4,7 +4,7 @@ import { ExceptionHandler } from 'src/presentation/rest/handler/exception.handle
 
 @Catch(ValidationException)
 export class ValidationExceptionHandler extends ExceptionHandler<ValidationException> {
-   constructor() {
-      super(HttpStatus.BAD_REQUEST);
-   }
+  constructor() {
+    super(HttpStatus.BAD_REQUEST);
+  }
 }
