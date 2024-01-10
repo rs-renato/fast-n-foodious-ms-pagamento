@@ -19,7 +19,18 @@ const getEstadoDoPedido = (estado) => {
   return ESTADO_PEDIDO[estado];
 };
 
+const getEstadoDoPagamento = (estado) => {
+  const ESTADO_PAGAMENTO = {
+    PENDENTE: 0,
+    CONFIRMADO: 1,
+    REJEITADO: 2,
+  };
+
+  return ESTADO_PAGAMENTO[estado];
+};
+
 module.exports = {
   getCurrentDate,
   getEstadoDoPedido,
+  getEstadoDoPagamento,
 };

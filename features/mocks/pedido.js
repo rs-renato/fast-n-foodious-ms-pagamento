@@ -1,8 +1,9 @@
-const { BASE_URL } = require('../config');
 const { getCurrentDate } = require('../step_definitions/utils');
 
+const currentDate = getCurrentDate();
+
 const novoPedido = {
-  dataInicio: getCurrentDate(),
+  dataInicio: currentDate,
   clienteId: 1,
   estadoPedido: 0,
   ativo: true,
@@ -11,45 +12,56 @@ const novoPedido = {
 const novoPedidoInteraction = {
   request: {
     method: 'POST',
-    path: `${BASE_URL.PEDIDO}`,
-    body: {
-      dataInicio: getCurrentDate(),
-      clienteId: 1,
-      estadoPedido: 0,
-      ativo: true,
-    },
+    path: '/v1/pedido',
+    body: novoPedido,
   },
   response: {
     status: 200,
     body: {
+      ...novoPedido,
       id: 1,
-      dataInicio: getCurrentDate(),
-      clienteId: 1,
-      estadoPedido: 0,
-      ativo: true,
     },
   },
 };
 
 const checkoutPedidoInteraction = {
   request: {
+    strict: false,
     method: 'POST',
-    path: `${BASE_URL.PEDIDO}/checkout/{pedidoId}`,
-    body: {
-      dataInicio: getCurrentDate(),
-      clienteId: 1,
-      estadoPedido: 0,
-      ativo: true,
-    },
+    path: '/v1/pedido/checkout/1',
   },
   response: {
     status: 200,
     body: {
-      id: 1,
-      dataInicio: getCurrentDate(),
-      clienteId: 1,
+      pagamento: {
+        transacaoId: 'alguma-transacaoId',
+      },
+    },
+  },
+};
+
+const getEstadoDoPedidoInteraction = {
+  request: {
+    method: 'GET',
+    path: '/v1/pedido/1/estado',
+  },
+  response: {
+    status: 200,
+    body: {
+      estadoPedido: 1,
+    },
+  },
+};
+
+const getEstadoDoPedidoRejeitadoInteraction = {
+  request: {
+    method: 'GET',
+    path: '/v1/pedido/2/estado',
+  },
+  response: {
+    status: 200,
+    body: {
       estadoPedido: 0,
-      ativo: true,
     },
   },
 };
@@ -58,4 +70,6 @@ module.exports = {
   novoPedido,
   novoPedidoInteraction,
   checkoutPedidoInteraction,
+  getEstadoDoPedidoInteraction,
+  getEstadoDoPedidoRejeitadoInteraction,
 };
