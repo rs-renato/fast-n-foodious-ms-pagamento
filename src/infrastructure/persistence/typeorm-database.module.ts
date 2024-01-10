@@ -6,16 +6,16 @@ import { PersistenceTypeOrmProviders } from 'src/infrastructure/persistence/prov
 import { PagamentoEntity } from './pagamento/entity/pagamento.entity';
 
 @Module({
-   imports: [
-      DatabaseConstants,
-      TypeOrmModule.forFeature([PagamentoEntity]),
-      TypeOrmModule.forRootAsync({
-         imports: [MysqlConfig],
-         useFactory: async (config: TypeOrmModuleOptions) => config,
-         inject: [DatabaseConstants.DATABASE_CONFIG_NAME],
-      }),
-   ],
-   providers: [...PersistenceTypeOrmProviders],
-   exports: [...PersistenceTypeOrmProviders],
+  imports: [
+    DatabaseConstants,
+    TypeOrmModule.forFeature([PagamentoEntity]),
+    TypeOrmModule.forRootAsync({
+      imports: [MysqlConfig],
+      useFactory: async (config: TypeOrmModuleOptions) => config,
+      inject: [DatabaseConstants.DATABASE_CONFIG_NAME],
+    }),
+  ],
+  providers: [...PersistenceTypeOrmProviders],
+  exports: [...PersistenceTypeOrmProviders],
 })
 export class TypeormDatabaseModule {}

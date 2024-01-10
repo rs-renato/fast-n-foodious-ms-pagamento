@@ -4,7 +4,7 @@ import { ExceptionHandler } from 'src/presentation/rest/handler/exception.handle
 
 @Catch(InfraestructureException)
 export class InfraestructureExceptionHandler extends ExceptionHandler<InfraestructureException> {
-   constructor() {
-      super(HttpStatus.INTERNAL_SERVER_ERROR);
-   }
+  constructor() {
+    super(HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 }

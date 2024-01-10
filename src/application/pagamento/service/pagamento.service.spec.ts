@@ -12,108 +12,108 @@ import { HttpModule } from '@nestjs/axios';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 
 describe('PagamentoService', () => {
-   let service: IPagamentoService;
-   let pagamentoRepository: IRepository<Pagamento>;
+  let service: IPagamentoService;
+  let pagamentoRepository: IRepository<Pagamento>;
 
-   const pagamento: Pagamento = {
-      dataHoraPagamento: new Date(),
-      estadoPagamento: EstadoPagamento.CONFIRMADO,
-      pedidoId: 1,
-      total: 10,
-      transacaoId: '1',
-      id: 1,
-   };
+  const pagamento: Pagamento = {
+    dataHoraPagamento: new Date(),
+    estadoPagamento: EstadoPagamento.CONFIRMADO,
+    pedidoId: 1,
+    total: 10,
+    transacaoId: '1',
+    id: 1,
+  };
 
-   const pagamentos: Pagamento[] = [
-      pagamento,
-      {
-         dataHoraPagamento: new Date(),
-         estadoPagamento: EstadoPagamento.PENDENTE,
-         pedidoId: 2,
-         total: 20,
-         transacaoId: '2',
-         id: 2,
-      },
-   ];
-
-   const pagamentoSolicitado: Pagamento = {
+  const pagamentos: Pagamento[] = [
+    pagamento,
+    {
       dataHoraPagamento: new Date(),
       estadoPagamento: EstadoPagamento.PENDENTE,
-      pedidoId: 1,
-      total: 10,
-      transacaoId: '1',
-      id: 1,
-   };
+      pedidoId: 2,
+      total: 20,
+      transacaoId: '2',
+      id: 2,
+    },
+  ];
 
-   beforeEach(async () => {
-      // Configuração do módulo de teste
-      const module: TestingModule = await Test.createTestingModule({
-         imports: [HttpModule],
-         providers: [
-            ...IntegrationProviders,
-            ...PagamentoProviders,
-            ...PersistenceInMemoryProviders,
-            // Mock do serviço IRepository<Pagamento>
-            {
-               provide: PagamentoConstants.IREPOSITORY,
-               useValue: {
-                  findBy: jest.fn(() => {
-                     // retorna vazio, simulando que não encontrou registros pelos atributos passados por parâmetro
-                     return Promise.resolve(pagamentos);
-                  }),
-                  save: jest.fn(() => {
-                     // retorna o pagamentoSolicitado
-                     return Promise.resolve(pagamentoSolicitado);
-                  }),
-               },
-            },
-         ],
-      }).compile();
+  const pagamentoSolicitado: Pagamento = {
+    dataHoraPagamento: new Date(),
+    estadoPagamento: EstadoPagamento.PENDENTE,
+    pedidoId: 1,
+    total: 10,
+    transacaoId: '1',
+    id: 1,
+  };
 
-      // Desabilita a saída de log
-      module.useLogger(false);
+  beforeEach(async () => {
+    // Configuração do módulo de teste
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
+      providers: [
+        ...IntegrationProviders,
+        ...PagamentoProviders,
+        ...PersistenceInMemoryProviders,
+        // Mock do serviço IRepository<Pagamento>
+        {
+          provide: PagamentoConstants.IREPOSITORY,
+          useValue: {
+            findBy: jest.fn(() => {
+              // retorna vazio, simulando que não encontrou registros pelos atributos passados por parâmetro
+              return Promise.resolve(pagamentos);
+            }),
+            save: jest.fn(() => {
+              // retorna o pagamentoSolicitado
+              return Promise.resolve(pagamentoSolicitado);
+            }),
+          },
+        },
+      ],
+    }).compile();
 
-      // Obtém a instância do repositório, validators e serviço a partir do módulo de teste
-      pagamentoRepository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
-      service = module.get<IPagamentoService>(PagamentoConstants.ISERVICE);
-   });
+    // Desabilita a saída de log
+    module.useLogger(false);
 
-   describe('injeção de dependências', () => {
-      it('deve existir instância de repositório definida', async () => {
-         expect(pagamentoRepository).toBeDefined();
-         expect(service).toBeDefined();
+    // Obtém a instância do repositório, validators e serviço a partir do módulo de teste
+    pagamentoRepository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
+    service = module.get<IPagamentoService>(PagamentoConstants.ISERVICE);
+  });
+
+  describe('injeção de dependências', () => {
+    it('deve existir instância de repositório definida', async () => {
+      expect(pagamentoRepository).toBeDefined();
+      expect(service).toBeDefined();
+    });
+  });
+
+  describe('buscarEstadoPagamentoPedido', () => {
+    it('deve retornar estado do pagamento corretamente', async () => {
+      await service.buscarEstadoPagamentoPedido(1).then((pagamento) => {
+        expect(pagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
       });
-   });
+    });
 
-   describe('buscarEstadoPagamentoPedido', () => {
-      it('deve retornar estado do pagamento corretamente', async () => {
-         await service.buscarEstadoPagamentoPedido(1).then((pagamento) => {
-            expect(pagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
-         });
-      });
+    it('não deve encontrar pedido por id quando houver um erro de banco ', async () => {
+      const error = new RepositoryException('Erro genérico de banco de dados');
+      jest.spyOn(pagamentoRepository, 'findBy').mockRejectedValue(error);
 
-      it('não deve encontrar pedido por id quando houver um erro de banco ', async () => {
-         const error = new RepositoryException('Erro genérico de banco de dados');
-         jest.spyOn(pagamentoRepository, 'findBy').mockRejectedValue(error);
+      await expect(service.buscarEstadoPagamentoPedido(1)).rejects.toThrowError(ServiceException);
+    });
+  });
 
-         await expect(service.buscarEstadoPagamentoPedido(1)).rejects.toThrowError(ServiceException);
+  describe('solicitarPagamentoPedido', () => {
+    it('deve solicitar pagamento corretamente', async () => {
+      const pedidoId = 1;
+      const totalPedido = 10;
+      await service.solicitarPagamentoPedido(pedidoId, totalPedido).then((pagamento) => {
+        expect(pagamento.pedidoId).toEqual(pedidoId);
       });
-   });
-
-   describe('solicitarPagamentoPedido', () => {
-      it('deve solicitar pagamento corretamente', async () => {
-         const pedidoId = 1;
-         const totalPedido = 10;
-         await service.solicitarPagamentoPedido(pedidoId, totalPedido).then((pagamento) => {
-            expect(pagamento.pedidoId).toEqual(pedidoId);
-         });
-      });
-      it('não deve fazer solicitação de pagamento quando houver erro de banco ', async () => {
-         const error = new RepositoryException('Erro genérico de banco de dados');
-         jest.spyOn(pagamentoRepository, 'save').mockRejectedValue(error);
-         const pedidoId = 1;
-         const totalPedido = 10;
-         await expect(service.solicitarPagamentoPedido(pedidoId, totalPedido)).rejects.toThrowError(ServiceException);
-      });
-   });
+    });
+    it('não deve fazer solicitação de pagamento quando houver erro de banco ', async () => {
+      const error = new RepositoryException('Erro genérico de banco de dados');
+      jest.spyOn(pagamentoRepository, 'save').mockRejectedValue(error);
+      const pedidoId = 1;
+      const totalPedido = 10;
+      await expect(service.solicitarPagamentoPedido(pedidoId, totalPedido)).rejects.toThrowError(ServiceException);
+    });
+  });
 });

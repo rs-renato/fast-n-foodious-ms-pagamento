@@ -9,13 +9,13 @@ import { HealthRestApi } from 'src/presentation/rest/health/api/health.api';
 import { PagamentoRestApi } from 'src/presentation/rest/pagamento/api/pagamento.api';
 
 @Module({
-   imports: [ApplicationModule],
-   providers: [
-      { provide: APP_FILTER, useClass: GeneralExceptionHandler },
-      { provide: APP_FILTER, useClass: GeneralHttpExceptionHandler },
-      { provide: APP_FILTER, useClass: InfraestructureExceptionHandler },
-      { provide: APP_FILTER, useClass: ValidationExceptionHandler },
-   ],
-   controllers: [PagamentoRestApi, HealthRestApi],
+  imports: [ApplicationModule],
+  providers: [
+    { provide: APP_FILTER, useClass: GeneralExceptionHandler },
+    { provide: APP_FILTER, useClass: GeneralHttpExceptionHandler },
+    { provide: APP_FILTER, useClass: InfraestructureExceptionHandler },
+    { provide: APP_FILTER, useClass: ValidationExceptionHandler },
+  ],
+  controllers: [PagamentoRestApi, HealthRestApi],
 })
 export class PresentationModule {}
