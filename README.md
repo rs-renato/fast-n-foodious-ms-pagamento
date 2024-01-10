@@ -4,12 +4,15 @@
 
 ![Static Badge](https://img.shields.io/badge/environment-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v23.x-version?logo=docker&color=%232496ED&labelColor=white&label=Docker) ![Static Badge](https://img.shields.io/badge/v1.27x-version?logo=kubernetes&color=%232496ED&labelColor=white&label=Kubernetes)
 
-![Static Badge](https://img.shields.io/badge/cloud-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/Amazon_AWS-232F3E?logo=amazon-aws&logoColor=%232596be&label=RDS|Cognito|Lambda|ECS&labelColor=white&color=%232596be) 
+![Static Badge](https://img.shields.io/badge/cloud-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/Amazon_Web_Services-232F3E?logo=amazon-aws&logoColor=%232596be&label=AWS&labelColor=white&color=%232596be)
+
+![Static Badge](https://img.shields.io/badge/iac-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v1.0.x-version?logo=terraform&color=%23623CE4&labelColor=white&label=Terraform)
+
 
 # 🍔 Fast & Foodious - Produto ![Github Actions](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v1.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
 
 Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de conclusão da Fase 04 da pós gradução em Software Architecture.
-[TLDR; Execução em modo produção (deprecated)](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate)
+[TLDR; Execução em modo produção (on premisse deprecated)](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
 
 * [Arquitetura de Solução (Cloud AWS)](#arquitetura-de-solução-cloud-aws)
 * [Arquitetura de Software](#arquitetura-de-software)
@@ -19,7 +22,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
     * [Variáveis de Ambiente](#-variáveis-de-ambiente)
     * [Execução em modo local (in-memory repository)](#%EF%B8%8F-execução-em-modo-local-in-memory-repository)
     * [Execução em modo local (mysql repository)](#%EF%B8%8F-execução-em-modo-local-mysql-repository)
-    * [**Execução em modo produção (deprecated)**](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate)
+    * [**Execução em modo produção (on premisse deprecated)**](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
         * [Docker Compose (Modo Fácil!)](#-docker-compose-modo-fácil)
         * [Docker (Modo Desbravador!)](#-docker-modo-desbravador)
         * [Kubernetes (Modo Fácil!)](#-kubernetes-modo-fácil)
@@ -52,7 +55,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 ![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-clean.png)
 
 - Cloud AWS
-    - API Gateway, Cognito, ECS, Lambda, Load Balancer, RDS
+    - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DynamoDB, etc
 - Arquitetura Clean & Modular
     - Camada de Application, Enterprise, Presentation e Infrastructure
     - Módulo Main, Application, Presentation e Infrastructure
@@ -74,7 +77,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
             - fast-n-foodious-ci: bdd-in-mysql     - Execução de testes bdd com mysql (all green)
             - fast-n-foodious-ci: build            - Build de imagens docker (AMD & ARM) e publicação no DockerHub
 
-***Nota:** Nas instruções abaixo, se assume que o diretório onde os comandos serão executados será a posta raiz do projeto ~/fast-n-foodious.*
+***Nota:** Nas instruções abaixo, se assume que o diretório onde os comandos serão executados será a posta raiz do projeto ~/fast-n-foodious-ms-pagamento*
 
 ## 🚀 Instalação de Dependências Node
 ```bash
@@ -139,8 +142,8 @@ CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS      
 $ NODE_ENV=local npm run start
 ```
 
-### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate)
-***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores.*
+### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
+***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores.*
 
 ***Nota 2:** O container da aplicação depende do mysql estar up & running. Então seja paciente, o tempo para o container do mysql estar disponível pode veriar, dependendo da disponibilidade de recursos e suas configurações de hardware locais.* 
 
@@ -395,7 +398,7 @@ $ docker-compose --env-file ./envs/{env-name}.env down {service}
 ```
 
 ## 🧪 Testes
-O projeto cobre testes unitários, testes e2e e testes isolados de api (para desenvolvedor), além de verifiar a cobertura dos testes:
+O projeto cobre testes unitários, bdd, testes e2e e testes isolados de api (para desenvolvedor), além de verifiar a cobertura dos testes:
 ```bash
 # Execução de testes unitários
 $ npm run test
@@ -410,11 +413,21 @@ $ NODE_ENV=local-mock-repository npm run test:e2e
 # 1. Necessita do container mysql em execução!
 # 2. Considere remover o volume criado no mysql caso execute o teste mais de uma vez!
 $ NODE_ENV=local npm run test:e2e
+
+# Execução de testes bdd SEM dependência de banco de dados (in-memory repository), considerar os comandos em terminais distintos
+$ NODE_ENV=local-mock-repository npm run start && npx wait-on http://localhost:3000
+$ npm run test:bdd
+
+# Execução de testes bdd COM dependência de banco de dados (mysql repository)
+# 1. Necessita do container mysql em execução!
+# 2. Considere remover o volume criado no mysql caso execute o teste mais de uma vez!
+$ NODE_ENV=local npm run start && npx wait-on http://localhost:3000
+$ NODE_ENV=local npm run test:bdd
 ```
 
 ### 🧪 Testes Stress 
 Excução de testes de stress cluster k8s, utilizando job k6.
-*Nota: A execução tem duração de 60s, estressando o path /v1/categoria. Assume a aplicação e mysql up & running no cluster kubernetes*
+*Nota: A execução tem duração de 60s, estressando o path /health. Assume a aplicação e mysql up & running no cluster kubernetes*
 
 ```bash
 $ kubectl apply -f k8s/fast-n-foodious-ms-pagamento-job.yml 

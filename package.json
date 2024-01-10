@@ -15,7 +15,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --verbose --runInBand",
     "test:watch": "jest --watch",
-    "test:bdd": "cucumber-js",
+    "test:bdd": "cucumber-js -f @cucumber/pretty-formatter",
     "test:cov": "jest --coverage --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json --runInBand",
@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@cucumber/cucumber": "^10.0.1",
+    "@cucumber/pretty-formatter": "^1.0.0",
     "@jest/test-sequencer": "^29.5.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
