@@ -100,6 +100,7 @@ jobs:
       - e2e-in-memory
       - e2e-mysql
       - bdd-test
+      - sonarcloud
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
