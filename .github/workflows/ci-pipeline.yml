@@ -66,6 +66,29 @@ jobs:
       - name: Stop and Remove Docker Containers
         run: docker-compose --env-file ./envs/prod.env down
 
+  bdd-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+      - name: Run BDD Tests
+        run: npm install && npm run test:bdd
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Running coverage tests
+        run: npm install && npm run test:cov
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   # Publicação de imagem no DockerHub para inibição de custos, logo o job "build-ecr" foi desativado
   build:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -76,6 +99,7 @@ jobs:
       - check-tests-impl
       - e2e-in-memory
       - e2e-mysql
+      - bdd-test
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js
@@ -91,7 +115,6 @@ jobs:
           docker buildx build --push --platform linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64 --tag $DOCKER_USERNAME/fast-n-foodious-ms-pagamento:${{github.run_number}} .
           docker buildx build --push --platform linux/arm/v6,linux/arm/v7,linux/arm64/v8,linux/amd64 --tag $DOCKER_USERNAME/fast-n-foodious-ms-pagamento:latest .
           echo "Docker image pushed successfully!"
-
   # build-ecr:
   #   if: ${{ github.ref == 'refs/heads/main' }}
   #   runs-on: ubuntu-latest
