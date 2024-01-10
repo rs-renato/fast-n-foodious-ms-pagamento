@@ -1,9 +1,7 @@
 const { getCurrentDate } = require('../step_definitions/utils');
 
-const currentDate = getCurrentDate();
-
 const novoPedido = {
-  dataInicio: currentDate,
+  dataInicio: getCurrentDate(),
   clienteId: 1,
   estadoPedido: 0,
   ativo: true,
