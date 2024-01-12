@@ -50,13 +50,15 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 * [Links Externos](#links-externos)        
 
 ## Arquitetura de Solução (Cloud AWS)
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-aws.png)
+![fast-n-foodious-aws](docs/diagramas/fast-n-foodious-aws.png)
+
+![fast-n-foodious-aws-resource-mapping](docs/diagramas/fast-n-foodious-aws-resource-mapping.png)
 
 ## Arquitetura de Software
 ![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-clean.png)
 
 - Cloud AWS
-    - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DynamoDB, etc
+    - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DocumentDB, etc
 - Arquitetura Clean & Modular
     - Camada de Application, Enterprise, Presentation e Infrastructure
     - Módulo Main, Application, Presentation e Infrastructure
@@ -388,10 +390,10 @@ $ docker-compose --env-file ./envs/{env-name}.env up
 $ docker-compose --env-file ./envs/{env-name}.env up {service}
 
 # Interrupção dos serviços registrados no docker-compose utilizando env específica
-$ docker-compose --env-file ./envs/{env-name}.env down
+$ docker-compose --env-file ./envs/{env-name}.env down -v
 
 # Interrupção de um serviço registrados no docker-compose utilizando env específica
-$ docker-compose --env-file ./envs/{env-name}.env down {service}
+$ docker-compose --env-file ./envs/{env-name}.env down {service} -v
 ```
 **Nota:** Os serviços registrados no docker-compose são:
 ```
