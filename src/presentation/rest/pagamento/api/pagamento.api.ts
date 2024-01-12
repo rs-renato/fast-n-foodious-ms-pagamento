@@ -1,10 +1,27 @@
-import { Controller, Get, Inject, Logger, NotFoundException, Param, Post, Query, ValidationPipe } from '@nestjs/common';
+import {
+   Body,
+   Controller,
+   Get,
+   Inject,
+   Logger,
+   NotFoundException,
+   Param,
+   Post,
+   Query,
+   ValidationPipe,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { BaseRestApi } from 'src/presentation/rest/base.api';
 import { BuscarEstadoPagamentoPedidoRequest } from 'src/presentation/rest/pagamento/request';
 import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response';
 import { PagamentoConstants } from 'src/shared/constants';
+import {
+   SolicitacaoPagamentoResponse
+} from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
+import {
+   SolicitacaoPagamentoRequest
+} from 'src/presentation/rest/pagamento/request/solicitar-pagamento-de-pedido.request';
 
 @Controller('v1/pagamento')
 @ApiTags('Pagamento')
@@ -45,7 +62,7 @@ export class PagamentoRestApi extends BaseRestApi {
    async buscarPorPedidoId(
       @Query(ValidationPipe) query: BuscarEstadoPagamentoPedidoRequest,
    ): Promise<BuscarEstadoPagamentoPedidoResponse> {
-      this.logger.debug(`Consultando estado do pagamento por ID do pedido: ${query}`);
+      this.logger.debug(`Consultando estado do pagamento por ID do pedido: ${JSON.stringify(query)}`);
       return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((pagamento) => {
          if (pagamento === undefined) {
             throw new NotFoundException('Pagamento para o pedido não encontrado');
@@ -54,4 +71,24 @@ export class PagamentoRestApi extends BaseRestApi {
          return new BuscarEstadoPagamentoPedidoResponse(pagamento);
       });
    }
+
+   @Post('solicitar')
+   @ApiOperation({
+      summary: 'Solicita pagamento  para um pedido',
+      description:
+         'Registra a solicitação de pagamento para um dado pedido.',
+   })
+   @ApiOkResponse({
+      description: 'Solicitação efetuada com sucesso',
+      type: SolicitacaoPagamentoResponse,
+   })
+   async solicitarPagamentoDePedido(
+      @Body() solicitacaoPagamentoRequest: SolicitacaoPagamentoRequest,
+   ): Promise<SolicitacaoPagamentoResponse> {
+      this.logger.debug(`Solicitando pagamento para pedido: ${JSON.stringify(solicitacaoPagamentoRequest)}`);
+
+      const pagamento = await this.service.solicitarPagamentoPedido(solicitacaoPagamentoRequest.pedidoId, solicitacaoPagamentoRequest.totalPedido);
+      return new SolicitacaoPagamentoResponse(pagamento);
+   }
+
 }
