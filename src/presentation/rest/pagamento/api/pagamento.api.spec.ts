@@ -5,17 +5,39 @@ import { PagamentoRestApi } from 'src/presentation/rest/pagamento/api/pagamento.
 import { PagamentoConstants } from 'src/shared/constants';
 import { BuscarEstadoPagamentoPedidoRequest } from 'src/presentation/rest/pagamento/request';
 import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response';
+import { SolicitacaoPagamentoRequest } from 'src/presentation/rest/pagamento/request/solicitar-pagamento-de-pedido.request';
+import { SolicitacaoPagamentoResponse } from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
+import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
   let service: IPagamentoService;
 
-  const request: BuscarEstadoPagamentoPedidoRequest = {
+  const buscarEstadoPagamentoPedidoRequest: BuscarEstadoPagamentoPedidoRequest = {
     pedidoId: 1,
   };
 
-  const response: BuscarEstadoPagamentoPedidoResponse = {
+  const buscarEstadoPagamentoPedidoResponse: BuscarEstadoPagamentoPedidoResponse = {
     estadoPagamento: EstadoPagamento.CONFIRMADO,
+  };
+
+  const solicitacaoPagamentoRequest: SolicitacaoPagamentoRequest = {
+    pedidoId: 1,
+    totalPedido: 100,
+  };
+
+  const pagamentoSolicitado: Pagamento = {
+    pedidoId: 1,
+    transacaoId: '123',
+    estadoPagamento: EstadoPagamento.PENDENTE,
+    total: 100,
+    dataHoraPagamento: new Date(),
+    id: 123,
+  };
+
+  const solicitacaoPagamentoResponse: SolicitacaoPagamentoResponse = {
+    pagamento: pagamentoSolicitado,
   };
 
   beforeEach(async () => {
@@ -27,9 +49,16 @@ describe('PagamentoRestApi', () => {
           provide: PagamentoConstants.ISERVICE,
           useValue: {
             buscarEstadoPagamentoPedido: jest.fn((pedidoId) =>
-              pedidoId === 1 ? Promise.resolve(response) : Promise.reject(new Error('error')),
+              pedidoId === 1
+                ? Promise.resolve(buscarEstadoPagamentoPedidoResponse)
+                : Promise.reject(new Error('error')),
             ),
             webhookPagamentoPedido: jest.fn(() => Promise.resolve(true)),
+            solicitarPagamentoPedido: jest.fn((pedidoId, totalPedido) =>
+              pedidoId === 1 && totalPedido === 100
+                ? Promise.resolve(pagamentoSolicitado)
+                : Promise.reject(new Error('error')),
+            ),
           },
         },
       ],
@@ -61,10 +90,27 @@ describe('PagamentoRestApi', () => {
 
   describe('consultar estado do pagamento por ID do pedido', () => {
     it('a consulta deve ser realizada com sucesso', async () => {
-      const result = await restApi.buscarPorPedidoId(request);
+      const result = await restApi.buscarPorPedidoId(buscarEstadoPagamentoPedidoRequest);
 
       expect(service.buscarEstadoPagamentoPedido).toHaveBeenCalledTimes(1);
-      expect(result).toEqual(response);
+      expect(result).toEqual(buscarEstadoPagamentoPedidoResponse);
+    });
+
+    it('a consulta nao encontra nenhum pagamento para o pedido', async () => {
+      jest.spyOn(service, 'buscarEstadoPagamentoPedido').mockResolvedValue(undefined);
+
+      await expect(restApi.buscarPorPedidoId(buscarEstadoPagamentoPedidoRequest)).rejects.toThrowError(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('solicitar pagamento do pedido', () => {
+    it('a consulta deve ser realizada com sucesso', async () => {
+      const result = await restApi.solicitarPagamentoDePedido(solicitacaoPagamentoRequest);
+
+      expect(service.solicitarPagamentoPedido).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(solicitacaoPagamentoResponse);
     });
   });
 });

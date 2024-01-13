@@ -85,6 +85,14 @@ describe('WebhookPagamentoPedidoUseCase', () => {
       expect(repository.edit).not.toHaveBeenCalled();
     });
 
+    it('should throw a Repository error', async () => {
+      const error = new Error('Erro no repositório');
+      jest.spyOn(repository, 'findBy').mockRejectedValue(error);
+
+      await expect(useCase.webhook('123', 1)).rejects.toThrowError(ServiceException);
+      expect(repository.edit).not.toHaveBeenCalled();
+    });
+
     it('should throw a ValidationException for an invalid payment state', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamento]);
       jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPedidoComoRecebido').mockResolvedValueOnce(undefined);
@@ -102,6 +110,20 @@ describe('WebhookPagamentoPedidoUseCase', () => {
 
       expect(mockedPagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
       expect(repository.edit).toHaveBeenCalledWith(mockedPagamento);
+    });
+
+    it('should update payment state and log when payment is NOT confirmed', async () => {
+      const mockedPagamentoPendente = {
+        ...mockedPagamento,
+        estadoPagamento: EstadoPagamento.PENDENTE,
+        dataHoraPagamento: null,
+      };
+      jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamentoPendente]);
+      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPedidoComoRecebido').mockResolvedValueOnce(undefined);
+
+      await useCase.webhook('123', 0);
+
+      expect(repository.edit).toHaveBeenCalledWith(mockedPagamentoPendente);
     });
   });
 });

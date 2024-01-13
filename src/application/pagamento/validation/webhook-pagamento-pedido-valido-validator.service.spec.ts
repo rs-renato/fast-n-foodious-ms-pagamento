@@ -95,6 +95,13 @@ describe('WebhookPagamentoPedidoValidoValidator', () => {
       await expect(validator.validate(mockedPagamento)).rejects.toThrowError(ServiceException);
     });
 
+    it('should handle error on buscarPagamento', async () => {
+      const error = new Error('Erro no repositório');
+      jest.spyOn(repository, 'findBy').mockRejectedValue(error);
+
+      await expect(validator.validate(mockedPagamento)).rejects.toThrowError(ServiceException);
+    });
+
     it('should handle a payment with undefined transaction ID', async () => {
       // repository.findBy = jest.fn().mockImplementation((param) => {
       //    return Promise.resolve(param.hasOwnProperty('pedidoId') ? [mockedPagamento] : []);
