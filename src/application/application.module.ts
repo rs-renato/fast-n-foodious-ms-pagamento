@@ -7,8 +7,8 @@ import { HttpModule } from '@nestjs/axios';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 
 @Module({
-   imports: [HttpModule],
-   providers: [...IntegrationProviders, ...PagamentoProviders],
-   exports: [{ provide: PagamentoConstants.ISERVICE, useClass: PagamentoService }],
+  imports: [HttpModule],
+  providers: [...IntegrationProviders, ...PagamentoProviders],
+  exports: [{ provide: PagamentoConstants.ISERVICE, useClass: PagamentoService }],
 })
 export class ApplicationModule {}

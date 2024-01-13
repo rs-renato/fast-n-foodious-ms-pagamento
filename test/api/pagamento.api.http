@@ -3,3 +3,12 @@ POST http://localhost:3001/v1/pagamento/863c99369e3d033aa1f080419d0502b226b37189
 Content-Type: application/json
 
 {}
+
+### Solicita um pagamento
+POST http://localhost:3002/v1/pagamento/solicitar
+Content-Type: application/json
+
+{
+  "pedidoId": 2,
+  "totalPedido": 123.45
+}

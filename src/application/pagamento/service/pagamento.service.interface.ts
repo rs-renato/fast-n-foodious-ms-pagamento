@@ -3,7 +3,7 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IService } from 'src/enterprise/service/service';
 
 export interface IPagamentoService extends IService<Pagamento> {
-   buscarEstadoPagamentoPedido(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento }>;
-   solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<Pagamento>;
-   webhookPagamentoPedido(transacaoId: string, estadoPagamento: number): Promise<boolean>;
+  buscarEstadoPagamentoPedido(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento }>;
+  solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<Pagamento>;
+  webhookPagamentoPedido(transacaoId: string, estadoPagamento: number): Promise<boolean>;
 }
