@@ -81,6 +81,17 @@ describe('WebhookPagamentoPedidoUseCase', () => {
     it('should throw a ServiceException if no associated payment is found', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([]);
 
+      // await expect(useCase.webhook('123', 1)).rejects.toThrowError(ServiceException);
+      await expect(useCase.webhook('123', 1)).rejects.toThrowError(
+        `Nenhum pagamento associado a transação 123 foi localizado no banco de dados`,
+      );
+      expect(repository.edit).not.toHaveBeenCalled();
+    });
+
+    it('should throw a Repository error', async () => {
+      const error = new Error('Erro no repositório');
+      jest.spyOn(repository, 'findBy').mockRejectedValue(error);
+
       await expect(useCase.webhook('123', 1)).rejects.toThrowError(ServiceException);
       expect(repository.edit).not.toHaveBeenCalled();
     });
@@ -102,6 +113,20 @@ describe('WebhookPagamentoPedidoUseCase', () => {
 
       expect(mockedPagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
       expect(repository.edit).toHaveBeenCalledWith(mockedPagamento);
+    });
+
+    it('should update payment state and log when payment is NOT confirmed', async () => {
+      const mockedPagamentoPendente = {
+        ...mockedPagamento,
+        estadoPagamento: EstadoPagamento.PENDENTE,
+        dataHoraPagamento: null,
+      };
+      jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamentoPendente]);
+      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPedidoComoRecebido').mockResolvedValueOnce(undefined);
+
+      await useCase.webhook('123', 0);
+
+      expect(repository.edit).toHaveBeenCalledWith(mockedPagamentoPendente);
     });
   });
 });
