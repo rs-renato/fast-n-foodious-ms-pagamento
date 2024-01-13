@@ -10,52 +10,52 @@ import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/pro
 import { PagamentoConstants } from 'src/shared/constants';
 
 describe('AtualizaPedidoComoRecebidoUseCase', () => {
-   let useCase: AtualizaPedidoComoRecebidoUseCase;
-   let pedidoIntegration: PedidoIntegration;
+  let useCase: AtualizaPedidoComoRecebidoUseCase;
+  let pedidoIntegration: PedidoIntegration;
 
-   const pedidoDto: PedidoDto = {
-      clienteId: 1,
-      dataInicio: '2024-01-05',
-      estadoPedido: 0,
-      ativo: true,
-      id: 1,
-      total: 10,
-   };
+  const pedidoDto: PedidoDto = {
+    clienteId: 1,
+    dataInicio: '2024-01-05',
+    estadoPedido: 0,
+    ativo: true,
+    id: 1,
+    total: 10,
+  };
 
-   const pedidoDtoComoRecebido: PedidoDto = {
-      clienteId: 1,
-      dataInicio: '2024-01-05',
-      estadoPedido: 1,
-      ativo: true,
-      id: 1,
-      total: 10,
-   };
+  const pedidoDtoComoRecebido: PedidoDto = {
+    clienteId: 1,
+    dataInicio: '2024-01-05',
+    estadoPedido: 1,
+    ativo: true,
+    id: 1,
+    total: 10,
+  };
 
-   beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-         imports: [HttpModule],
-         providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
-      }).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
+      providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
+    }).compile();
 
-      useCase = module.get<AtualizaPedidoComoRecebidoUseCase>(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE);
-      pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
-   });
+    useCase = module.get<AtualizaPedidoComoRecebidoUseCase>(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE);
+    pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
+  });
 
-   describe('atualizarPedidoComoRecebido', () => {
-      it('O pedidoDto enviado para integração com pedido tem que estar com estado "RECEBIDO"', async () => {
-         const editarPedidoSpy = jest.spyOn(pedidoIntegration, 'editarPedido').mockResolvedValue(undefined);
+  describe('atualizarPedidoComoRecebido', () => {
+    it('O pedidoDto enviado para integração com pedido tem que estar com estado "RECEBIDO"', async () => {
+      const editarPedidoSpy = jest.spyOn(pedidoIntegration, 'editarPedido').mockResolvedValue(undefined);
 
-         await useCase.atualizarPedidoComoRecebido(pedidoDto);
+      await useCase.atualizarPedidoComoRecebido(pedidoDto);
 
-         expect(pedidoDto.estadoPedido).toEqual(EstadoPedido.RECEBIDO);
-         expect(editarPedidoSpy).toHaveBeenCalledWith(pedidoDtoComoRecebido);
-      });
+      expect(pedidoDto.estadoPedido).toEqual(EstadoPedido.RECEBIDO);
+      expect(editarPedidoSpy).toHaveBeenCalledWith(pedidoDtoComoRecebido);
+    });
 
-      it('deve lançar erro se pedidoIntegration.editarPedido falhar', async () => {
-         const error = new Error('Erro');
-         jest.spyOn(pedidoIntegration, 'editarPedido').mockRejectedValue(error);
+    it('deve lançar erro se pedidoIntegration.editarPedido falhar', async () => {
+      const error = new Error('Erro');
+      jest.spyOn(pedidoIntegration, 'editarPedido').mockRejectedValue(error);
 
-         await expect(useCase.atualizarPedidoComoRecebido(pedidoDto)).rejects.toThrowError(error);
-      });
-   });
+      await expect(useCase.atualizarPedidoComoRecebido(pedidoDto)).rejects.toThrowError(error);
+    });
+  });
 });

@@ -8,27 +8,27 @@ import { RandomIdGeneratorUtils } from 'src/shared/random.id.generator.utils';
 
 @Injectable()
 export class SolicitaPagamentoPedidoUseCase {
-   private logger = new Logger(SolicitaPagamentoPedidoUseCase.name);
+  private logger = new Logger(SolicitaPagamentoPedidoUseCase.name);
 
-   constructor(@Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>) {}
+  constructor(@Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>) {}
 
-   async solicitaPagamento(pedidoId: number, totalPedido: number): Promise<Pagamento> {
-      const transacaoId = RandomIdGeneratorUtils.generate('transacaoId', pedidoId);
-      const pagamento: Pagamento = {
-         pedidoId: pedidoId,
-         transacaoId: transacaoId,
-         estadoPagamento: EstadoPagamento.PENDENTE,
-         total: totalPedido,
-         dataHoraPagamento: undefined,
-      };
-      return await this.repository
-         .save(pagamento)
-         .then((pagamento) => {
-            return pagamento;
-         })
-         .catch((error) => {
-            this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
-            throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
-         });
-   }
+  async solicitaPagamento(pedidoId: number, totalPedido: number): Promise<Pagamento> {
+    const transacaoId = RandomIdGeneratorUtils.generate('transacaoId', pedidoId);
+    const pagamento: Pagamento = {
+      pedidoId: pedidoId,
+      transacaoId: transacaoId,
+      estadoPagamento: EstadoPagamento.PENDENTE,
+      total: totalPedido,
+      dataHoraPagamento: undefined,
+    };
+    return await this.repository
+      .save(pagamento)
+      .then((pagamento) => {
+        return pagamento;
+      })
+      .catch((error) => {
+        this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
+        throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
+      });
+  }
 }

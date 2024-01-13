@@ -14,80 +14,78 @@ import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/use
 
 @Injectable()
 export class WebhookPagamentoPedidoUseCase {
-   private logger = new Logger(WebhookPagamentoPedidoUseCase.name);
+  private logger = new Logger(WebhookPagamentoPedidoUseCase.name);
 
-   constructor(
-      @Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>,
-      @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
-      @Inject(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE)
-      private atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase,
-      @Inject(PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR) private validators: WebhookPagamentoValidator[],
-   ) {}
+  constructor(
+    @Inject(PagamentoConstants.IREPOSITORY) private repository: IRepository<Pagamento>,
+    @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
+    @Inject(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE)
+    private atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase,
+    @Inject(PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR) private validators: WebhookPagamentoValidator[],
+  ) {}
 
-   async webhook(transacaoId: string, estadoPagamento: number): Promise<boolean> {
-      this.logger.log(`Webhook: ativado para transaçãoId = ${transacaoId} para estado = ${estadoPagamento}\n`);
+  async webhook(transacaoId: string, estadoPagamento: number): Promise<boolean> {
+    this.logger.log(`Webhook: ativado para transaçãoId = ${transacaoId} para estado = ${estadoPagamento}\n`);
 
-      const estadoPagamentoEnum: EstadoPagamento = this.constroiEstadoPagamentoEnum(estadoPagamento);
-      const pagamentoParaValidar = new Pagamento(undefined, transacaoId, undefined, undefined, undefined, undefined);
-      await ValidatorUtils.executeValidators(this.validators, pagamentoParaValidar);
+    const estadoPagamentoEnum: EstadoPagamento = this.constroiEstadoPagamentoEnum(estadoPagamento);
+    const pagamentoParaValidar = new Pagamento(undefined, transacaoId, undefined, undefined, undefined, undefined);
+    await ValidatorUtils.executeValidators(this.validators, pagamentoParaValidar);
 
-      // buscar pagamento associado a transaçãoID
-      const pagamento = await this.buscarPagamento(transacaoId);
+    // buscar pagamento associado a transaçãoID
+    const pagamento = await this.buscarPagamento(transacaoId);
 
-      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
-      await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
+    // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
+    await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
 
-      // mudar status pagamento para o estado CONFIRMADO
-      pagamento.estadoPagamento = estadoPagamentoEnum;
-      pagamento.dataHoraPagamento = pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? new Date() : null;
-      await this.repository.edit(pagamento);
+    // mudar status pagamento para o estado CONFIRMADO
+    pagamento.estadoPagamento = estadoPagamentoEnum;
+    pagamento.dataHoraPagamento = pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? new Date() : null;
+    await this.repository.edit(pagamento);
 
-      this.logger.log(`Webhook: finalizado para transaçãoId = ${transacaoId}\n`);
-      return true;
-   }
+    this.logger.log(`Webhook: finalizado para transaçãoId = ${transacaoId}\n`);
+    return true;
+  }
 
-   private constroiEstadoPagamentoEnum(estadoPagamento: number): EstadoPagamento {
-      const estadoPagamentoFromValue = getEstadoPagamentoFromValue(estadoPagamento);
-      if (estadoPagamentoFromValue === undefined) {
-         throw new ValidationException(
-            `Estado de pagamento válidos são 1 (Confirmado) e 2 (Rejeitado). O estado de pagamento informado é inválido: ${estadoPagamento}`,
-         );
-      }
-      return estadoPagamentoFromValue;
-   }
+  private constroiEstadoPagamentoEnum(estadoPagamento: number): EstadoPagamento {
+    const estadoPagamentoFromValue = getEstadoPagamentoFromValue(estadoPagamento);
+    if (estadoPagamentoFromValue === undefined) {
+      throw new ValidationException(
+        `Estado de pagamento válidos são 1 (Confirmado) e 2 (Rejeitado). O estado de pagamento informado é inválido: ${estadoPagamento}`,
+      );
+    }
+    return estadoPagamentoFromValue;
+  }
 
-   private async mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(
-      estadoPagamentoEnum: EstadoPagamento,
-      pagamento: Pagamento,
-   ): Promise<void> {
-      if (estadoPagamentoEnum === EstadoPagamento.CONFIRMADO) {
-         // buscar pedido associado a transaçãoID
-         const pedido: PedidoDto = await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
-         this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
-         await this.atualizaPedidoComoRecebidoUseCase.atualizarPedidoComoRecebido(pedido);
-      }
-   }
+  private async mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(
+    estadoPagamentoEnum: EstadoPagamento,
+    pagamento: Pagamento,
+  ): Promise<void> {
+    if (estadoPagamentoEnum === EstadoPagamento.CONFIRMADO) {
+      // buscar pedido associado a transaçãoID
+      const pedido: PedidoDto = await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
+      this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
+      await this.atualizaPedidoComoRecebidoUseCase.atualizarPedidoComoRecebido(pedido);
+    }
+  }
 
-   private async buscarPagamento(transacaoId: string): Promise<Pagamento> {
-      const pagamento = await this.repository
-         .findBy({ transacaoId: transacaoId })
-         .then((pagamentos: Pagamento[]) => {
-            return pagamentos[0];
-         })
-         .catch((error) => {
-            this.logger.error(
-               `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `,
-            );
-            throw new ServiceException(
-               `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `,
-            );
-         });
-      if (pagamento === undefined) {
-         this.logger.error(`Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`);
-         throw new ServiceException(
-            `Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`,
-         );
-      }
-      return pagamento;
-   }
+  private async buscarPagamento(transacaoId: string): Promise<Pagamento> {
+    const pagamento = await this.repository
+      .findBy({ transacaoId: transacaoId })
+      .then((pagamentos: Pagamento[]) => {
+        return pagamentos[0];
+      })
+      .catch((error) => {
+        this.logger.error(`Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `);
+        throw new ServiceException(
+          `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `,
+        );
+      });
+    if (pagamento === undefined) {
+      this.logger.error(`Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`);
+      throw new ServiceException(
+        `Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`,
+      );
+    }
+    return pagamento;
+  }
 }

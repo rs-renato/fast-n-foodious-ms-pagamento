@@ -3,7 +3,7 @@ import { DatabaseModule } from 'src/infrastructure/persistence/database.module';
 
 @Global()
 @Module({
-   imports: [DatabaseModule.forFeature()],
-   exports: [DatabaseModule.forFeature()],
+  imports: [DatabaseModule.forFeature()],
+  exports: [DatabaseModule.forFeature()],
 })
 export class InfrastructureModule {}

@@ -4,7 +4,7 @@ import { ExceptionHandler } from 'src/presentation/rest/handler/exception.handle
 
 @Catch(Error)
 export class GeneralExceptionHandler extends ExceptionHandler<ValidationException> {
-   constructor() {
-      super(HttpStatus.INTERNAL_SERVER_ERROR, 'Houve um erro genérico ao processar a requisição');
-   }
+  constructor() {
+    super(HttpStatus.INTERNAL_SERVER_ERROR, 'Houve um erro genérico ao processar a requisição');
+  }
 }
