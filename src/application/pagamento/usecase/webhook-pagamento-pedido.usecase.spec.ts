@@ -81,10 +81,7 @@ describe('WebhookPagamentoPedidoUseCase', () => {
     it('should throw a ServiceException if no associated payment is found', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([]);
 
-      // await expect(useCase.webhook('123', 1)).rejects.toThrowError(ServiceException);
-      await expect(useCase.webhook('123', 1)).rejects.toThrowError(
-        `Nenhum pagamento associado a transação 123 foi localizado no banco de dados`,
-      );
+      await expect(useCase.webhook('123', 1)).rejects.toThrowError(ServiceException);
       expect(repository.edit).not.toHaveBeenCalled();
     });
 
