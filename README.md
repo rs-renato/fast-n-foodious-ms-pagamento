@@ -559,4 +559,4 @@ test/                                   # Implementações de testes
 - [fast-n-foodious-ms-pedido](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_fast-n-foodious-ms-pedido)
 
 ### Monday
-- [Monday](https://fast-n-foodious.monday.com/workspaces/4361241)
+- [fast-n-foodious](https://fast-n-foodious.monday.com/workspaces/4361241)
