@@ -22,8 +22,8 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
     @Inject(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE) private buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
   ) {}
 
-  async validate(pagamentoParametro: Pagamento): Promise<boolean> {
-    const pagamento = await this.buscarPagamento(pagamentoParametro.transacaoId);
+  async validate({ transacaoId }: Pagamento): Promise<boolean> {
+    const pagamento = await this.buscarPagamento(transacaoId);
     this.logger.log(
       `Inicializando validação ${WebhookPagamentoPedidoValidoValidator.name} para validar o estado do pedido id: ${pagamento.pedidoId}`,
     );
@@ -49,20 +49,17 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
 
   private async buscarPagamento(transacaoId: string): Promise<Pagamento> {
     const pagamento = await this.repositoryPagamento
-      .findBy({ transacaoId: transacaoId })
-      .then((pagamentos: Pagamento[]) => {
-        return pagamentos[0];
-      })
+      .findBy({ transacaoId })
+      .then((pagamentos: Pagamento[]) => pagamentos[0])
       .catch((error) => {
         const errorMessage = `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error}`;
         this.logger.error(errorMessage);
         throw new ServiceException(errorMessage);
       });
     if (pagamento === undefined) {
-      this.logger.error(`Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`);
-      throw new ServiceException(
-        `Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`,
-      );
+      const errorPagamentoUndefined = `Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`;
+      this.logger.error(errorPagamentoUndefined);
+      throw new ServiceException(errorPagamentoUndefined);
     }
     return pagamento;
   }

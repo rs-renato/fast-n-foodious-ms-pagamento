@@ -8,6 +8,7 @@ import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagam
 import { SolicitacaoPagamentoRequest } from 'src/presentation/rest/pagamento/request/solicitar-pagamento-de-pedido.request';
 import { SolicitacaoPagamentoResponse } from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
@@ -93,6 +94,14 @@ describe('PagamentoRestApi', () => {
 
       expect(service.buscarEstadoPagamentoPedido).toHaveBeenCalledTimes(1);
       expect(result).toEqual(buscarEstadoPagamentoPedidoResponse);
+    });
+
+    it('a consulta nao encontra nenhum pagamento para o pedido', async () => {
+      jest.spyOn(service, 'buscarEstadoPagamentoPedido').mockResolvedValue(undefined);
+
+      await expect(restApi.buscarPorPedidoId(buscarEstadoPagamentoPedidoRequest)).rejects.toThrowError(
+        NotFoundException,
+      );
     });
   });
 
