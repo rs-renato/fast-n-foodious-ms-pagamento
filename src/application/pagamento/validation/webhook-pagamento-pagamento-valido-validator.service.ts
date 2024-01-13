@@ -43,10 +43,9 @@ export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagament
         return pagamentos[0];
       })
       .catch((error) => {
-        this.logger.error(`Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `);
-        throw new ServiceException(
-          `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error} `,
-        );
+        const errorMessage = `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error}`;
+        this.logger.error(errorMessage);
+        throw new ServiceException(errorMessage);
       });
     if (pagamento === undefined) {
       this.logger.error(`Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`);
