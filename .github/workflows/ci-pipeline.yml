@@ -140,4 +140,4 @@ jobs:
   #         docker tag felipemaxrosa/fast-n-foodious-ms-pagamento:latest 571341489776.dkr.ecr.us-east-1.amazonaws.com/fast-n-foodious-ms-pagamento:latest
   #     - name: Push Docker Image to ECR
   #       run: |
-  #         docker push 571341489776.dkr.ecr.us-east-1.amazonaws.com/fast-n-foodious-ms-produto:latest
+  #         docker push 571341489776.dkr.ecr.us-east-1.amazonaws.com/fast-n-foodious-ms-pagamento:latest
