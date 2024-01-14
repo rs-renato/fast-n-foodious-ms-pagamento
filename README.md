@@ -162,6 +162,12 @@ CONTAINER ID   IMAGE                            COMMAND                  CREATED
 06ebf6b90fa7   mysql:8.0                        "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3306->3306/tcp, 33060/tcp   mysql
 ```
 
+A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mysql. Esta forma de inicialização é recomendada para testes e as imagens é baixadas do github em sua versão latest:
+
+```bash
+$ docker-compose --env-file ./envs/local.env -f docker-compose-all.yml -p "fast-n-foodious" up
+```
+
 #### 💀 Docker (Modo Desbravador!)
 Inicia o container da aplicação e do mysql com as variáveis de produção, utilizando *`imagens docker`* do mysql e da aplicação:
 ```bash
@@ -315,6 +321,12 @@ $ docker-compose --env-file ./envs/local.env -p "fast-n-foodious" down -v
 $ docker image rm fast-n-foodious-ms-pagamento-fast-n-foodious
 Untagged: fast-n-foodious-ms-pagamento-fast-n-foodious-ms-pagamento:latest
 Deleted: sha256:357edf598a86260a5d755b8739b8be3ecd761ed51f8c9a84a5d32b93971e3e5e
+```
+
+Ou se você utilizou o docker compose com o `docker-compose-all.yml`:
+
+```bash
+$ docker-compose -f docker-compose-all.yml -p "fast-n-foodious" down -v
 ```
 
 3. Se você utilizou o `helm` para subir a aplicação:
