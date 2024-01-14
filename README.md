@@ -165,7 +165,7 @@ CONTAINER ID   IMAGE                            COMMAND                  CREATED
 A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mysql. Esta forma de inicialização é recomendada para testes e as imagens é baixadas do github em sua versão latest:
 
 ```bash
-$ docker-compose --env-file ./envs/local.env -f docker-compose-all.yml -p "fast-n-foodious" up
+$ docker-compose --env-file ./envs/prod.env -f docker-compose-all.yml -p "fast-n-foodious" up
 ```
 
 #### 💀 Docker (Modo Desbravador!)
