@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  fast-n-foodious-ms-produto:
+    restart: unless-stopped
+    image: ottero/fast-n-foodious-ms-produto:latest
+    container_name: fast-n-foodious-ms-produto
+    env_file:
+      - ./envs/${NODE_ENV:-prod}.env
+    ports:
+      - 3000:3000
+    depends_on:
+      - mysql
+    networks:
+      - fast-n-foodious-network
+  fast-n-foodious-ms-pedido:
+    restart: unless-stopped
+    image: ottero/fast-n-foodious-ms-pedido:latest
+    container_name: fast-n-foodious-ms-pedido
+    env_file:
+      - ./envs/${NODE_ENV:-prod}.env
+    ports:
+      - 3001:3000
+    depends_on:
+      - mysql
+    networks:
+      - fast-n-foodious-network
+  fast-n-foodious-ms-pagamento:
+    restart: unless-stopped
+    image: ottero/fast-n-foodious-ms-pagamento:latest
+    container_name: fast-n-foodious-ms-pagamento
+    env_file:
+      - ./envs/${NODE_ENV:-prod}.env
+    ports:
+      - 3002:3000
+    depends_on:
+      - mysql
+    networks:
+      - fast-n-foodious-network
+  mysql:
+    image: mysql:8.0
+    container_name: mysql    
+    restart: unless-stopped
+    environment:
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - ${MYSQL_PORT:-3306}:${MYSQL_PORT:-3306}
+    volumes:
+      - ./scripts/schema:/docker-entrypoint-initdb.d
+      - mysql-data:/data/db
+    networks:
+      - fast-n-foodious-network
+
+volumes:
+  mysql-data:
+networks:
+  fast-n-foodious-network:
+    driver: bridge
