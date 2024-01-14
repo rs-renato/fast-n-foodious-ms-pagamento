@@ -1,5 +1,7 @@
 FROM node:18.16-alpine
 
+ENV TZ=America/Sao_Paulo
+
 WORKDIR /fast-n-foodious-ms-pagamento
 
 COPY package*.json ./
