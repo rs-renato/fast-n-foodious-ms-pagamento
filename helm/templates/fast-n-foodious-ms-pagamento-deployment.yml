@@ -118,5 +118,3 @@ spec:
             items:
               - key: init.sql
                 path: 1-init.sql
-              - key: populate.sql
-                path: 2-populate.sql
