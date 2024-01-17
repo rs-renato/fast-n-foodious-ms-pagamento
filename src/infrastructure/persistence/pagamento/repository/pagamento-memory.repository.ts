@@ -16,7 +16,7 @@ export class PagamentoMemoryRepository implements IRepository<Pagamento> {
       resolve(
         this.pagamentosRepository.filter((pagamento) => {
           return Object.entries(attributes).every(([key, value]) => {
-            return pagamento[key] === value;
+            return pagamento[key] == value;
           });
         }),
       );
@@ -24,7 +24,7 @@ export class PagamentoMemoryRepository implements IRepository<Pagamento> {
   }
 
   async save(pagamento: Pagamento): Promise<Pagamento> {
-    this.logger.debug(`Efetuando novo pagamento: ${pagamento}`);
+    this.logger.debug(`Efetuando novo pagamento:  ${JSON.stringify(pagamento)}`);
     const promise = new Promise<Pagamento>((resolve) => {
       pagamento.id = ++PagamentoMemoryRepository.ID_COUNT;
       this.pagamentosRepository.push(pagamento);
