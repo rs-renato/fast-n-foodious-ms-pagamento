@@ -11,7 +11,7 @@ spec:
           image: 24hoursmedia/k6-xarch
           env:
             - name: FAST_N_FOODIOUS_SVC
-              value: fast-n-foodious-ms-pagamento-svc
+              value: fast-n-foodious-ms-pagamento
           command:
             - /bin/sh
             - -c

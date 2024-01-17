@@ -16,11 +16,11 @@ spec:
         image: ottero/fast-n-foodious-ms-pagamento:latest
         resources:
           limits:
-            memory: "512Mi"
+            memory: "768Mi"
             cpu: "500m"
         livenessProbe:
           httpGet:
-            port: 3000
+            port: 3002
             path: /api
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -28,14 +28,14 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            port: 3000
+            port: 3002
             path: /api
           initialDelaySeconds: 40
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
         ports:
-        - containerPort: 3000
+        - containerPort: 3002
         envFrom:
           - configMapRef:
               name: fast-n-foodious-ms-pagamento-env
@@ -54,18 +54,18 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: mysql-pagamento
 spec:
   selector:
     matchLabels:
-      app: mysql
+      app: mysql-pagamento
   template:
     metadata:
       labels:
-        app: mysql
+        app: mysql-pagamento
     spec:
       containers:
-      - name: mysql
+      - name: mysql-pagamento
         image: mysql:8.0
         resources:
           limits:
@@ -102,19 +102,17 @@ spec:
                 name: fast-n-foodious-ms-pagamento-secret
                 key: MYSQL_PASSWORD
         volumeMounts:
-          - name: mysql-init
+          - name: fast-n-foodious-ms-pagamento-mysql-init
             mountPath: /docker-entrypoint-initdb.d
-          - name: fast-n-foodious-volume
-            mountPath: /var/lib/mysql
+          - name: fast-n-foodious-ms-pagamento-volume
+            mountPath: /var/lib/mysql-pagamento
       volumes:
-        - name: fast-n-foodious-volume
+        - name: fast-n-foodious-ms-pagamento-volume
           persistentVolumeClaim:
-            claimName: fast-n-foodious-pvc
-        - name: mysql-init
+            claimName: fast-n-foodious-ms-pagamento-pvc
+        - name: fast-n-foodious-ms-pagamento-mysql-init
           configMap:
-            name: mysql-env
+            name: mysql-pagamento-env
             items:
               - key: init.sql
                 path: 1-init.sql
-              - key: populate.sql
-                path: 2-populate.sql
