@@ -10,11 +10,12 @@ application:
 
 service:
   loadbalancer:
-    port: 80
+    port: 3002
 
 mysql:
-  name: mysql
+  name: mysql-pagamento
   image: mysql:8.0
+  mountPath: /var/lib/mysql-pagamento
   resources:
     limits:
       memory: "768Mi"
@@ -23,7 +24,7 @@ mysql:
 configMap:
   data:
     NODE_ENV: prod
-    MYSQL_HOST: mysql
+    MYSQL_HOST: mysql-pagamento
     MYSQL_USER: fnf_user
 
 hpa:
@@ -35,16 +36,16 @@ hpa:
     averageUtilization: 70
 
 pv:
-  name: fast-n-foodious-pv
+  name: fast-n-foodious-ms-pagamento-pv
   storage: 500Mi
   hostPath: /Users/renatorodrigues/mysql
 
 pvc:
-  name: fast-n-foodious-pvc
+  name: fast-n-foodious-ms-pagamentos-pvc
   requests:
-      storage: 300Mi
+      storage: 500Mi
 
-storageClassName: fast-n-foodious-storage
+storageClassName: fast-n-foodious-ms-pagamento-storage
 
 secret:
   data:
