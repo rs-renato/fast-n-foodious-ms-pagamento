@@ -167,7 +167,12 @@ A opção acima, executa o container do micro serviço de forma isolada. Para ro
 ```bash
 $ docker-compose --env-file ./envs/prod.env -f docker-compose-all.yml -p "fast-n-foodious" up --build
 ```
+**Nota:** É necessário realizar a inicialização do banco de dados para os microserviços. Na referência dos arquivos para a inicialização do schema, assumesse que todos os projetos estão localizados no mesmo diretório! Logo, certifique que os paths dos volumes para os containers do mysql estejam corretos. Exemplo para inicialização do banco (mapeamento de volume):
 
+```yml
+ volumes:
+      - dir-do-microservico/scripts/schema:/docker-entrypoint-initdb.d
+```
 #### 💀 Docker (Modo Desbravador!)
 Inicia o container da aplicação e do mysql com as variáveis de produção, utilizando *`imagens docker`* do mysql e da aplicação:
 ```bash
