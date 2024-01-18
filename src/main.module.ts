@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { InfrastructureModule } from 'src/infrastructure/infrastructure.module';
 import { PresentationModule } from 'src/presentation/presentation.module';
 import { IntegrationModule } from './integration/integration.module';
