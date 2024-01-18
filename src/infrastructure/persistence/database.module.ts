@@ -15,7 +15,6 @@ export class DatabaseModule {
         exports: [MemoryDatabaseModule],
       };
     } else {
-
       if (process.env.DATABASE_ENGINE === 'sql') {
         this.logger.log('Carregando repositório SQL');
         return {
