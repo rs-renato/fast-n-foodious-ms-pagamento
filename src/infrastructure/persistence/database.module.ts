@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { MemoryDatabaseModule } from 'src/infrastructure/persistence/memory-database.module';
 import { TypeormDatabaseModule } from 'src/infrastructure/persistence/typeorm-database.module';
+import { PagamentoMongooseModule } from 'src/infrastructure/persistence/mongoose-database.module';
 
 @Module({})
 export class DatabaseModule {
@@ -12,8 +13,10 @@ export class DatabaseModule {
       };
     } else {
       return {
-        module: TypeormDatabaseModule,
-        exports: [TypeormDatabaseModule],
+        // module: TypeormDatabaseModule,
+        // exports: [TypeormDatabaseModule],
+        module: PagamentoMongooseModule,
+        exports: [PagamentoMongooseModule],
       };
     }
   }

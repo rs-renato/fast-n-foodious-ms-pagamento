@@ -15,6 +15,7 @@ export class SolicitaPagamentoPedidoUseCase {
   async solicitaPagamento(pedidoId: number, totalPedido: number): Promise<Pagamento> {
     const transacaoId = RandomIdGeneratorUtils.generate('transacaoId', pedidoId);
     const pagamento: Pagamento = {
+      id: 1,
       pedidoId: pedidoId,
       transacaoId: transacaoId,
       estadoPagamento: EstadoPagamento.PENDENTE,
@@ -27,7 +28,7 @@ export class SolicitaPagamentoPedidoUseCase {
         return pagamento;
       })
       .catch((error) => {
-        this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
+        this.logger.error(`Erro ao criar pagamento no banco de dados: ${error} `);
         throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
       });
   }

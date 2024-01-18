@@ -7,6 +7,6 @@ import {
   PagamentoMongoDbRepository
 } from 'src/infrastructure/persistence/pagamento/repository/pagamento-mongoose.repository';
 
-export const PersistenceTypeOrmProviders: Provider[] = [
-  { provide: PagamentoConstants.IREPOSITORY, useClass: PagamentoTypeormRepository },
+export const PersistenceMongooseProviders: Provider[] = [
+  { provide: PagamentoConstants.IREPOSITORY, useClass: PagamentoMongoDbRepository },
 ];
