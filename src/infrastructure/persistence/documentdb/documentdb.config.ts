@@ -11,15 +11,15 @@ import { MongooseModuleOptions } from '@nestjs/mongoose';
       useFactory: (configService: ConfigService): MongooseModuleOptions => ({
         uri: `mongodb://${configService.get<string>('DYNAMODB_URI')}`,
         dbName: configService.get<string>('DYNAMODB_DATABASE'),
-        auth:{
+        auth: {
           username: configService.get<string>('DYNAMODB_USER'),
           password: configService.get<string>('DYNAMODB_PASSWORD'),
-        } ,
-        authSource: "admin",
+        },
+        authSource: 'admin',
         autoCreate: DatabaseDocConstants.DATABASE_DOC_AUTO_CREATE,
         tls: DatabaseDocConstants.DATABASE_DOC_TLS,
         tlsInsecure: DatabaseDocConstants.DATABASE_DOC_TLS_INSECURE,
-        tlsCAFile: configService.get<string>('DYNAMODB_DATABASE_TLS_CA_FILE'), 
+        tlsCAFile: configService.get<string>('DYNAMODB_DATABASE_TLS_CA_FILE'),
       }),
       inject: [ConfigService],
     },
