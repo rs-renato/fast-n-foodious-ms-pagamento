@@ -5,10 +5,6 @@ import { PresentationModule } from 'src/presentation/presentation.module';
 import { IntegrationModule } from './integration/integration.module';
 
 @Module({
-  imports: [
-    InfrastructureModule,
-    PresentationModule,
-    IntegrationModule,
-  ],
+  imports: [InfrastructureModule, PresentationModule, IntegrationModule],
 })
 export class MainModule {}

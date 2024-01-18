@@ -6,9 +6,10 @@ import { DatabaseModule } from 'src/infrastructure/persistence/database.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: `${process.cwd()}/envs/${process.env.NODE_ENV || 'prod'}.env`
+      envFilePath: `${process.cwd()}/envs/${process.env.NODE_ENV || 'prod'}.env`,
     }),
-    DatabaseModule.forFeature()],
+    DatabaseModule.forFeature(),
+  ],
   exports: [DatabaseModule.forFeature()],
 })
 export class InfrastructureModule {}

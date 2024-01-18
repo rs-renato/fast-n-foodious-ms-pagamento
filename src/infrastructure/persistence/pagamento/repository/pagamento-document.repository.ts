@@ -5,24 +5,24 @@ import { IRepository } from 'src/enterprise/repository/repository';
 @Injectable()
 export class PagamentoDocumentRepository implements IRepository<Pagamento> {
   private logger: Logger = new Logger(PagamentoDocumentRepository.name);
-  
+
   async findBy(attributes: Partial<Pagamento>): Promise<Pagamento[]> {
-    return
+    return;
   }
 
   async save(pagamento: Pagamento): Promise<Pagamento> {
-    return
+    return;
   }
 
   async edit(pagamento: Pagamento): Promise<Pagamento> {
-    return
+    return;
   }
 
   async delete(pagamentoId: number): Promise<boolean> {
-    return
+    return;
   }
 
   async findAll(): Promise<Pagamento[]> {
-    return
+    return;
   }
 }
