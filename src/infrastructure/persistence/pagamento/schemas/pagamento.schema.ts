@@ -2,8 +2,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class PagamentoMongoDbEntity {
-  @Prop({ required: true })
-  id: number;
+  @Prop()
+  id?: number;
 
   @Prop({ required: true })
   pedidoId: number;

@@ -12,11 +12,13 @@ import { PersistenceMongooseProviders } from 'src/infrastructure/persistence/pro
   imports: [
     DatabaseDocConstants,
     MongooseModule.forFeature([{ name: PagamentoMongoDbEntity.name, schema: PagamentoSchema }]),
+
     MongooseModule.forRootAsync({
       imports: [DocumentdbConfig],
       useFactory: async (config: MongooseModuleOptions) => config,
       inject: [DatabaseDocConstants.DATABASE_DOC_CONFIG_NAME],
     }),
+
   ],
   providers: [...PersistenceMongooseProviders],
   exports: [...PersistenceMongooseProviders],

@@ -15,7 +15,6 @@ export class SolicitaPagamentoPedidoUseCase {
   async solicitaPagamento(pedidoId: number, totalPedido: number): Promise<Pagamento> {
     const transacaoId = RandomIdGeneratorUtils.generate('transacaoId', pedidoId);
     const pagamento: Pagamento = {
-      id: 1,
       pedidoId: pedidoId,
       transacaoId: transacaoId,
       estadoPagamento: EstadoPagamento.PENDENTE,

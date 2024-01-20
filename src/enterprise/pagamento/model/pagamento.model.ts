@@ -8,5 +8,6 @@ export class Pagamento {
     public total: number,
     public dataHoraPagamento: Date,
     public id?: number,
+    public _id?: string,
   ) {}
 }
