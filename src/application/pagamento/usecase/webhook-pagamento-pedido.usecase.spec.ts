@@ -13,7 +13,7 @@ import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/
 describe('WebhookPagamentoPedidoUseCase', () => {
   let useCase: WebhookPagamentoPedidoUseCase;
   let repository: IRepository<Pagamento>;
-  let buscaPedidoIdUseCase: BuscaPedidoIdUseCase;
+
   let atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase;
 
   const mockedValidators: WebhookPagamentoValidator[] = []; // Adicione os validadores conforme necessário
@@ -59,9 +59,11 @@ describe('WebhookPagamentoPedidoUseCase', () => {
       ],
     }).compile();
 
+    // Desabilita a saída de log
+    module.useLogger(false);
+
     useCase = module.get<WebhookPagamentoPedidoUseCase>(WebhookPagamentoPedidoUseCase);
     repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
-    buscaPedidoIdUseCase = module.get<BuscaPedidoIdUseCase>(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE);
     atualizaPedidoComoRecebidoUseCase = module.get<AtualizaPedidoComoRecebidoUseCase>(
       PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
     );

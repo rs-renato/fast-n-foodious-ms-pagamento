@@ -18,7 +18,6 @@ import { PersistenceMongooseProviders } from 'src/infrastructure/persistence/pro
       useFactory: async (config: MongooseModuleOptions) => config,
       inject: [DatabaseDocConstants.DATABASE_DOC_CONFIG_NAME],
     }),
-
   ],
   providers: [...PersistenceMongooseProviders],
   exports: [...PersistenceMongooseProviders],

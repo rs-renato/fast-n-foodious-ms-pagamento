@@ -158,15 +158,4 @@ describe('PagamentoTypeormRepository', () => {
     }); // end it não deve editar pagamento quando houver um erro de banco
   }); // end describe edit
 
-  describe('delete', () => {
-    it('deletar deve falhar porque não foi implementado', async () => {
-      await expect(repository.delete(1)).rejects.toThrow(new RepositoryException('Método não implementado.'));
-    });
-  });
-
-  describe('findAll', () => {
-    it('deletar deve falhar porque não foi implementado', async () => {
-      await expect(repository.findAll()).rejects.toThrow(new RepositoryException('Método não implementado.'));
-    });
-  });
 });

@@ -11,7 +11,7 @@ export abstract class ExceptionHandler<T extends Error> implements ExceptionFilt
       exception,
     );
 
-    this.logger.error(`Stack: ${exception.stack}`)
+    this.logger.error(`Stack: ${exception.stack}`);
 
     const context = host.switchToHttp();
     const request = context.getRequest();

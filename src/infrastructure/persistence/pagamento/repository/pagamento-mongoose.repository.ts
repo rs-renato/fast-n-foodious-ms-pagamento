@@ -39,16 +39,15 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
   }
   async edit(pagamento: Pagamento): Promise<Pagamento> {
     const pagamentoDocument = await this.pagamentoModel
-       .find({
-         _id: pagamento._id,
-       })
-       .lean()
-       .then((returnedPagamentoDocument) => {
-         return returnedPagamentoDocument[0];
-       });
+      .find({
+        _id: pagamento._id,
+      })
+      .lean()
+      .then((returnedPagamentoDocument) => {
+        return returnedPagamentoDocument[0];
+      });
 
     this.logger.log(`pagamentoDocument = ${JSON.stringify(pagamentoDocument)}`);
-
 
     const updatePagamentoDto: UpdatePagamentoDto = {
       pedidoId: pagamento.pedidoId,
@@ -58,9 +57,9 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
       dataHoraPagamento: pagamento.dataHoraPagamento,
     };
     const updatedPagamento = await this.pagamentoModel.findByIdAndUpdate(
-       pagamentoDocument._id,
-       updatePagamentoDto,
-       { new: true }, // retorna o novo documento atualizado
+      pagamentoDocument._id,
+      updatePagamentoDto,
+      { new: true }, // retorna o novo documento atualizado
     );
 
     this.logger.log(`updatedPagamento = ${JSON.stringify(updatedPagamento)}`);
@@ -75,37 +74,27 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
       estadoPagamento: updatedPagamento.estadoPagamento,
       total: updatedPagamento.total,
       dataHoraPagamento: updatedPagamento.dataHoraPagamento,
-    }
+    };
     return pagamentoEditado;
-
-  }
-  delete(id: number): Promise<boolean> {
-    throw new Error('Method not implemented.');
-  }
-  findAll(): Promise<Pagamento[]> {
-    throw new Error('Method not implemented.');
   }
 
   async findBy(attributes: Partial<Pagamento>): Promise<Pagamento[]> {
     const pagamentos: Pagamento[] = [];
-    const resultados = await this.pagamentoModel.find(attributes).then(
-       (documents) => {
-         for (const document of documents) {
-           pagamentos.push({
-             _id: document._id.toString(),
-             pedidoId: document.pedidoId,
-             transacaoId: document.transacaoId,
-             estadoPagamento: document.estadoPagamento,
-             total: document.total,
-             dataHoraPagamento: document.dataHoraPagamento
-           })
-           this.logger.log(`pagamentos = ${JSON.stringify(pagamentos)}`);
-         }
-       }
-    );
+    await this.pagamentoModel.find(attributes).then((documents) => {
+      for (const document of documents) {
+        pagamentos.push({
+          _id: document._id.toString(),
+          pedidoId: document.pedidoId,
+          transacaoId: document.transacaoId,
+          estadoPagamento: document.estadoPagamento,
+          total: document.total,
+          dataHoraPagamento: document.dataHoraPagamento,
+        });
+        this.logger.log(`pagamentos = ${JSON.stringify(pagamentos)}`);
+      }
+    });
 
     this.logger.log(`pagamentos = ${JSON.stringify(pagamentos)}`);
     return pagamentos;
   }
-
 }

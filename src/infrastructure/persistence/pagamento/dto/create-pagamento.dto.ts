@@ -1,8 +1,6 @@
 import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-import { ObjectId } from 'mongoose';
 
 export class CreatePagamentoDto {
-
   @IsNumber()
   @IsNotEmpty()
   readonly pedidoId: number;
