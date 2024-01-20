@@ -49,7 +49,7 @@ services:
       - fast-n-foodious-network
 
 volumes:
-  mysql-data-pagamento:
+  # mysql-data-pagamento:
   mongo-data-pagamento:
 networks:
   fast-n-foodious-network:
