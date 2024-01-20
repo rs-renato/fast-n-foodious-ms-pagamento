@@ -6,6 +6,7 @@ import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
+import * as process from 'process';
 
 @Injectable()
 export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagamentoValidator {
@@ -23,7 +24,18 @@ export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagament
       `Inicializando validação ${WebhookPagamentoPagamentoValidoValidator.name} para verificar o estado do pagamento: ${pagamento.id}`,
     );
 
-    await this.repositoryPagamento.findBy({ id: pagamento.id }).then((pagamentos) => {
+    this.logger.debug("---- RODRIGO -----")
+    this.logger.debug(`Pagamento: ${JSON.stringify(pagamentoParametro)}`);
+    this.logger.debug(`Pagamento: ${JSON.stringify(pagamento)}`);
+    this.logger.debug(`DATABASE_ENGINE: ${process.env.DATABASE_ENGINE}`);
+
+    let pagamentoIdParaBuscar: Partial<Pagamento> = { _id: pagamento._id };
+    if (process.env.DATABASE_ENGINE === 'sql') {
+      pagamentoIdParaBuscar = { id: pagamento.id };
+    }
+
+    await this.repositoryPagamento.findBy(pagamentoIdParaBuscar).then((pagamentos) => {
+      this.logger.debug(`Pagamentos: ${JSON.stringify(pagamentos)}`);
       if (pagamentos.length === 0) {
         throw new ValidationException(WebhookPagamentoPagamentoValidoValidator.PAGAMENTO_INEXISTENTE_ERROR_MESSAGE);
       }
@@ -33,6 +45,8 @@ export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagament
         );
       }
     });
+
+    this.logger.debug("---- OTTERO -----")
     return true;
   }
 
