@@ -5,7 +5,6 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
-import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
 import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 import { PagamentoConstants } from 'src/shared/constants';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';

@@ -78,5 +78,4 @@ export class PagamentoTypeormRepository implements IRepository<Pagamento> {
         );
       });
   }
-
 }

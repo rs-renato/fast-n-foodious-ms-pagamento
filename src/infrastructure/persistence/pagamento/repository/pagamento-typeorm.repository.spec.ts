@@ -157,5 +157,4 @@ describe('PagamentoTypeormRepository', () => {
       await expect(repository.edit(mockedPagamentoEditado)).rejects.toThrowError(RepositoryException);
     }); // end it não deve editar pagamento quando houver um erro de banco
   }); // end describe edit
-
 });
