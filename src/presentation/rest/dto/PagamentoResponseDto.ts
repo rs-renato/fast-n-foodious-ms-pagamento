@@ -1,13 +1,12 @@
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 
-export class Pagamento {
+export class PagamentoResponseDto {
   constructor(
     public pedidoId: number,
     public transacaoId: string,
     public estadoPagamento: EstadoPagamento,
     public total: number,
     public dataHoraPagamento: Date,
-    public id?: number,
-    public _id?: string,
+    public id: number | string,
   ) {}
 }

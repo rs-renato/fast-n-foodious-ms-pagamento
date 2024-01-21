@@ -27,7 +27,7 @@ export class SolicitaPagamentoPedidoUseCase {
         return pagamento;
       })
       .catch((error) => {
-        this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
+        this.logger.error(`Erro ao criar pagamento no banco de dados: ${error} `);
         throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
       });
   }

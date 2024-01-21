@@ -37,6 +37,9 @@ describe('AtualizaPedidoComoRecebidoUseCase', () => {
       providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
     }).compile();
 
+    // Desabilita a saída de log
+    module.useLogger(false);
+
     useCase = module.get<AtualizaPedidoComoRecebidoUseCase>(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE);
     pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
   });

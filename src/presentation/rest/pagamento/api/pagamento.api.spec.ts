@@ -7,8 +7,8 @@ import { BuscarEstadoPagamentoPedidoRequest } from 'src/presentation/rest/pagame
 import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response';
 import { SolicitacaoPagamentoRequest } from 'src/presentation/rest/pagamento/request/solicitar-pagamento-de-pedido.request';
 import { SolicitacaoPagamentoResponse } from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
-import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { NotFoundException } from '@nestjs/common';
+import { PagamentoResponseDto } from 'src/presentation/rest/dto/PagamentoResponseDto';
 
 describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
@@ -27,7 +27,7 @@ describe('PagamentoRestApi', () => {
     totalPedido: 100,
   };
 
-  const pagamentoSolicitado: Pagamento = {
+  const pagamentoSolicitado: PagamentoResponseDto = {
     pedidoId: 1,
     transacaoId: '123',
     estadoPagamento: EstadoPagamento.PENDENTE,

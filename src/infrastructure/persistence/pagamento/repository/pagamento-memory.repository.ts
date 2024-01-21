@@ -35,7 +35,7 @@ export class PagamentoMemoryRepository implements IRepository<Pagamento> {
 
   async edit(pagamento: Pagamento): Promise<Pagamento> {
     return new Promise<Pagamento>((resolve) => {
-      this.pagamentosRepository[pagamento.id - 1] = pagamento;
+      this.pagamentosRepository[+pagamento.id - 1] = pagamento;
       resolve(pagamento);
     });
   }
