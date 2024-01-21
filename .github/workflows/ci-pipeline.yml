@@ -41,6 +41,7 @@ jobs:
         run: npm install && NODE_ENV=local-mock-repository npm run test:e2e
 
   e2e-mysql:
+    if: ${{vars.DATABASE_ENGINE == 'sql'}}
     runs-on: ubuntu-latest
     env:
       MYSQL_USER: ${{vars.MYSQL_USER}}
@@ -56,11 +57,7 @@ jobs:
       - name: Running e2e in mysql server - Start Docker Containers
         run: docker-compose --env-file ./envs/prod.env up -d
       - name: Running e2e in mysql server - Wait for MySQL to Accept Connections
-        run: docker-compose --env-file ./envs/prod.env exec -T mysql sh -c "until mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD ; do sleep 1; done"
-      # - name: Create schema MySQL Schema & Populate Database
-      #   run: |
-      #     docker cp ./scripts/schema/. $(docker-compose ps -q mysql):/docker-entrypoint-initdb.d
-      #     docker-compose --env-file ./envs/prod.env exec -T mysql sh -c "mysql -uroot -pMYSQL_ROOT_PASSWORD -e 'source /docker-entrypoint-initdb.d/1-init.sql; source /docker-entrypoint-initdb.d/2-populate.sql;'"
+        run: docker-compose --env-file ./envs/prod.env exec -T mysql-pagamento sh -c "until mysqladmin ping -h 127.0.0.1 -u$MYSQL_USER -p$MYSQL_PASSWORD ; do sleep 1; done"
       - name: Run E2E Tests (With TypeORM Repositories - MySQL)
         run: docker-compose --env-file ./envs/prod.env exec -T fast-n-foodious-ms-pagamento sh -c "npm run test:e2e"
       - name: Stop and Remove Docker Containers

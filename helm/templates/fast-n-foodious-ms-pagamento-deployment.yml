@@ -21,7 +21,7 @@ spec:
             cpu: {{ .Values.application.resources.limits.cpu }}
         livenessProbe:
           httpGet:
-            port: 3000
+            port: 3002
             path: /api
           initialDelaySeconds: 30
           periodSeconds: 10
@@ -29,14 +29,14 @@ spec:
           failureThreshold: 3
         readinessProbe:
           httpGet:
-            port: 3000
+            port: 3002
             path: /api
           initialDelaySeconds: 40
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
         ports:
-        - containerPort: 3000
+        - containerPort: 3002
         envFrom:
           - configMapRef:
               name: {{ .Values.application.name }}-env
@@ -104,19 +104,17 @@ spec:
                 name: {{ .Values.application.name }}-secret
                 key: MYSQL_PASSWORD
         volumeMounts:
-          - name: mysql-init
+          - name: {{ .Values.application.name }}-mysql-init
             mountPath: /docker-entrypoint-initdb.d
           - name: {{ .Values.application.name }}-volume
-            mountPath: /var/lib/mysql
+            mountPath: {{ .Values.mysql.mountPath }}
       volumes:
         - name: {{ .Values.application.name }}-volume
           persistentVolumeClaim:
             claimName: {{ .Values.pvc.name }}
-        - name: mysql-init
+        - name: {{ .Values.application.name }}-mysql-init
           configMap:
             name: {{ .Values.mysql.name }}-env
             items:
               - key: init.sql
                 path: 1-init.sql
-              - key: populate.sql
-                path: 2-populate.sql

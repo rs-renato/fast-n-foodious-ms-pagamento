@@ -34,10 +34,6 @@ export class PagamentoTypeormRepository implements IRepository<Pagamento> {
       });
   }
 
-  async delete(): Promise<boolean> {
-    throw new RepositoryException('Método não implementado.');
-  }
-
   async edit(pagamento: Pagamento): Promise<Pagamento> {
     this.logger.debug(`Editando pagamento: ${JSON.stringify(pagamento)}`);
 
@@ -81,9 +77,5 @@ export class PagamentoTypeormRepository implements IRepository<Pagamento> {
           `Houve um erro ao salvar o pagamento no banco de dados: '${pagamento}': ${error.message}`,
         );
       });
-  }
-
-  async findAll(): Promise<Pagamento[]> {
-    throw new RepositoryException('Método não implementado.');
   }
 }

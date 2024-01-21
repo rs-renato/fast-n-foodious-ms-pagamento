@@ -1,23 +1,23 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fast-n-foodious-ms-pagamento-svc
+  name: fast-n-foodious-ms-pagamento
 spec:
   selector:
     app: fast-n-foodious-ms-pagamento
   type: LoadBalancer
   ports:
-  - port: 80
-    nodePort: 30000
-    targetPort: 3000
+  - port: 3002
+    nodePort: 30002
+    targetPort: 3002
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: mysql-pagamento
 spec:
   selector:
-    app: mysql
+    app: mysql-pagamento
   ports:
   - port: 3306
 
