@@ -36,6 +36,22 @@ describe('SolicitaPagamentoPedidoUseCase', () => {
     ativo: true,
     id: 1,
     total: 10,
+    itensPedido: [
+      {
+        pedidoId: 1,
+        produtoId: 1,
+        quantidade: 1,
+        produto: {
+          preco: 10,
+          nome: 'Produto 1',
+          idCategoriaProduto: 1,
+          ativo: true,
+          descricao: 'Produto 1',
+          id: 1,
+          imagemBase64: '',
+        },
+      },
+    ],
   };
 
   beforeEach(async () => {
