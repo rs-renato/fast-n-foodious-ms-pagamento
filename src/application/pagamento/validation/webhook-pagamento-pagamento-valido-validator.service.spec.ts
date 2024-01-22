@@ -5,7 +5,7 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
 import { PagamentoConstants } from 'src/shared/constants';
-import { WebhookPagamentoPagamentoValidoValidator } from 'src/application/pagamento/validation/webhook-pagamento-pagamento-valido-validator.service';
+import { WebhookPagamentoPagamentoValidoValidator } from 'src/application/pagamento/validation/webhook-pagamento-pagamento-valido-validator';
 
 describe('WebhookPagamentoPagamentoValidoValidator', () => {
   let validator: WebhookPagamentoPagamentoValidoValidator;
