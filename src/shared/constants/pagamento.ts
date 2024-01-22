@@ -7,5 +7,7 @@ export const WEBHOOK_PAGAMENTO_PEDIDO_USECASE = 'WebhookPagamentoPedidoUseCase';
 export const BUSCA_PEDIDO_ID_USECASE = 'BuscaPedidoIdUseCase';
 export const ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE = 'AtualizaPedidoComoRecebidoUseCase';
 
+export const PAGAMENTO_VALIDATOR = 'PagamentoValidator';
+
 export const WEBHOOK_PAGAMENTO_VALIDATOR = 'WebhookPagamentoValidator';
 export const WEBHOOK_PAGAMENTO_TRANSACAO_ID_VALIDO_VALIDATOR = 'WebhookPagamentoTransacaoIdValidoValidator';
