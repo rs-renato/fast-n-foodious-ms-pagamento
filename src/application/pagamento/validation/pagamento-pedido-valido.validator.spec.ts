@@ -4,7 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { PagamentoConstants } from 'src/shared/constants';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
-import { IRepository } from 'src/enterprise/repository/repository';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
@@ -14,7 +13,6 @@ import { PagamentoPedidoValidoValidator } from 'src/application/pagamento/valida
 describe('PagamentoPedidoValidoValidator', () => {
   let validator: PagamentoPedidoValidoValidator;
   let pedidoIntegration: PedidoIntegration;
-  let repository: IRepository<Pagamento>;
 
   const mockedPagamento: Pagamento = {
     pedidoId: 1,
@@ -53,7 +51,6 @@ describe('PagamentoPedidoValidoValidator', () => {
 
     validator = module.get<PagamentoPedidoValidoValidator>(PagamentoPedidoValidoValidator);
     pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
-    repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
 
     jest.spyOn(pedidoIntegration, 'getPedidoById').mockResolvedValue(mockedPedidoDTO);
   });
