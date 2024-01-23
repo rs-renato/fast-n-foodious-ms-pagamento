@@ -40,6 +40,13 @@ export class PagamentoPedidoValidoValidator implements PagamentoValidator {
       throw new ValidationException(PagamentoPedidoValidoValidator.PEDIDO_JA_PAGO_ERROR_MESSAGE);
     }
 
+    // calcular o total do pedido
+    let totalPedido = 0;
+    for (const itemPedido of pedido?.itensPedido) {
+      totalPedido += itemPedido.quantidade * itemPedido?.produto.preco;
+    }
+    pedido.total = totalPedido;
+
     if (pedido.total !== total) {
       this.logger.debug(
         `O total solicitado para pagamento: ${total}, diverge do total do pedido que é ${pedido.total}`,

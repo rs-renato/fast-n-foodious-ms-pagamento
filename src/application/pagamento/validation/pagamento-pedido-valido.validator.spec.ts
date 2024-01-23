@@ -30,6 +30,22 @@ describe('PagamentoPedidoValidoValidator', () => {
     ativo: true,
     id: 1,
     total: 100,
+    itensPedido: [
+      {
+        pedidoId: 1,
+        produtoId: 1,
+        quantidade: 1,
+        produto: {
+          preco: 100,
+          nome: 'Produto 1',
+          idCategoriaProduto: 1,
+          ativo: true,
+          descricao: 'Produto 1',
+          id: 1,
+          imagemBase64: '',
+        },
+      },
+    ],
   };
 
   beforeEach(async () => {
@@ -68,7 +84,16 @@ describe('PagamentoPedidoValidoValidator', () => {
     });
 
     it('nao deve passar na validacao com VALOR_TOTAL_DIVERGENTE_ERROR_MESSAGE', async () => {
-      jest.spyOn(pedidoIntegration, 'getPedidoById').mockResolvedValueOnce({ ...mockedPedidoDTO, total: 1 });
+      const itensPedidoDivergente = {
+        ...mockedPedidoDTO.itensPedido[0],
+        produto: {
+          ...mockedPedidoDTO.itensPedido[0].produto,
+          preco: 1,
+        },
+      };
+      jest
+        .spyOn(pedidoIntegration, 'getPedidoById')
+        .mockResolvedValueOnce({ ...mockedPedidoDTO, itensPedido: [itensPedidoDivergente] });
       await expect(validator.validate(mockedPagamento)).rejects.toThrowError(
         PagamentoPedidoValidoValidator.VALOR_TOTAL_DIVERGENTE_ERROR_MESSAGE,
       );
