@@ -291,11 +291,11 @@ Para realizar a desistalação da aplicação e o cleanup da infraestrutura, bas
 
 ```bash
 $ docker stop mongodb fast-n-foodious-ms-pagamento
-mysql
+mongodb
 fast-n-foodious-ms-pagamento
 
-$ docker volume rm mysql-data
-mysql-data-pagamento
+$ docker volume rm mongo-data-pagamento
+mongo-data-pagamento
 
 $ docker network rm fast-n-foodious-network
 fast-n-foodious-network
@@ -314,10 +314,10 @@ Deleted: sha256:f93cb6531dabccc23848e273402d3fbef0515206efab1a29ccc1be81bf273dea
 ```bash
 $ docker-compose --env-file ./envs/local.env -p "fast-n-foodious" down -v
 [+] Running 4/4
- ✔ Container fast-n-foodious-ms-pagamento              Removed                                                                                           0.8s 
- ✔ Container mongodb                           Removed                                                                                           1.1s 
- ✔ Volume fast-n-foodious-ms-pagamento_mysql-data      Removed                                                                                           0.0s 
- ✔ Network fast-n-foodious_fast-n-foodious-network     Removed                                                                                           0.1s
+ ✔ Container fast-n-foodious-ms-pagamento                          Removed                                                                                           0.8s 
+ ✔ Container mongodb                                               Removed                                                                                           1.1s 
+ ✔ Volume fast-n-foodious-ms-pagamento_mongo-data-pagamento        Removed                                                                                           0.0s 
+ ✔ Network fast-n-foodious_fast-n-foodious-network                 Removed                                                                                           0.1s
 
 $ docker image rm fast-n-foodious-ms-pagamento-fast-n-foodious
 Untagged: fast-n-foodious-ms-pagamento-fast-n-foodious-ms-pagamento:latest
@@ -425,25 +425,20 @@ $ npm run test:cov
 # Execução de testes e2e SEM dependência de banco de dados (in-memory repository)
 $ NODE_ENV=local-mock-repository npm run test:e2e
 
-# Execução de testes e2e COM dependência de banco de dados (mysql repository)
-# 1. Necessita do container mysql em execução!
-# 2. Considere remover o volume criado no mysql caso execute o teste mais de uma vez!
-$ NODE_ENV=local npm run test:e2e
-
 # Execução de testes bdd SEM dependência de banco de dados (in-memory repository), considerar os comandos em terminais distintos
 $ NODE_ENV=local-mock-repository npm run start && npx wait-on http://localhost:3002
 $ npm run test:bdd
 
-# Execução de testes bdd COM dependência de banco de dados (mysql repository)
-# 1. Necessita do container mysql em execução!
-# 2. Considere remover o volume criado no mysql caso execute o teste mais de uma vez!
-$ MYSQL_HOST=localhost NODE_ENV=local npm run start && npx wait-on http://localhost:3002
+# Execução de testes bdd COM dependência de banco de dados (mongodb repository)
+# 1. Necessita do container mongodb em execução!
+# 2. Considere remover o volume criado no mongodb caso execute o teste mais de uma vez!
+$ DOCUMENTDB_URI=mongodb://fnf_user:fnfpass@localhost:27017/pagamento-db NODE_ENV=local npm run start && npx wait-on http://localhost:3002
 $ NODE_ENV=local npm run test:bdd
 ```
 
 ### 🧪 Testes Stress 
 Excução de testes de stress cluster k8s, utilizando job k6.
-*Nota: A execução tem duração de 60s, estressando o path /health. Assume a aplicação e mysql up & running no cluster kubernetes*
+*Nota: A execução tem duração de 60s, estressando o path /health. Assume a aplicação e mongodb up & running no cluster kubernetes*
 
 ```bash
 $ kubectl apply -f k8s/stress/fast-n-foodious-ms-pagamento-job.yml 
@@ -475,7 +470,7 @@ docs/                                   # Documentação da aplicação
 envs/                                   # Configurações de ambiente
 helm/                                   # Configuração de descriptors Helm
 k8s/                                    # Configuração de descriptors kubernetes
-scripts/                                # Scripts gerais de inicialização e validação (git prepush, precommit - cobertura de testes, testes unitários, e2e MySQL e memória)
+scripts/                                # Scripts gerais de inicialização e validação (git prepush, precommit - cobertura de testes, testes unitários, e2e MondoDB e memória)
 src/                                    # Source da solução
 ├── application                         # Camada de Application (use cases, validators)    
 │   ├── pagamento
@@ -495,8 +490,8 @@ src/                                    # Source da solução
 │   └── persistence
 │       ├── pagamento
 │       │   ├── entity                  # Entitdades ORM
-│       │   └── repository              # Repositórios (mysql, in-memory)
-│       ├── mysql                       # Configurações de banco de dados MySQL 
+│       │   └── repository              # Repositórios (mongodb, in-memory)
+│       ├── documentdb                  # Configurações de banco de dados MongoDB 
 │       ├── providers                   # Registro de providers (repositorório in-memory, typeorm). utilizados via DI
 ├── integration                         # Camada integração com serviços externos
 │   ├── pedido                          # Integrações com o microserviço de pedido
