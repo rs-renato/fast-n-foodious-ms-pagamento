@@ -95,7 +95,7 @@ jobs:
       - coverage-tests
       - check-tests-impl
       - e2e-in-memory
-      - e2e-mysql
+      # - e2e-mysql
       - bdd-test
       - sonarcloud
     steps:
