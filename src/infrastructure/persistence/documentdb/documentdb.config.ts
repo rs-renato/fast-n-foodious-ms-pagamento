@@ -20,7 +20,7 @@ import { MongooseModuleOptions } from '@nestjs/mongoose';
         tls: DatabaseDocConstants.DATABASE_DOC_TLS,
         tlsInsecure: DatabaseDocConstants.DATABASE_DOC_TLS_INSECURE,
         tlsCAFile: configService.get<string>('DOCUMENTDB_DATABASE_TLS_CA_FILE'),
-        retryAttempts: 3
+        retryAttempts: 3,
       }),
       inject: [ConfigService],
     },

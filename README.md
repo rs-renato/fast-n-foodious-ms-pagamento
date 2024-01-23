@@ -1,6 +1,6 @@
 ![Static Badge](https://img.shields.io/badge/backend-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v18.16.0-version?logo=nodedotjs&color=%23339933&labelColor=white&label=Node%2EJS) ![Static Badge](https://img.shields.io/badge/v9.x-version?logo=nestjs&logoColor=gray&color=gray&labelColor=white&label=NestJS) ![Static Badge](https://img.shields.io/badge/v5.x-version?logo=typescript&color=blue&labelColor=white&label=TypeScript)
 
-![Static Badge](https://img.shields.io/badge/database-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v8.X-version?logo=mysql&color=%234169E1&labelColor=white&label=MySQL) ![Static Badge](https://img.shields.io/badge/v9.x-version?logo=typeorm&logoColor=%232D3748&color=%232D3748&labelColor=white&label=TypeORM)
+![Static Badge](https://img.shields.io/badge/database-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v8.X-version?logo=mongodb&color=%234169E1&labelColor=white&label=MongoDB) ![Static Badge](https://img.shields.io/badge/v9.x-version?logo=typeorm&logoColor=%232D3748&color=%232D3748&labelColor=white&label=TypeORM)
 
 ![Static Badge](https://img.shields.io/badge/environment-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v23.x-version?logo=docker&color=%232496ED&labelColor=white&label=Docker) ![Static Badge](https://img.shields.io/badge/v1.27x-version?logo=kubernetes&color=%232496ED&labelColor=white&label=Kubernetes)
 
@@ -21,7 +21,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 * [Executando a Aplicação](#%EF%B8%8F-executando-a-aplicação)
     * [Variáveis de Ambiente](#-variáveis-de-ambiente)
     * [Execução em modo local (in-memory repository)](#%EF%B8%8F-execução-em-modo-local-in-memory-repository)
-    * [Execução em modo local (mysql repository)](#%EF%B8%8F-execução-em-modo-local-mysql-repository)
+    * [Execução em modo local (mongo repository)](#%EF%B8%8F-execução-em-modo-local-mongo-repository)
     * [**Execução em modo produção (on premisse deprecated)**](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
         * [Docker Compose (Modo Fácil!)](#-docker-compose-modo-fácil)
         * [Docker (Modo Desbravador!)](#-docker-modo-desbravador)
@@ -63,7 +63,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
     - Camada de Application, Enterprise, Presentation e Infrastructure
     - Módulo Main, Application, Presentation e Infrastructure
 - Principais Tecnologias/Frameworks
-    - Docker, Kubernetes, Helm, Kubectl, NodeJS, NestJS, TypeORM, NPM, Mysql, Swagger, Typescript, Jest
+    - Docker, Kubernetes, Helm, Kubectl, NodeJS, NestJS, TypeORM, NPM, MongoDB, Swagger, Typescript, Jest
 - Qualidade / Testes
     - Validações pré-commit/push
         - Validação de cobertura de testes
@@ -75,9 +75,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
             - fast-n-foodious-ci: coverage-tests   - Execução de validação de cobertura de testes (all green)
             - fast-n-foodious-ci: check-test-impl  - Execução de validação de implementação de testes (mandatório para rest apis, services, usecases,  validators, repositories)
             - fast-n-foodious-ci: e2e-in-memory    - Execução de testes e2e em memória (all green)
-            - fast-n-foodious-ci: e2e-mysql        - Execução de testes e2e com mysql (all green)
             - fast-n-foodious-ci: bdd-in-memory    - Execução de testes bdd com memória (all green)
-            - fast-n-foodious-ci: bdd-in-mysql     - Execução de testes bdd com mysql (all green)
             - fast-n-foodious-ci: sonarcloud       - Execução de análise de código no SonarCloud
             - fast-n-foodious-ci: build            - Build de imagens docker (AMD & ARM) e publicação no DockerHub
 
@@ -100,16 +98,16 @@ O sistema pode ser executado com ou sem dependências externas.
 `NODE_ENV` como variável de ambiente, com os seguintes valores:
 ```
 # env_name:
-- local-mock-repository   # Variáveis usadas para rodar a aplicação em ambiente local, SEM dependência de container mysql
+- local-mock-repository   # Variáveis usadas para rodar a aplicação em ambiente local, SEM dependência de container mongodb
                           # Exemplo de caso de uso: debugar local rodando com o banco em memória
                           # $ NODE_ENV=local-mock-repository npm run start:debug
 
-- local                   # Variáveis usadas para rodar a aplicação em ambiente local, COM dependência de container mysql
-                          # Presume mysql rodando e a necessidade de atachar a aplicação ao container para desenvolver
+- local                   # Variáveis usadas para rodar a aplicação em ambiente local, COM dependência de container mongodb
+                          # Presume mongodb rodando e a necessidade de atachar a aplicação ao container para desenvolver
                           # Exemplo de caso de uso: debugar local e apontando para o banco no container.
-                          # $ MYSQL_HOST=localhost NODE_ENV=local npm run start:debug
+                          # $ NODE_ENV=local npm run start:debug
 
-- prod                    # Variáveis usadas para rodar a aplicação em ambiente de produção, COM dependøencia de container mysql
+- prod                    # Variáveis usadas para rodar a aplicação em ambiente de produção, COM dependøencia de container mongodb
                           # $ NODE_ENV=prod npm run start:debug
 ```
 
@@ -126,7 +124,7 @@ $ NODE_ENV={env_name} npm run start:debug
 # Modo Produção
 $ npm run start:prod
 ```
-**Nota:** Se informado o env_name DIFERENTE de `local-mock-repository`, o modo de desenvolvimento, watch, debug e produção vai depender de ter um container mysql em execução.
+**Nota:** Se informado o env_name DIFERENTE de `local-mock-repository`, o modo de desenvolvimento, watch, debug e produção vai depender de ter um container mongodb em execução.
 
 ### ⚡️ Execução em modo local (in-memory repository)
 Utilizado **`apenas para desenvolvimento local, modo watch, debug, testes unitários e e2e`**. Executa a aplicação em modo local, com repositório em memória:
@@ -134,68 +132,67 @@ Utilizado **`apenas para desenvolvimento local, modo watch, debug, testes unitá
 $ NODE_ENV=local-mock-repository npm run start
 ```
 
-### ⚡️ Execução em modo local (mysql repository)
-Utilizado **`apenas para desenvolvimento local, modo watch, debug, testes e2e `**. Inicia o contianer mysql com as variáveis locais e inicia a aplicação `(fora do container)`com as variáveis locais:
+### ⚡️ Execução em modo local (mongodb repository)
+Utilizado **`apenas para desenvolvimento local, modo watch, debug, testes e2e `**. Inicia o contianer mongodb com as variáveis locais e inicia a aplicação `(fora do container)`com as variáveis locais:
 ```bash
-$ docker-compose --env-file ./envs/local.env -p "fast-n-foodious" up mysql-pagamento
+$ docker-compose --env-file ./envs/local.env -p "fast-n-foodious" up mongodb
 $ docker ps
 CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS         PORTS                               NAMES
-83c9b4d8880a   mysql:8.0   "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:3308->3308/tcp, 33060/tcp   mysql-pagamento
+83c9b4d8880a   mongo:7.0.5   "docker-entrypoint.s…"   3 seconds ago   Up 2 seconds   0.0.0.0:27017->27017/tcp, 33060/tcp   mongodb
 
-# Executa a aplicação com as variáveis locais, conectando no container do mysql
-$ MYSQL_HOST=localhost NODE_ENV=local npm run start
+# Executa a aplicação com as variáveis locais, conectando no container do mongodb
+$ DOCUMENTDB_URI=mongodb://fnf_user:fnfpass@localhost:27017/pagamento-db NODE_ENV=local npm run start
 ```
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
 ***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores.*
 
-***Nota 2:** O container da aplicação depende do mysql estar up & running. Então seja paciente, o tempo para o container do mysql estar disponível pode veriar, dependendo da disponibilidade de recursos e suas configurações de hardware locais.* 
+***Nota 2:** O container da aplicação depende do mongodb estar up & running. Então seja paciente, o tempo para o container do mongodb estar disponível pode veriar, dependendo da disponibilidade de recursos e suas configurações de hardware locais.* 
 
 #### 🫧 Docker Compose (Modo Fácil!)
-Inicia o container da aplicação e do mysql com as variáveis de produção, utilizando o docker compose:
+Inicia o container da aplicação e do mongodb com as variáveis de produção, utilizando o docker compose:
 ```bash
 $ docker-compose --env-file ./envs/prod.env build
 $ docker-compose --env-file ./envs/prod.env up -d
 $ docker ps
 CONTAINER ID   IMAGE                            COMMAND                  CREATED         STATUS         PORTS                               NAMES
 2a0f11e4ffe3   fast-n-foodious-ms-pagamento     "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3000->3002/tcp              fast-n-foodious-ms-pagamento
-06ebf6b90fa7   mysql:8.0                        "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:3308->3308/tcp, 33060/tcp   mysql
+06ebf6b90fa7   mongodb:8.0                        "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:27017->27017/tcp, 33060/tcp   mongodb
 ```
 
-A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mysql. Esta forma de inicialização é recomendada para testes e as imagens é baixadas do github em sua versão latest:
+A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mongodb. Esta forma de inicialização é recomendada para testes e as imagens é baixadas do github em sua versão latest:
 
 ```bash
 $ docker-compose --env-file ./envs/prod.env -f docker-compose-all.yml -p "fast-n-foodious" up --build
 ```
-**Nota:** É necessário realizar a inicialização do banco de dados para os microserviços. Na referência dos arquivos para a inicialização do schema, assumesse que todos os projetos estão localizados no mesmo diretório! Logo, certifique que os paths dos volumes para os containers do mysql estejam corretos. Exemplo para inicialização do banco (mapeamento de volume):
+**Nota:** É necessário realizar a inicialização do banco de dados para os microserviços. Na referência dos arquivos para a inicialização do schema, assumesse que todos os projetos estão localizados no mesmo diretório! Logo, certifique que os paths dos volumes para os containers do mongodb estejam corretos. Exemplo para inicialização do banco (mapeamento de volume):
 
 ```yml
  volumes:
       - dir-do-microservico/scripts/schema:/docker-entrypoint-initdb.d
 ```
 #### 💀 Docker (Modo Desbravador!)
-Inicia o container da aplicação e do mysql com as variáveis de produção, utilizando *`imagens docker`* do mysql e da aplicação:
+Inicia o container da aplicação e do mongodb com as variáveis de produção, utilizando *`imagens docker`* do mongodb e da aplicação:
 ```bash
 $ docker network create fast-n-foodious-network
 
-$ docker run -d --rm --name mysql-pagamento -p 3308:3308 \
+$ docker run -d --rm --name mongodb -p 27017:27017 \
     --env-file ./envs/prod.env --network fast-n-foodious-network \
-    -v ./scripts/schema:/docker-entrypoint-initdb.d \
-    -v mysql-data-pagamento:/data/db \
-    mysql:8.0
+    -v mongo-data-pagamento:/data/mongodb \
+    mongo:7.0.5
 
 $ docker run -d --rm --name fast-n-foodious-ms-pagamento -p 3002:3000 \
     --env-file ./envs/prod.env --network fast-n-foodious-network \
     ottero/fast-n-foodious-ms-pagamento:latest
 
 $ docker ps
-CONTAINER ID   IMAGE                                            COMMAND                  CREATED         STATUS         PORTS                               NAMES
-88bf7eae7e46   ottero/fast-n-foodious-ms-pagamento:latest       "docker-entrypoint.s…"   2 seconds ago   Up 1 second    0.0.0.0:3000->3002/tcp              fast-n-foodious-ms-pagamento
-8b0268d435a6   mysql:8.0                                        "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:3308->3308/tcp, 33060/tcp   mysql-pagamento
+CONTAINER ID   IMAGE                                               COMMAND                  CREATED         STATUS         PORTS                               NAMES
+88bf7eae7e46   ottero/fast-n-foodious-ms-pagamento:latest         "docker-entrypoint.s…"   2 seconds ago   Up 1 second    0.0.0.0:3000->3002/tcp              fast-n-foodious-ms-pagamento
+8b0268d435a6   mongo:7.0.5                                        "docker-entrypoint.s…"   6 seconds ago   Up 5 seconds   0.0.0.0:27017->27017/tcp, 33060/tcp   mongodb
 ```
 
 #### 🫧 Kubernetes (Modo Fácil!)
-Inicia o pod da aplicação e do mysql com as variáveis de produção, assim como suas dependências (services, deployments, replicasets, hpas, configmaps, secrets, pv, pvc) utilizando o helm:
+Inicia o pod da aplicação e do mongodb com as variáveis de produção, assim como suas dependências (services, deployments, replicasets, hpas, configmaps, secrets, pv, pvc) utilizando o helm:
 *Nota: Assume k8s pod/metrics-server up & running para habilitação de escalabilidade via HPA*
 
 *Nota: O `PersistentVolume` está configurado para `Filesystem`, com o `hostpath` apontando para uma pasta local de usuário. Certifique de apontar para um local onde tenha permissão de escrita e leitura. Para alterar o valor dessa hostpath, altere o valor da propriedade `pv.hostPath` no arquivo `/helm/values.yaml`*
@@ -214,27 +211,27 @@ $ kubectl get all
 
 NAME                                                    READY   STATUS    RESTARTS        AGE
 pod/fast-n-foodious-ms-pagamento-5c6cbcbf76-v4bgd       1/1     Running   1 (2m29s ago)   3m28s
-pod/mysql-pagamento-595c5c9d4f-x7grb                    1/1     Running   0               3m28s
+pod/mongodb-595c5c9d4f-x7grb                    1/1     Running   0               3m28s
 
 NAME                                                TYPE              CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
 service/fast-n-foodious-ms-pagamento            LoadBalancer      10.97.158.122   localhost       3002:30002/TCP   3m28s
 service/kubernetes                                  ClusterIP         10.96.0.1       <none>          443/TCP        9d
-service/mysql-pagamento                             ClusterIP         10.109.101.116  <none>          3308/TCP       3m28s
+service/mongodb                             ClusterIP         10.109.101.116  <none>          3308/TCP       3m28s
 
 NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/fast-n-foodious-ms-pagamento        1/1     1            1           3m28s
-deployment.apps/mysql-pagamento                     1/1     1            1           3m28s
+deployment.apps/mongodb                     1/1     1            1           3m28s
 
 NAME                                                        DESIRED   CURRENT   READY   AGE
 replicaset.apps/fast-n-foodious-ms-pagamento-5c6cbcbf76     1         1         1       3m28s
-replicaset.apps/mysql-pagamento-595c5c9d4f                            1         1         1       3m28s
+replicaset.apps/mongodb-595c5c9d4f                            1         1         1       3m28s
 
 NAME                                                                        REFERENCE                               TARGETS             MINPODS   MAXPODS   REPLICAS   AGE
 horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa        Deployment/fast-n-foodious-ms-pagamento   46%/70%, 0%/70%     1         3         1          3m28s
 ```
 
 #### 💀 Kubernetes (Modo Desbravador!)
-Inicia o pod da aplicação e do mysql com as variáveis de produção, assim como suas dependências (services, deployments, replicasets, hpas, configmaps, secrets, pv, pvc) utilizando o CLI kubectl:
+Inicia o pod da aplicação e do mongodb com as variáveis de produção, assim como suas dependências (services, deployments, replicasets, hpas, configmaps, secrets, pv, pvc) utilizando o CLI kubectl:
 *Nota: Assume k8s pod/metrics-server up & running para habilitação de escalabilidade via HPA*
 
 ```bash
@@ -243,7 +240,6 @@ secret/fast-n-foodious-ms-pagamento-secret created
 
 $ kubectl apply -f k8s/stress/fast-n-foodious-ms-pagamento-configmap.yml 
 configmap/fast-n-foodious-ms-pagamento-env created
-configmap/mysql-pagamento-env created
 
 $ kubectl apply -f k8s/stress/fast-n-foodious-pv.yml 
 persistentvolume/fast-n-foodious-ms-pagamento-pv created
@@ -253,11 +249,11 @@ persistentvolumeclaim/fast-n-foodious-ms-pagamento-pvc created
 
 $ kubectl apply -f k8s/stress/fast-n-foodious-ms-pagamento-deployment.yml 
 deployment.apps/fast-n-foodious-ms-pagamento created
-deployment.apps/mysql-pagamento created
+deployment.apps/mongodb created
 
 $ kubectl apply -f k8s/stress/fast-n-foodious-ms-pagamento-service.yml 
 service/fast-n-foodious-ms-pagamento created
-service/mysql-pagamento created
+service/mongodb created
 
 $ kubectl apply -f k8s/stress/fast-n-foodious-ms-pagamento-hpa.yml 
 horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa created
@@ -265,20 +261,20 @@ horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa created
 $ kubectl get all
 NAME                                                    READY   STATUS    RESTARTS   AGE
 pod/fast-n-foodious-ms-pagamento-7fc6f95bdb-krcnm       1/1     Running   0          2m58s
-pod/mysql-pagamento-595c5c9d4f-5vpj8                    1/1     Running   0          2m58s
+pod/mongodb-595c5c9d4f-5vpj8                    1/1     Running   0          2m58s
 
 NAME                                                TYPE            CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
 service/fast-n-foodious-ms-pagamento            LoadBalancer    10.110.74.44   localhost       3002:30002/TCP     2m53s
 service/kubernetes                                  ClusterIP       10.96.0.1       <none>        443/TCP          5m52s
-service/mysql-pagamento                             ClusterIP       10.108.3.249    <none>        3308/TCP         2m53s
+service/mongodb                             ClusterIP       10.108.3.249    <none>        3308/TCP         2m53s
 
 NAME                                                READY   UP-TO-DATE   AVAILABLE   AGE
 deployment.apps/fast-n-foodious-ms-pagamento        1/1     1            1           2m59s
-deployment.apps/mysql-pagamento                     1/1     1            1           2m59s
+deployment.apps/mongodb                     1/1     1            1           2m59s
 
 NAME                                                        DESIRED   CURRENT   READY   AGE
 replicaset.apps/fast-n-foodious-ms-pagamento-7fc6f95bdb     1         1         1       2m59s
-replicaset.apps/mysql-pagamento-595c5c9d4f                  1         1         1       2m58s
+replicaset.apps/mongodb-595c5c9d4f                  1         1         1       2m58s
 
 NAME                                                                        REFERENCE                                   TARGETS           MINPODS   MAXPODS   REPLICAS   AGE
 horizontalpodautoscaler.autoscaling/fast-n-foodious-ms-pagamento-hpa        fast-n-foodious-ms-pagamento-n-foodious     69%/80%, 0%/80%   1         3         1          2m48s 
@@ -294,7 +290,7 @@ Para realizar a desistalação da aplicação e o cleanup da infraestrutura, bas
 1. Se você utilizou o `docker` para subir a aplicação:
 
 ```bash
-$ docker stop mysql-pagamento fast-n-foodious-ms-pagamento
+$ docker stop mongodb fast-n-foodious-ms-pagamento
 mysql
 fast-n-foodious-ms-pagamento
 
@@ -319,7 +315,7 @@ Deleted: sha256:f93cb6531dabccc23848e273402d3fbef0515206efab1a29ccc1be81bf273dea
 $ docker-compose --env-file ./envs/local.env -p "fast-n-foodious" down -v
 [+] Running 4/4
  ✔ Container fast-n-foodious-ms-pagamento              Removed                                                                                           0.8s 
- ✔ Container mysql-pagamento                           Removed                                                                                           1.1s 
+ ✔ Container mongodb                           Removed                                                                                           1.1s 
  ✔ Volume fast-n-foodious-ms-pagamento_mysql-data      Removed                                                                                           0.0s 
  ✔ Network fast-n-foodious_fast-n-foodious-network     Removed                                                                                           0.1s
 
@@ -347,11 +343,11 @@ horizontalpodautoscaler.autoscaling "fast-n-foodious-ms-pagamento-hpa" deleted
 
 $ kubectl delete -f k8s/stress/fast-n-foodious-ms-pagamento-service.yml 
 service "fast-n-foodious-ms-pagamento" deleted
-service "mysql-pagamento" deleted
+service "mongodb" deleted
 
 $ kubectl delete -f k8s/stress/fast-n-foodious-ms-pagamento-deployment.yml 
 deployment.apps "fast-n-foodious-ms-pagamento" deleted
-deployment.apps "mysql-pagamento" deleted
+deployment.apps "mongodb" deleted
 
 $ kubectl delete -f k8s/stress/fast-n-foodious-ms-pagamento-pvc.yml 
 persistentvolumeclaim "fast-n-foodious-ms-pagamento-pvc" deleted
@@ -361,7 +357,6 @@ persistentvolume "fast-n-foodious-ms-pagamento-pv" deleted
 
 $ kubectl delete -f k8s/stress/fast-n-foodious-ms-pagamento-configmap.yml 
 configmap "fast-n-foodious-ms-pagamento-env" deleted
-configmap "mysql-pagamento-env" deleted
 
 $ kubectl delete -f k8s/stress/fast-n-foodious-ms-pagamento-secret.yml 
 secret "fast-n-foodious-ms-pagamento-secret" deleted
@@ -415,7 +410,7 @@ $ docker-compose --env-file ./envs/{env-name}.env -p "fast-n-foodious" down {ser
 **Nota:** Os serviços registrados no docker-compose são:
 ```
 - fast-n-foodious-ms-pagamento
-- mysql-pagamento
+- mongodb
 ```
 
 ## 🧪 Testes
@@ -460,7 +455,7 @@ NAME                                                READY   STATUS    RESTARTS  
 fast-n-foodious-ms-pagamento-5c6cbcbf76-n5vn5       1/1     Running   1 (6m49s ago)   7m46s
 fast-n-foodious-ms-pagamento-5c6cbcbf76-q5q7t       1/1     Running   0               106s
 k6-stress-job-fkjv9                                 1/1     Running   0               6s
-mysql-pagamento-595c5c9d4f-chlrx                    1/1     Running   0               7m46s
+mongodb-595c5c9d4f-chlrx                    1/1     Running   0               7m46s
 
 $ kubectl logs -f k6-stress-job-fkjv9
 
