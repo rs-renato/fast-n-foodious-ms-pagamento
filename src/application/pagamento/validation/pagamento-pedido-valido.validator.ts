@@ -42,7 +42,7 @@ export class PagamentoPedidoValidoValidator implements PagamentoValidator {
 
     // calcular o total do pedido
     let totalPedido = 0;
-    for (const itemPedido of pedido?.itensPedido) {
+    for (const itemPedido of pedido.itensPedido) {
       totalPedido += itemPedido.quantidade * itemPedido?.produto.preco;
     }
     pedido.total = totalPedido;
