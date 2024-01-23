@@ -18,29 +18,14 @@ Para operações que envolvem leituras intensivas, o MongoDB pode oferecer desem
 
 O MongoDB oferece uma versão gratuita em nuvem através do MongoDB Atlas, o que condiz com o objetivo educacional do projeto.
 
-### Familiariadade do time com o MongoDB
-
-Apesar de sua popularidade, os membros da equipe não tinham bastante experiência com ele. E depois de pesquisar um pouco mais sobre banco de dados NoSQL, dentre algumas outras opções optamos pelo MongoDB uma vez que sua implementação e usabilidade eram mais familiares e declarativas.
-
 ### Substituição do MySQL pelo MongoDB/DocumentDB
 
-A mudança foi solicitada pelos stakeholders, e o processo de substituição foi trabalhoso devido à falta de experiência com ele, porem o microsserviço de pagamento era menor, considerando que ele iria contemplar apenas a tabela de pagamento recebendo apenas o ID do pedido de forma externa. A implementação na AWS que foi mais trabalhada devido também à falta de experiência com o mesmo.
+Durante a transição do projeto de monolito para microsserviços e sua migração para a nuvem AWS, o MySQL foi inicialmente substituído pelo Amazon Aurora MySQL. No entanto, a escolha estratégica mais recente recaiu sobre o MongoDB, integrado ao Amazon DocumentDB.
 
-## Modelo de dados
+Essa mudança permitiu flexibilidade no esquema, agilizando o desenvolvimento e evitando alterações frequentes nos esquemas existentes. Além disso, o MongoDB proporcionou desempenho superior em leituras intensivas, especialmente em consultas com documentos aninhados, simplificando operações sem a necessidade de junções complexas. Essa adaptação  não só manteve a coerência na nuvem, mas também contribuiu para a eficiência operacional e custos, com a oferta gratuita do MongoDB Atlas para fins educacionais no âmbito do projeto.
 
-### Diagrama
+## Collection
 
-![fast-n-foodious-ms-pagamento-data-model.png](diagramas/fast-n-foodious-ms-pagamento-data-model.png)
+### Pagamento
 
-### Código DBML
-
-```dbml
-Documento "PAGAMENTO" {
-  "ID" INT [pk, increment]
-  "PEDIDO_ID" INT [not null]
-  "TRANSACAO_ID" VARCHAR(255) [not null]
-  "ESTADO_PAGAMENTO" INT [not null]
-  "TOTAL" DECIMAL(8,2) [not null]
-  "DATA_HORA_PAGAMENTO" DATETIME
-}
-```
+![fast-n-foodious-data-model.png](diagramas/fast-n-foodious-data-model.png)

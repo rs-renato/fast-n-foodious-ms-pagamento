@@ -11,6 +11,29 @@ data:
   MYSQL_ROOT_HOST: "%"
   NODE_ENV: {{ .Values.configMap.data.NODE_ENV }}
   SERVER_PORT: "3002"
+  DATABASE_ENGINE: {{ .Values.configMap.data.DATABASE_ENGINE }}
+  DOCUMENTDB_URI: {{ .Values.configMap.data.DOCUMENTDB_URI }}
+  DOCUMENTDB_USER: {{ .Values.configMap.data.DOCUMENTDB_USER }}
+  DOCUMENTDB_DATABASE: {{ .Values.configMap.data.DOCUMENTDB_DATABASE }}
+  DOCUMENTDB_DATABASE_TLS_CA_FILE: {{ .Values.configMap.data.DOCUMENTDB_DATABASE_TLS_CA_FILE }}
+  ensure-users.sh: |
+      set -e
+
+      mongosh <<EOF
+      use $MONGO_INITDB_DATABASE
+
+      print('mongodb startup script..');
+      db.createUser({
+        user: '$MONGO_INITDB_ROOT_USERNAME',
+        pwd: '$MONGO_INITDB_ROOT_PASSWORD',
+        roles: [{
+          role: 'readWrite',
+          db: '$MONGO_INITDB_DATABASE'
+        }]
+      })
+      print('user created..');
+
+      EOF
 ---
 apiVersion: v1
 kind: ConfigMap

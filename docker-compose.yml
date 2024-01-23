@@ -44,7 +44,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: $DOCUMENTDB_PASSWORD
       MONGO_INITDB_DATABASE: $DOCUMENTDB_DATABASE
     volumes:
-      - mongo-data-pagamento:/data/db
+      - mongo-data-pagamento:/data/mongodb
     networks:
       - fast-n-foodious-network
 

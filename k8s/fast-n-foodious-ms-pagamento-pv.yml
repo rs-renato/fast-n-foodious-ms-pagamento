@@ -11,5 +11,5 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: fast-n-foodious-ms-pagamento-storage
   hostPath:
-     path: /Users/renatorodrigues/mysql-pagamento
+     path: /Users/renatorodrigues/mongodb-pagamento
      type: DirectoryOrCreate

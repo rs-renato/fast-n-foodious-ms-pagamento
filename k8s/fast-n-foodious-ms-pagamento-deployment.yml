@@ -40,79 +40,152 @@ spec:
           - configMapRef:
               name: fast-n-foodious-ms-pagamento-env
         env:
-          - name: MYSQL_PASSWORD
+          - name: DOCUMENTDB_URI
+            valueFrom:
+              configMapKeyRef:
+                name: fast-n-foodious-ms-pagamento-env
+                key: DOCUMENTDB_URI
+          - name: DOCUMENTDB_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: fast-n-foodious-ms-pagamento-secret
-                key: MYSQL_PASSWORD
+                key: DOCUMENTDB_PASSWORD
           - name: SERVER_PORT
             valueFrom:
               configMapKeyRef:
                 name: fast-n-foodious-ms-pagamento-env
                 key: SERVER_PORT
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mysql-pagamento
+# spec:
+#   selector:
+#     matchLabels:
+#       app: mysql-pagamento
+#   template:
+#     metadata:
+#       labels:
+#         app: mysql-pagamento
+#     spec:
+#       containers:
+#       - name: mysql-pagamento
+#         image: mysql:8.0
+#         resources:
+#           limits:
+#             memory: "768Mi"
+#             cpu: "500m"
+#         ports:
+#           - containerPort: 3306
+#         livenessProbe:
+#           tcpSocket:
+#             port: 3306
+#           initialDelaySeconds: 10
+#           periodSeconds: 10
+#           successThreshold: 1
+#           failureThreshold: 3
+#         readinessProbe:
+#           tcpSocket:
+#             port: 3306
+#           initialDelaySeconds: 30
+#           periodSeconds: 10
+#           successThreshold: 1
+#           failureThreshold: 3
+#         envFrom:
+#           - configMapRef:
+#               name: fast-n-foodious-ms-pagamento-env
+#         env:
+#           - name: MYSQL_ROOT_PASSWORD
+#             valueFrom:
+#               secretKeyRef:
+#                 name: fast-n-foodious-ms-pagamento-secret
+#                 key: MYSQL_ROOT_PASSWORD
+#           - name: MYSQL_PASSWORD
+#             valueFrom:
+#               secretKeyRef:
+#                 name: fast-n-foodious-ms-pagamento-secret
+#                 key: MYSQL_PASSWORD
+#         volumeMounts:
+#           - name: fast-n-foodious-ms-pagamento-mysql-init
+#             mountPath: /docker-entrypoint-initdb.d
+#           - name: fast-n-foodious-ms-pagamento-volume
+#             mountPath: /var/lib/mysql-pagamento
+#       volumes:
+#         - name: fast-n-foodious-ms-pagamento-volume
+#           persistentVolumeClaim:
+#             claimName: fast-n-foodious-ms-pagamento-pvc
+#         - name: fast-n-foodious-ms-pagamento-mysql-init
+#           configMap:
+#             name: mysql-pagamento-env
+#             items:
+#               - key: init.sql
+#                 path: 1-init.sql
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-pagamento
+  name: mongodb
 spec:
   selector:
     matchLabels:
-      app: mysql-pagamento
+      app: mongodb
   template:
     metadata:
       labels:
-        app: mysql-pagamento
+        app: mongodb
     spec:
       containers:
-      - name: mysql-pagamento
-        image: mysql:8.0
+      - name: mongodb
+        image: mongo:7.0.5
         resources:
           limits:
             memory: "768Mi"
             cpu: "500m"
         ports:
-          - containerPort: 3306
+          - containerPort: 27017
         livenessProbe:
           tcpSocket:
-            port: 3306
+            port: 27017
           initialDelaySeconds: 10
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
         readinessProbe:
           tcpSocket:
-            port: 3306
+            port: 27017
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
-        envFrom:
-          - configMapRef:
-              name: fast-n-foodious-ms-pagamento-env
         env:
-          - name: MYSQL_ROOT_PASSWORD
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: fast-n-foodious-ms-pagamento-env
+                key: DOCUMENTDB_USER
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: fast-n-foodious-ms-pagamento-env
+                key: DOCUMENTDB_DATABASE                
+          - name: MONGO_INITDB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: fast-n-foodious-ms-pagamento-secret
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: fast-n-foodious-ms-pagamento-secret
-                key: MYSQL_PASSWORD
+                key: DOCUMENTDB_PASSWORD
         volumeMounts:
-          - name: fast-n-foodious-ms-pagamento-mysql-init
-            mountPath: /docker-entrypoint-initdb.d
           - name: fast-n-foodious-ms-pagamento-volume
-            mountPath: /var/lib/mysql-pagamento
+            mountPath: /data/mongodb
+          - name: mongodb-scripts
+            mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: fast-n-foodious-ms-pagamento-volume
           persistentVolumeClaim:
             claimName: fast-n-foodious-ms-pagamento-pvc
-        - name: fast-n-foodious-ms-pagamento-mysql-init
+        - name: mongodb-scripts
           configMap:
-            name: mysql-pagamento-env
+            name: fast-n-foodious-ms-pagamento-env
             items:
-              - key: init.sql
-                path: 1-init.sql
+            - key: ensure-users.sh
+              path: ensure-users.sh

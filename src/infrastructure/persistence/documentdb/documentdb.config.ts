@@ -9,18 +9,18 @@ import { MongooseModuleOptions } from '@nestjs/mongoose';
     {
       provide: DatabaseDocConstants.DATABASE_DOC_CONFIG_NAME,
       useFactory: (configService: ConfigService): MongooseModuleOptions => ({
-        uri: `${configService.get<string>('DOCUMENTDB_URI')}`,
-        dbName: configService.get<string>('DOCUMENTDB_DATABASE'),
-        auth: {
-          username: configService.get<string>('DOCUMENTDB_USER'),
-          password: configService.get<string>('DOCUMENTDB_PASSWORD'),
-        },
+        uri: configService.get<string>('DOCUMENTDB_URI'),
+        // dbName: configService.get<string>('DOCUMENTDB_DATABASE'),
+        // auth: {
+        //   username: configService.get<string>('DOCUMENTDB_USER'),
+        //   password: configService.get<string>('DOCUMENTDB_PASSWORD'),
+        // },
         authSource: 'admin',
         autoCreate: DatabaseDocConstants.DATABASE_DOC_AUTO_CREATE,
         tls: DatabaseDocConstants.DATABASE_DOC_TLS,
         tlsInsecure: DatabaseDocConstants.DATABASE_DOC_TLS_INSECURE,
         tlsCAFile: configService.get<string>('DOCUMENTDB_DATABASE_TLS_CA_FILE'),
-        retryAttempts: 5,
+        retryAttempts: 3
       }),
       inject: [ConfigService],
     },

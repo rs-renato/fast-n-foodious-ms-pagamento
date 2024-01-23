@@ -51,70 +51,139 @@ spec:
               configMapKeyRef:
                 name: {{ .Values.application.name }}-env
                 key: SERVER_PORT
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: {{ .Values.mysql.name }}
+#   namespace: {{ .Values.namespace }}
+# spec:
+#   selector:
+#     matchLabels:
+#       app: {{ .Values.mysql.name }}
+#   template:
+#     metadata:
+#       labels:
+#         app: {{ .Values.mysql.name }}
+#     spec:
+#       containers:
+#       - name: {{ .Values.mysql.name }}
+#         image: {{ .Values.mysql.image }}
+#         resources:
+#           limits:
+#             memory: {{ .Values.mysql.resources.limits.memory }}
+#             cpu: {{ .Values.mysql.resources.limits.cpu }}
+#         ports:
+#           - containerPort: 3306
+#         livenessProbe:
+#           tcpSocket:
+#             port: 3306
+#           initialDelaySeconds: 10
+#           periodSeconds: 10
+#           successThreshold: 1
+#           failureThreshold: 3
+#         readinessProbe:
+#           tcpSocket:
+#             port: 3306
+#           initialDelaySeconds: 30
+#           periodSeconds: 10
+#           successThreshold: 1
+#           failureThreshold: 3
+#         envFrom:
+#           - configMapRef:
+#               name: {{ .Values.application.name }}-env
+#         env:
+#           - name: MYSQL_ROOT_PASSWORD
+#             valueFrom:
+#               secretKeyRef:
+#                 name: {{ .Values.application.name }}-secret
+#                 key: MYSQL_ROOT_PASSWORD
+#           - name: MYSQL_PASSWORD
+#             valueFrom:
+#               secretKeyRef:
+#                 name: {{ .Values.application.name }}-secret
+#                 key: MYSQL_PASSWORD
+#         volumeMounts:
+#           - name: {{ .Values.application.name }}-mysql-init
+#             mountPath: /docker-entrypoint-initdb.d
+#           - name: {{ .Values.application.name }}-volume
+#             mountPath: {{ .Values.mysql.mountPath }}
+#       volumes:
+#         - name: {{ .Values.application.name }}-volume
+#           persistentVolumeClaim:
+#             claimName: {{ .Values.pvc.name }}
+#         - name: {{ .Values.application.name }}-mysql-init
+#           configMap:
+#             name: {{ .Values.mysql.name }}-env
+#             items:
+#               - key: init.sql
+#                 path: 1-init.sql
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.mysql.name }}
+  name: {{ .Values.mongodb.name }}
   namespace: {{ .Values.namespace }}
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.mysql.name }}
+      app: {{ .Values.mongodb.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.mysql.name }}
+        app: {{ .Values.mongodb.name }}
     spec:
       containers:
-      - name: {{ .Values.mysql.name }}
-        image: {{ .Values.mysql.image }}
+      - name: {{ .Values.mongodb.name }}
+        image: {{ .Values.mongodb.image }}
         resources:
           limits:
-            memory: {{ .Values.mysql.resources.limits.memory }}
-            cpu: {{ .Values.mysql.resources.limits.cpu }}
+            memory: {{ .Values.mongodb.resources.limits.memory }}
+            cpu: {{ .Values.mongodb.resources.limits.cpu }}
         ports:
-          - containerPort: 3306
+          - containerPort: 27017
         livenessProbe:
           tcpSocket:
-            port: 3306
+            port: 27017
           initialDelaySeconds: 10
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
         readinessProbe:
           tcpSocket:
-            port: 3306
+            port: 27017
           initialDelaySeconds: 30
           periodSeconds: 10
           successThreshold: 1
           failureThreshold: 3
-        envFrom:
-          - configMapRef:
-              name: {{ .Values.application.name }}-env
         env:
-          - name: MYSQL_ROOT_PASSWORD
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.application.name }}-env
+                key: DOCUMENTDB_USER
+          - name: MONGO_INITDB_DATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.application.name }}-env
+                key: DOCUMENTDB_DATABASE                
+          - name: MONGO_INITDB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 name: {{ .Values.application.name }}-secret
-                key: MYSQL_ROOT_PASSWORD
-          - name: MYSQL_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.application.name }}-secret
-                key: MYSQL_PASSWORD
+                key: DOCUMENTDB_PASSWORD
         volumeMounts:
-          - name: {{ .Values.application.name }}-mysql-init
-            mountPath: /docker-entrypoint-initdb.d
           - name: {{ .Values.application.name }}-volume
-            mountPath: {{ .Values.mysql.mountPath }}
+            mountPath: {{ .Values.mongodb.mountPath }}
+          - name: mongodb-scripts
+            mountPath: /docker-entrypoint-initdb.d
       volumes:
         - name: {{ .Values.application.name }}-volume
           persistentVolumeClaim:
-            claimName: {{ .Values.pvc.name }}
-        - name: {{ .Values.application.name }}-mysql-init
+            claimName: {{ .Values.application.name }}-pvc
+        - name: mongodb-scripts
           configMap:
-            name: {{ .Values.mysql.name }}-env
+            name: {{ .Values.application.name }}-env
             items:
-              - key: init.sql
-                path: 1-init.sql
+            - key: ensure-users.sh
+              path: ensure-users.sh

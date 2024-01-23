@@ -21,11 +21,25 @@ mysql:
       memory: "768Mi"
       cpu: "500m"
 
+mongodb:
+  name: mongodb
+  image: mongo:7.0.5
+  mountPath: /data/mongodb
+  resources:
+    limits:
+      memory: "768Mi"
+      cpu: "500m"
+
 configMap:
   data:
     NODE_ENV: prod
     MYSQL_HOST: mysql-pagamento
     MYSQL_USER: fnf_user
+    DATABASE_ENGINE: nosql
+    DOCUMENTDB_URI: mongodb://fnf_user:fnfpass@mongodb:27017/pagamento-db
+    DOCUMENTDB_USER: fnf_user
+    DOCUMENTDB_DATABASE: pagamento-db
+    DOCUMENTDB_DATABASE_TLS_CA_FILE: global-bundle.pem
 
 hpa:
   minReplicas: 1
@@ -38,10 +52,10 @@ hpa:
 pv:
   name: fast-n-foodious-ms-pagamento-pv
   storage: 500Mi
-  hostPath: /Users/renatorodrigues/mysql
+  hostPath: /Users/renatorodrigues/mongodb-pagamento
 
 pvc:
-  name: fast-n-foodious-ms-pagamentos-pvc
+  name: fast-n-foodious-ms-pagamento-pvc
   requests:
       storage: 500Mi
 
@@ -51,3 +65,4 @@ secret:
   data:
     MYSQL_PASSWORD: Zm5mX3Bhc3M=
     MYSQL_ROOT_PASSWORD: Zm5mX3Bhc3M=
+    DOCUMENTDB_PASSWORD: Zm5mcGFzcw==
