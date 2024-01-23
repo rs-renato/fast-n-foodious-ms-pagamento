@@ -1,8 +1,8 @@
-import { NotFoundException, ServiceUnavailableException, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { Injectable, Logger, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import * as process from 'process';
 import { catchError, lastValueFrom, map } from 'rxjs';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
-import * as process from 'process';
 
 @Injectable()
 export class PedidoIntegration {

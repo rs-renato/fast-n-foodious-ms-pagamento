@@ -10,6 +10,29 @@ data:
   MYSQL_ROOT_HOST: '%'
   NODE_ENV: prod
   SERVER_PORT: '3002'
+  DATABASE_ENGINE: nosql
+  DOCUMENTDB_URI: mongodb://fnf_user:fnfpass@mongodb:27017/pagamento-db
+  DOCUMENTDB_USER: fnf_user
+  DOCUMENTDB_DATABASE: pagamento-db
+  DOCUMENTDB_DATABASE_TLS_CA_FILE: global-bundle.pem
+  ensure-users.sh: |
+      set -e
+
+      mongosh <<EOF
+      use $MONGO_INITDB_DATABASE
+
+      print('mongodb startup script..');
+      db.createUser({
+        user: '$MONGO_INITDB_ROOT_USERNAME',
+        pwd: '$MONGO_INITDB_ROOT_PASSWORD',
+        roles: [{
+          role: 'readWrite',
+          db: '$MONGO_INITDB_DATABASE'
+        }]
+      })
+      print('user created..');
+
+      EOF
 ---
 apiVersion: v1
 kind: ConfigMap

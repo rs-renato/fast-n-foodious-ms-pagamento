@@ -41,6 +41,7 @@ jobs:
         run: npm install && NODE_ENV=local-mock-repository npm run test:e2e
 
   e2e-mysql:
+    if: ${{vars.DATABASE_ENGINE == 'sql'}}
     runs-on: ubuntu-latest
     env:
       MYSQL_USER: ${{vars.MYSQL_USER}}

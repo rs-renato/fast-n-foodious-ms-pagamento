@@ -11,30 +11,46 @@ services:
     ports:
       - ${SERVER_PORT:-3002}:${SERVER_PORT:-3002}
     depends_on:
-      - mysql-pagamento
+      # - mysql-pagamento
+      - mongodb
     networks:
       - fast-n-foodious-network
-  mysql-pagamento:
-    image: mysql:8.0
-    container_name: mysql-pagamento
-    restart: unless-stopped
-    environment:
-      MYSQL_PASSWORD: $MYSQL_PASSWORD
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_USER: $MYSQL_USER
-      MYSQL_DATABASE: $MYSQL_DATABASE
-      MYSQL_TCP_PORT: ${MYSQL_PORT:-3308}
+  # mysql-pagamento:
+  #   image: mysql:8.0
+  #   container_name: mysql-pagamento
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_PASSWORD: $MYSQL_PASSWORD
+  #     MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+  #     MYSQL_ROOT_HOST: '%'
+  #     MYSQL_USER: $MYSQL_USER
+  #     MYSQL_DATABASE: $MYSQL_DATABASE
+  #     MYSQL_TCP_PORT: ${MYSQL_PORT:-3308}
+  #   ports:
+  #     - ${MYSQL_PORT:-3308}:${MYSQL_PORT:-3308}
+  #   volumes:
+  #     - ./scripts/schema:/docker-entrypoint-initdb.d
+  #     - mysql-data-pagamento:/data/db
+  #   networks:
+  #     - fast-n-foodious-network
+  mongodb:
+    container_name: mongodb
+    image: mongo:7.0.5
     ports:
-      - ${MYSQL_PORT:-3308}:${MYSQL_PORT:-3308}
+      - '27017:27017'
+    environment:
+      DOCUMENTDB_URI: $DOCUMENTDB_URI
+      MONGO_INITDB_ROOT_USERNAME: $DOCUMENTDB_USER
+      MONGO_INITDB_ROOT_PASSWORD: $DOCUMENTDB_PASSWORD
+      MONGO_INITDB_DATABASE: $DOCUMENTDB_DATABASE
     volumes:
-      - ./scripts/schema:/docker-entrypoint-initdb.d
-      - mysql-data-pagamento:/data/db
+      - mongo-data-pagamento:/data/mongodb
     networks:
       - fast-n-foodious-network
 
 volumes:
-  mysql-data-pagamento:
+  # mysql-data-pagamento:
+  mongo-data-pagamento:
 networks:
   fast-n-foodious-network:
     driver: bridge

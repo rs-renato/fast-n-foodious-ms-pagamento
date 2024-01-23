@@ -10,10 +10,13 @@ import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/pro
 import { PagamentoConstants } from 'src/shared/constants';
 import { HttpModule } from '@nestjs/axios';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
+import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
+import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 
 describe('PagamentoService', () => {
   let service: IPagamentoService;
   let pagamentoRepository: IRepository<Pagamento>;
+  let pedidoIntegration: PedidoIntegration;
 
   const pagamento: Pagamento = {
     dataHoraPagamento: new Date(),
@@ -22,6 +25,31 @@ describe('PagamentoService', () => {
     total: 10,
     transacaoId: '1',
     id: 1,
+  };
+
+  const pedidoDTO: PedidoDto = {
+    clienteId: 1,
+    dataInicio: '2024-01-05',
+    estadoPedido: 0,
+    ativo: true,
+    id: 1,
+    total: 10,
+    itensPedido: [
+      {
+        pedidoId: 1,
+        produtoId: 1,
+        quantidade: 1,
+        produto: {
+          preco: 10,
+          nome: 'Produto 1',
+          idCategoriaProduto: 1,
+          ativo: true,
+          descricao: 'Produto 1',
+          id: 1,
+          imagemBase64: '',
+        },
+      },
+    ],
   };
 
   const pagamentos: Pagamento[] = [
@@ -75,7 +103,10 @@ describe('PagamentoService', () => {
 
     // Obtém a instância do repositório, validators e serviço a partir do módulo de teste
     pagamentoRepository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
+    pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
     service = module.get<IPagamentoService>(PagamentoConstants.ISERVICE);
+
+    jest.spyOn(pedidoIntegration, 'getPedidoById').mockResolvedValue(pedidoDTO);
   });
 
   describe('injeção de dependências', () => {

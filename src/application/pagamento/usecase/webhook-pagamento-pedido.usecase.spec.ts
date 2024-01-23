@@ -5,7 +5,6 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
-import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
 import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 import { PagamentoConstants } from 'src/shared/constants';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';
@@ -13,7 +12,7 @@ import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/
 describe('WebhookPagamentoPedidoUseCase', () => {
   let useCase: WebhookPagamentoPedidoUseCase;
   let repository: IRepository<Pagamento>;
-  let buscaPedidoIdUseCase: BuscaPedidoIdUseCase;
+
   let atualizaPedidoComoRecebidoUseCase: AtualizaPedidoComoRecebidoUseCase;
 
   const mockedValidators: WebhookPagamentoValidator[] = []; // Adicione os validadores conforme necessário
@@ -59,9 +58,11 @@ describe('WebhookPagamentoPedidoUseCase', () => {
       ],
     }).compile();
 
+    // Desabilita a saída de log
+    module.useLogger(false);
+
     useCase = module.get<WebhookPagamentoPedidoUseCase>(WebhookPagamentoPedidoUseCase);
     repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
-    buscaPedidoIdUseCase = module.get<BuscaPedidoIdUseCase>(PagamentoConstants.BUSCA_PEDIDO_ID_USECASE);
     atualizaPedidoComoRecebidoUseCase = module.get<AtualizaPedidoComoRecebidoUseCase>(
       PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
     );
