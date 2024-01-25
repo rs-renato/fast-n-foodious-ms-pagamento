@@ -24,7 +24,6 @@ export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagament
       `Inicializando validação ${WebhookPagamentoPagamentoValidoValidator.name} para verificar o estado do pagamento: ${pagamento.id}`,
     );
 
-    this.logger.debug('---- RODRIGO -----');
     this.logger.debug(`Pagamento: ${JSON.stringify(pagamentoParametro)}`);
     this.logger.debug(`Pagamento: ${JSON.stringify(pagamento)}`);
     this.logger.debug(`DATABASE_ENGINE: ${process.env.DATABASE_ENGINE}`);
@@ -46,7 +45,6 @@ export class WebhookPagamentoPagamentoValidoValidator implements WebhookPagament
       }
     });
 
-    this.logger.debug('---- OTTERO -----');
     return true;
   }
 

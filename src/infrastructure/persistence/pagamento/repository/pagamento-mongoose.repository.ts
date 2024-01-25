@@ -38,11 +38,12 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
     });
   }
   async edit(pagamento: Pagamento): Promise<Pagamento> {
+    this.logger.debug(`Editando pagamento: ${JSON.stringify(pagamento)}`);
     const pagamentoDocument = await this.pagamentoModel
       .find({
         _id: pagamento._id,
       })
-      .lean()
+      //.lean()
       .then((returnedPagamentoDocument) => {
         return returnedPagamentoDocument[0];
       });
@@ -75,6 +76,7 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
       total: updatedPagamento.total,
       dataHoraPagamento: updatedPagamento.dataHoraPagamento,
     };
+    this.logger.debug(`Pagamento editado com sucesso: ${JSON.stringify(pagamentoEditado)}`);
     return pagamentoEditado;
   }
 
