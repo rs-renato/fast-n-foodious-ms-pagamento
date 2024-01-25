@@ -18,6 +18,7 @@ import { BuscaPedidoIdUseCase } from 'src/application/pagamento/usecase/busca-pe
 import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 import { PagamentoValidator } from '../validation/pagamento.validator';
 import { PagamentoPedidoValidoValidator } from '../validation/pagamento-pedido-valido.validator';
+import { GerarQrCodePagamentoPedidoUseCase } from 'src/application/pagamento/usecase/gerar-qrcode-pagamento-pedido.usecase';
 
 export const PagamentoProviders: Provider[] = [
   {
@@ -58,6 +59,11 @@ export const PagamentoProviders: Provider[] = [
         atualizaPedidoComoRecebidoUseCase,
         validators,
       ),
+  },
+  {
+    provide: PagamentoConstants.GERAR_QRCODE_PAGAMENTO_PEDIDO_USECASE,
+    useFactory: (): GerarQrCodePagamentoPedidoUseCase =>
+      new GerarQrCodePagamentoPedidoUseCase(),
   },
   {
     provide: PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,

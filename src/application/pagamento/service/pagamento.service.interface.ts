@@ -4,6 +4,6 @@ import { IService } from 'src/enterprise/service/service';
 
 export interface IPagamentoService extends IService<Pagamento> {
   buscarEstadoPagamentoPedido(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento }>;
-  solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<Pagamento>;
+  solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<[Pagamento, string]>;
   webhookPagamentoPedido(transacaoId: string, estadoPagamento: number): Promise<boolean>;
 }

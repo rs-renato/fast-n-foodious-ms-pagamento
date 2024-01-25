@@ -139,8 +139,9 @@ describe('PagamentoService', () => {
     it('deve solicitar pagamento corretamente', async () => {
       const pedidoId = 1;
       const totalPedido = 10;
-      await service.solicitarPagamentoPedido(pedidoId, totalPedido).then((pagamento) => {
+      await service.solicitarPagamentoPedido(pedidoId, totalPedido).then(([pagamento, qrCode]) => {
         expect(pagamento.pedidoId).toEqual(pedidoId);
+        expect(qrCode).not.toBeUndefined;
       });
     });
     it('não deve fazer solicitação de pagamento quando houver erro de banco ', async () => {
