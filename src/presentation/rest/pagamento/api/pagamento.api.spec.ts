@@ -14,6 +14,8 @@ describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
   let service: IPagamentoService;
 
+  const qrCode = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOwAAAD';
+
   const buscarEstadoPagamentoPedidoRequest: BuscarEstadoPagamentoPedidoRequest = {
     pedidoId: 1,
   };
@@ -38,6 +40,7 @@ describe('PagamentoRestApi', () => {
 
   const solicitacaoPagamentoResponse: SolicitacaoPagamentoResponse = {
     pagamento: pagamentoSolicitado,
+    qrCode: qrCode,
   };
 
   beforeEach(async () => {
@@ -56,7 +59,7 @@ describe('PagamentoRestApi', () => {
             webhookPagamentoPedido: jest.fn(() => Promise.resolve(true)),
             solicitarPagamentoPedido: jest.fn((pedidoId, totalPedido) =>
               pedidoId === 1 && totalPedido === 100
-                ? Promise.resolve(pagamentoSolicitado)
+                ? Promise.resolve([pagamentoSolicitado, qrCode])
                 : Promise.reject(new Error('error')),
             ),
           },

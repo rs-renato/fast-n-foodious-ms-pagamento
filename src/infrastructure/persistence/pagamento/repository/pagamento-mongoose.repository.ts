@@ -1,12 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Error, Model, Promise } from 'mongoose';
+import { Model } from 'mongoose';
 import { PagamentoMongoDbEntity } from 'src/infrastructure/persistence/pagamento/schemas/pagamento.schema';
 import { PagamentoDocument } from 'src/infrastructure/persistence/pagamento/interface/pagamento.interface';
 import { CreatePagamentoDto } from 'src/infrastructure/persistence/pagamento/dto/create-pagamento.dto';
 import { UpdatePagamentoDto } from 'src/infrastructure/persistence/pagamento/dto/update-pagamento.dto';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
+import { RepositoryException } from 'src/infrastructure/exception/repository.exception';
 
 @Injectable()
 export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
@@ -66,7 +67,7 @@ export class PagamentoMongoDbRepository implements IRepository<Pagamento> {
     this.logger.log(`updatedPagamento = ${JSON.stringify(updatedPagamento)}`);
 
     if (!updatedPagamento) {
-      throw new Error(`Pagamento ${pagamento._id} not found`);
+      throw new RepositoryException(`Pagamento ${pagamento._id} not found`);
     }
     const pagamentoEditado: Pagamento = {
       _id: updatedPagamento._id.toString(),
