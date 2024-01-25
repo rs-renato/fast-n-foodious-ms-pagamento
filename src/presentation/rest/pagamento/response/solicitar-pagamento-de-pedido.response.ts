@@ -7,7 +7,7 @@ export class SolicitacaoPagamentoResponse {
   @ApiProperty({ required: true, nullable: false, description: 'Informações do pagamento solicitado' })
   public pagamento: PagamentoResponseDto;
 
-  @ApiProperty({ required: true, nullable: false, description: 'QrCode de pagamento'})
+  @ApiProperty({ required: true, nullable: false, description: 'QrCode de pagamento' })
   public qrCode: string;
 
   constructor(pagamento: Pagamento, qrCode: string) {

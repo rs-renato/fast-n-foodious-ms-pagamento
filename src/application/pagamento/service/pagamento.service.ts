@@ -30,7 +30,7 @@ export class PagamentoService implements IPagamentoService {
   async solicitarPagamentoPedido(pedidoId: number, totalPedido: number): Promise<[Pagamento, string]> {
     const pagamento = await this.solicitarPagamentoPedidoUsecase.solicitaPagamento(pedidoId, totalPedido);
     const qrCode = await this.gerarQrCodePagamentoPedidoUseCase.gerarQrCode(pagamento);
-    return [pagamento, qrCode]
+    return [pagamento, qrCode];
   }
 
   async webhookPagamentoPedido(transacaoId: string, estadoPagamento: number): Promise<boolean> {

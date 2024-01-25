@@ -71,7 +71,8 @@ export class PagamentoRestApi extends BaseRestApi {
   @Post('solicitar')
   @ApiOperation({
     summary: 'Solicita pagamento  para um pedido e gera o seu respectivo QRCode',
-    description: 'Registra a solicitação de pagamento para um dado pedido, gerando o código QRCode para realização do pagamento.',
+    description:
+      'Registra a solicitação de pagamento para um dado pedido, gerando o código QRCode para realização do pagamento.',
   })
   @ApiOkResponse({
     description: 'Solicitação efetuada com sucesso',

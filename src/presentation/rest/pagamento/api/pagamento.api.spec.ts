@@ -14,7 +14,7 @@ describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
   let service: IPagamentoService;
 
-  const qrCode: string = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOwAAAD'
+  const qrCode = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOwAAAD';
 
   const buscarEstadoPagamentoPedidoRequest: BuscarEstadoPagamentoPedidoRequest = {
     pedidoId: 1,

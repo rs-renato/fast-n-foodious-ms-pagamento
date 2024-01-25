@@ -62,8 +62,7 @@ export const PagamentoProviders: Provider[] = [
   },
   {
     provide: PagamentoConstants.GERAR_QRCODE_PAGAMENTO_PEDIDO_USECASE,
-    useFactory: (): GerarQrCodePagamentoPedidoUseCase =>
-      new GerarQrCodePagamentoPedidoUseCase(),
+    useFactory: (): GerarQrCodePagamentoPedidoUseCase => new GerarQrCodePagamentoPedidoUseCase(),
   },
   {
     provide: PagamentoConstants.BUSCA_PEDIDO_ID_USECASE,
