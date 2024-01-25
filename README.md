@@ -79,7 +79,9 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
             - fast-n-foodious-ci: sonarcloud       - Execução de análise de código no SonarCloud
             - fast-n-foodious-ci: build            - Build de imagens docker (AMD & ARM) e publicação no DockerHub
 
-***Nota:** Nas instruções abaixo, se assume que o diretório onde os comandos serão executados será a posta raiz do projeto ~/fast-n-foodious-ms-pagamento*
+***Nota 1:** Nas instruções abaixo, se assume que o diretório onde os comandos serão executados será a posta raiz do projeto ~/fast-n-foodious-ms-pagamento*
+
+***Nota 2:** A segurança da aplicação é delegada para o API Gateway do cloud provider (AWS). Todos os microserviços são públicos no contexto de execução local. Além disso, todas credenciais contidas do projeto, são meramentes ilustrativas para a execução local. Em ambiente cloud, todas as credenciais são geradas no momento da crição do infraestrutura cloud (`terraforn random_password`)*, portanto, não se preocupe com as credenciais estáticas contidas em `.envs`.
 
 ## 🚀 Instalação de Dependências Node
 ```bash
@@ -145,7 +147,7 @@ $ DOCUMENTDB_URI=mongodb://fnf_user:fnfpass@localhost:27017/pagamento-db NODE_EN
 ```
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
-***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores.*
+***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores (`considearar a execução via docker-compose-all.yml`)*
 
 ***Nota 2:** O container da aplicação depende do mongodb estar up & running. Então seja paciente, o tempo para o container do mongodb estar disponível pode veriar, dependendo da disponibilidade de recursos e suas configurações de hardware locais.* 
 
@@ -160,12 +162,13 @@ CONTAINER ID   IMAGE                            COMMAND                  CREATED
 06ebf6b90fa7   mongodb:8.0                        "docker-entrypoint.s…"   5 seconds ago   Up 4 seconds   0.0.0.0:27017->27017/tcp, 33060/tcp   mongodb
 ```
 
-A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mongodb. Esta forma de inicialização é recomendada para testes e as imagens é baixadas do github em sua versão latest:
+**Nota:** A opção acima, executa o container do micro serviço de forma isolada. Para rodar todos os micro serviços de forma conjunta, deve-se utilizar o `docker-compose-all.yml`. Este comando subirá todos os micro serviços e o banco de dados mongodb. Esta forma de inicialização é recomendada para realização dos testes e/ou avaliação. As imagens são baixadas do github em sua versão latest:
 
 ```bash
 $ docker-compose --env-file ./envs/prod.env -f docker-compose-all.yml -p "fast-n-foodious" up --build
 ```
-**Nota:** É necessário realizar a inicialização do banco de dados para os microserviços. Na referência dos arquivos para a inicialização do schema, assumesse que todos os projetos estão localizados no mesmo diretório! Logo, certifique que os paths dos volumes para os containers do mongodb estejam corretos. Exemplo para inicialização do banco (mapeamento de volume):
+**Nota:** É necessário realizar a inicialização do banco de dados para os microserviços. Na referência dos arquivos para a inicialização do schema, assume-se que todos os projetos (micro serviços) estão localizados no mesmo diretório para que as referências de envs e scripts estejam corretas!
+Abaixo segue apenas um exemplo de referência para inicialização do banco (mapeamento de volume) que está contido no docker-compose-all.yml:
 
 ```yml
  volumes:
@@ -566,4 +569,4 @@ test/                                   # Implementações de testes
 - [fast-n-foodious-ms-pedido](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_fast-n-foodious-ms-pedido)
 
 ### Monday
-- [fast-n-foodious](https://fast-n-foodious.monday.com/workspaces/4361241)
+- [fast-n-foodious workspace](https://fast-n-foodious.monday.com/workspaces/4361241)
