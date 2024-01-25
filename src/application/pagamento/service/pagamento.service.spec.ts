@@ -93,6 +93,10 @@ describe('PagamentoService', () => {
               // retorna o pagamentoSolicitado
               return Promise.resolve(pagamentoSolicitado);
             }),
+            edit: jest.fn(() => {
+              // retorna o pagamento
+              return Promise.resolve(pagamento);
+            }),
           },
         },
       ],
@@ -142,6 +146,7 @@ describe('PagamentoService', () => {
     it('não deve fazer solicitação de pagamento quando houver erro de banco ', async () => {
       const error = new RepositoryException('Erro genérico de banco de dados');
       jest.spyOn(pagamentoRepository, 'save').mockRejectedValue(error);
+      jest.spyOn(pagamentoRepository, 'edit').mockRejectedValue(error);
       const pedidoId = 1;
       const totalPedido = 10;
       await expect(service.solicitarPagamentoPedido(pedidoId, totalPedido)).rejects.toThrowError(ServiceException);
