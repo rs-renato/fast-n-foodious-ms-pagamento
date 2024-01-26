@@ -122,8 +122,8 @@ describe('PagamentoService', () => {
 
   describe('buscarEstadoPagamentoPedido', () => {
     it('deve retornar estado do pagamento corretamente', async () => {
-      await service.buscarEstadoPagamentoPedido(1).then((pagamento) => {
-        expect(pagamento.estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
+      await service.buscarEstadoPagamentoPedido(1).then((estadoPagamento) => {
+        expect(estadoPagamento).toEqual(EstadoPagamento.CONFIRMADO);
       });
     });
 

@@ -1,5 +1,4 @@
 import { HttpModule } from '@nestjs/axios';
-import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { PagamentoConstants } from 'src/shared/constants';
@@ -9,6 +8,7 @@ import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { PagamentoPedidoValidoValidator } from 'src/application/pagamento/validation/pagamento-pedido-valido.validator';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
 
 describe('PagamentoPedidoValidoValidator', () => {
   let validator: PagamentoPedidoValidoValidator;
@@ -116,7 +116,7 @@ describe('PagamentoPedidoValidoValidator', () => {
     });
 
     it('nao deve passar na validacao com PEDIDO_INEXISTENTE_ERROR_MESSAGE', async () => {
-      jest.spyOn(pedidoIntegration, 'getPedidoById').mockRejectedValueOnce(new NotFoundException());
+      jest.spyOn(pedidoIntegration, 'getPedidoById').mockRejectedValueOnce(new NaoEncontradoApplicationException());
 
       await expect(validator.validate(mockedPagamento)).rejects.toThrowError(
         PagamentoPedidoValidoValidator.PEDIDO_INEXISTENTE_ERROR_MESSAGE,

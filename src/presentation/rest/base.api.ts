@@ -1,4 +1,5 @@
 import {
+  ApiBadGatewayResponse,
   ApiBadRequestResponse,
   ApiConsumes,
   ApiInternalServerErrorResponse,
@@ -12,4 +13,5 @@ import { ErroResponse } from 'src/presentation/rest/response/erro.response';
 @ApiNotFoundResponse({ type: ErroResponse })
 @ApiBadRequestResponse({ type: ErroResponse })
 @ApiInternalServerErrorResponse({ type: ErroResponse })
+@ApiBadGatewayResponse({ type: ErroResponse })
 export abstract class BaseRestApi {}

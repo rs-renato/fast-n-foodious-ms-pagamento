@@ -9,6 +9,7 @@ import { PagamentoConstants } from 'src/shared/constants';
 import { ConsultaEstadoPagamentoPedidoUseCase } from './consulta-estado-pagamento-pedido.usecase';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { HttpModule } from '@nestjs/axios';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
 
 describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
   let useCase: ConsultaEstadoPagamentoPedidoUseCase;
@@ -42,15 +43,13 @@ describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
 
       const result = await useCase.buscaEstadoPagamento(1);
 
-      expect(result).toEqual({ estadoPagamento: mockedPagamento.estadoPagamento });
+      expect(result).toEqual(mockedPagamento.estadoPagamento);
     });
 
-    it('deve retornar undefined quando o pagamento não for encontrado', async () => {
+    it('deve retornar NaoEncontradoApplicationException quando o pagamento não for encontrado', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValue([]);
 
-      const result = await useCase.buscaEstadoPagamento(2);
-
-      expect(result).toBeUndefined();
+      await expect(useCase.buscaEstadoPagamento(2)).rejects.toThrow(NaoEncontradoApplicationException);
     });
 
     it('deve lançar uma ServiceException em caso de erro no repositório', async () => {

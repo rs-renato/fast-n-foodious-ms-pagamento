@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
 import { WebhookPagamentoPedidoValidoValidator } from 'src/application/pagamento/validation/webhook-pagamento-pedido-valido-validator';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
@@ -8,6 +7,7 @@ import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
 
 describe('WebhookPagamentoPedidoValidoValidator', () => {
   let validator: WebhookPagamentoPedidoValidoValidator;
@@ -74,7 +74,7 @@ describe('WebhookPagamentoPedidoValidoValidator', () => {
     });
 
     it('should throw ValidationException if pedido is not found', async () => {
-      buscaPedidoIdUseCaseMock.buscarPedidoPorId.mockRejectedValueOnce(new NotFoundException());
+      buscaPedidoIdUseCaseMock.buscarPedidoPorId.mockRejectedValueOnce(new NaoEncontradoApplicationException());
 
       await expect(validator.validate(mockedPagamento)).rejects.toThrowError('Código de pedido inexistente');
     });
@@ -87,12 +87,12 @@ describe('WebhookPagamentoPedidoValidoValidator', () => {
       );
     });
 
-    it('should handle null or undefined payment', async () => {
+    it('should handle payment not found', async () => {
       repository.findBy = jest.fn().mockImplementation(() => {
-        return Promise.resolve([undefined]);
+        return Promise.resolve([]);
       });
 
-      await expect(validator.validate(mockedPagamento)).rejects.toThrowError(ServiceException);
+      await expect(validator.validate(mockedPagamento)).rejects.toThrowError(NaoEncontradoApplicationException);
     });
 
     it('should handle error on buscarPagamento', async () => {

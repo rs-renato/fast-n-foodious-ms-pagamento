@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Logger,
-  NotFoundException,
-  Param,
-  Post,
-  Query,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Param, Post, Query, ValidationPipe } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { BaseRestApi } from 'src/presentation/rest/base.api';
@@ -59,12 +48,8 @@ export class PagamentoRestApi extends BaseRestApi {
     @Query(ValidationPipe) query: BuscarEstadoPagamentoPedidoRequest,
   ): Promise<BuscarEstadoPagamentoPedidoResponse> {
     this.logger.debug(`Consultando estado do pagamento por ID do pedido: ${JSON.stringify(query)}`);
-    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((pagamento) => {
-      if (pagamento === undefined) {
-        throw new NotFoundException('Pagamento para o pedido não encontrado');
-      }
-
-      return new BuscarEstadoPagamentoPedidoResponse(pagamento);
+    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((estadoPagamento) => {
+      return new BuscarEstadoPagamentoPedidoResponse(estadoPagamento);
     });
   }
 
