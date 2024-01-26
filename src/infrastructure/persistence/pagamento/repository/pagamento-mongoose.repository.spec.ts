@@ -18,7 +18,7 @@ describe('PagamentoMongoDbRepository', () => {
     pedidoId: 1,
     transacaoId: 'transacaoId',
     estadoPagamento: EstadoPagamento.CONFIRMADO,
-    total: 10.00,
+    total: 10.0,
     dataHoraPagamento: new Date('2023-08-30'),
     _id: '12345',
   };
@@ -27,18 +27,17 @@ describe('PagamentoMongoDbRepository', () => {
     pedidoId: 1,
     transacaoId: 'transacaoId',
     estadoPagamento: EstadoPagamento.REJEITADO,
-    total: 200.00,
+    total: 200.0,
     dataHoraPagamento: new Date('2023-08-31'),
     _id: '12345',
   };
 
   let mockSave = true;
   function mockMongooseFunctions() {
-    this.save  = () => Promise.resolve(pagamento);
+    this.save = () => Promise.resolve(pagamento);
   }
 
   beforeEach(async () => {
-    
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
@@ -46,23 +45,25 @@ describe('PagamentoMongoDbRepository', () => {
           inject: [getModelToken(PagamentoMongoDbEntity.name)],
           useFactory: (pagamentoModel: Model<PagamentoDocument>): IRepository<Pagamento> => {
             return new PagamentoMongoDbRepository(pagamentoModel);
-          }
+          },
         },
         {
           provide: getModelToken(PagamentoMongoDbEntity.name),
-          useValue: mockSave ? mockMongooseFunctions : {
-            findByIdAndUpdate: jest.fn((id, p) => {
-              return p.total === 200 ? Promise.resolve(pagamento) : Promise.resolve(undefined)
-            }),
-            find: jest.fn().mockResolvedValue([pagamento]),
-          }
-        }
+          useValue: mockSave
+            ? mockMongooseFunctions
+            : {
+                findByIdAndUpdate: jest.fn((id, p) => {
+                  return p.total === 200 ? Promise.resolve(pagamento) : Promise.resolve(undefined);
+                }),
+                find: jest.fn().mockResolvedValue([pagamento]),
+              },
+        },
       ],
     }).compile();
 
-     // Desabilita a saída de log
-     module.useLogger(false);
-     
+    // Desabilita a saída de log
+    module.useLogger(false);
+
     repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
     pagamentoDocument = module.get<Model<PagamentoDocument>>(getModelToken(PagamentoMongoDbEntity.name));
   });
@@ -77,14 +78,14 @@ describe('PagamentoMongoDbRepository', () => {
     it('should save a payment', async () => {
       const result = await repository.save(pagamento);
       expect(result).toEqual(pagamento);
-      mockSave=false
+      mockSave = false;
     });
   });
 
   describe('edit', () => {
     it('should edit a payment', async () => {
       pagamento.estadoPagamento = EstadoPagamento.REJEITADO;
-      pagamento.total = 200.00;
+      pagamento.total = 200.0;
       pagamento.dataHoraPagamento = new Date('2023-08-31');
       const result = await repository.edit(pagamento);
       expect(result).toEqual(pagamentoEditado);
@@ -95,7 +96,6 @@ describe('PagamentoMongoDbRepository', () => {
       await expect(repository.edit(pagamentoEditado)).rejects.toThrowError(RepositoryException);
     });
   });
-
 
   describe('findBy', () => {
     it('should find payments', async () => {

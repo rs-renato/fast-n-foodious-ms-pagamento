@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema({collection: 'pagamentos'})
+@Schema({ collection: 'pagamentos' })
 export class PagamentoMongoDbEntity {
   @Prop()
   id?: number;

@@ -4,7 +4,6 @@ import {
   Get,
   Inject,
   Logger,
-  NotFoundException,
   Param,
   Post,
   Query,
@@ -59,12 +58,8 @@ export class PagamentoRestApi extends BaseRestApi {
     @Query(ValidationPipe) query: BuscarEstadoPagamentoPedidoRequest,
   ): Promise<BuscarEstadoPagamentoPedidoResponse> {
     this.logger.debug(`Consultando estado do pagamento por ID do pedido: ${JSON.stringify(query)}`);
-    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((pagamento) => {
-      if (pagamento === undefined) {
-        throw new NotFoundException('Pagamento para o pedido não encontrado');
-      }
-
-      return new BuscarEstadoPagamentoPedidoResponse(pagamento);
+    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((estadoPagamento) => {
+      return new BuscarEstadoPagamentoPedidoResponse(estadoPagamento);
     });
   }
 

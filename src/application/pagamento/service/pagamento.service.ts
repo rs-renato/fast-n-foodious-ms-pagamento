@@ -23,7 +23,7 @@ export class PagamentoService implements IPagamentoService {
     private gerarQrCodePagamentoPedidoUseCase: GerarQrCodePagamentoPedidoUseCase,
   ) {}
 
-  async buscarEstadoPagamentoPedido(pedidoId: number): Promise<{ estadoPagamento: EstadoPagamento }> {
+  async buscarEstadoPagamentoPedido(pedidoId: number): Promise<EstadoPagamento> {
     return await this.consultaEstadoUsecase.buscaEstadoPagamento(pedidoId);
   }
 
