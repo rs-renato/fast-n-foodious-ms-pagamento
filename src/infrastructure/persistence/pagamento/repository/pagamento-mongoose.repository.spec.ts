@@ -40,7 +40,6 @@ describe('PagamentoMongoDbRepository', () => {
   beforeEach(async () => {
     
     const module: TestingModule = await Test.createTestingModule({
-      // imports: [MongooseModule.forFeature([{ name: PagamentoMongoDbEntity.name, schema: PagamentoSchema }])],
       providers: [
         {
           provide: PagamentoConstants.IREPOSITORY,
