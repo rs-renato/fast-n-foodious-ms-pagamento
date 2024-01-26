@@ -14,8 +14,8 @@ export class ConsultaEstadoPagamentoPedidoUseCase {
 
   async buscaEstadoPagamento(pedidoId: number): Promise<EstadoPagamento> {
     const pagamento = await this.repository.findBy({ pedidoId }).catch((error) => {
-        this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
-        throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
+      this.logger.error(`Erro ao consultar pagamento no banco de dados: ${error} `);
+      throw new ServiceException(`Houve um erro ao consultar o pagamento: ${error}`);
     });
 
     if (!pagamento.length) {

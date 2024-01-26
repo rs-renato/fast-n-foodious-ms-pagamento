@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Logger,
-  Param,
-  Post,
-  Query,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Param, Post, Query, ValidationPipe } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { BaseRestApi } from 'src/presentation/rest/base.api';

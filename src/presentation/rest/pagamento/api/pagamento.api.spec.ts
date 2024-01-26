@@ -47,9 +47,7 @@ describe('PagamentoRestApi', () => {
           provide: PagamentoConstants.ISERVICE,
           useValue: {
             buscarEstadoPagamentoPedido: jest.fn((pedidoId) =>
-              pedidoId === 1
-                ? Promise.resolve(EstadoPagamento.CONFIRMADO)
-                : Promise.reject(new Error('error')),
+              pedidoId === 1 ? Promise.resolve(EstadoPagamento.CONFIRMADO) : Promise.reject(new Error('error')),
             ),
             webhookPagamentoPedido: jest.fn(() => Promise.resolve(true)),
             solicitarPagamentoPedido: jest.fn((pedidoId, totalPedido) =>
@@ -94,7 +92,7 @@ describe('PagamentoRestApi', () => {
     });
 
     it('a consulta nao encontra nenhum pagamento para o pedido', async () => {
-      jest.spyOn(service, 'buscarEstadoPagamentoPedido').mockRejectedValue(new NaoEncontradoApplicationException);
+      jest.spyOn(service, 'buscarEstadoPagamentoPedido').mockRejectedValue(new NaoEncontradoApplicationException());
 
       await expect(restApi.buscarPorPedidoId(buscarEstadoPagamentoPedidoRequest)).rejects.toThrowError(
         NaoEncontradoApplicationException,

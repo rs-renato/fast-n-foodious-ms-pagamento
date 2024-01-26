@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
@@ -6,6 +6,8 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
 import { PagamentoValidator } from 'src/application/pagamento/validation/pagamento.validator';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
+import { IntegrationApplicationException } from 'src/application/exception/integration-application.exception';
 
 @Injectable()
 export class PagamentoPedidoValidoValidator implements PagamentoValidator {
@@ -29,10 +31,10 @@ export class PagamentoPedidoValidoValidator implements PagamentoValidator {
       pedido = await this.pedidoIntegration.getPedidoById(pedidoId);
     } catch (error) {
       this.logger.error(`Erro ao buscar pedido por id - ${pedidoId}: ${error.message}`);
-      if (error instanceof NotFoundException) {
+      if (error instanceof NaoEncontradoApplicationException) {
         throw new ValidationException(PagamentoPedidoValidoValidator.PEDIDO_INEXISTENTE_ERROR_MESSAGE);
       }
-      throw new ValidationException(PagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
+      throw new IntegrationApplicationException(PagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
     }
 
     if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {

@@ -1,7 +1,9 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import * as process from 'process';
 import { catchError, lastValueFrom, map } from 'rxjs';
+import { IntegrationApplicationException } from 'src/application/exception/integration-application.exception';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 
 @Injectable()
@@ -20,10 +22,10 @@ export class PedidoIntegration {
       .pipe(
         catchError((error) => {
           const statusError = error.response.status;
-          if (statusError === 404) {
-            throw new NotFoundException(`Pedido ${id} não encontrado.`);
+          if (statusError === HttpStatus.NOT_FOUND) {
+            throw new NaoEncontradoApplicationException(`Pedido ${id} não encontrado.`);
           }
-          throw new ServiceUnavailableException(
+          throw new IntegrationApplicationException(
             'Não foi possível realizar a integração com o MS de Pedido para buscar o pedido.',
           );
         }),
@@ -55,7 +57,7 @@ export class PedidoIntegration {
       .pipe(map((res) => res.data))
       .pipe(
         catchError(() => {
-          throw new ServiceUnavailableException(
+          throw new IntegrationApplicationException(
             'Não foi possível realizar a integração com o MS de Pedido para editar o pedido.',
           );
         }),
