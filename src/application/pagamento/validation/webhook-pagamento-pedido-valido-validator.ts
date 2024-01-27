@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { WebhookPagamentoValidator } from 'src/application/pagamento/validation/webhook-pagamento.validator';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { ValidationException } from 'src/enterprise/exception/validation.exception';
@@ -8,6 +8,8 @@ import { PagamentoConstants } from 'src/shared/constants';
 import { BuscaPedidoIdUseCase } from 'src/application/pagamento/usecase/busca-pedido-id.usecase';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
+import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
+import { IntegrationApplicationException } from 'src/application/exception/integration-application.exception';
 
 @Injectable()
 export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoValidator {
@@ -33,10 +35,10 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
       pedido = await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
     } catch (error) {
       this.logger.error(`Erro ao buscar pedido por id: ${error.message}`);
-      if (error instanceof NotFoundException) {
+      if (error instanceof NaoEncontradoApplicationException) {
         throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_INEXISTENTE_ERROR_MESSAGE);
       }
-      throw new ValidationException(WebhookPagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
+      throw new IntegrationApplicationException(WebhookPagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
     }
 
     if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {
@@ -48,19 +50,16 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
   }
 
   private async buscarPagamento(transacaoId: string): Promise<Pagamento> {
-    const pagamento = await this.repositoryPagamento
-      .findBy({ transacaoId })
-      .then((pagamentos: Pagamento[]) => pagamentos[0])
-      .catch((error) => {
-        const errorMessage = `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error}`;
-        this.logger.error(errorMessage);
-        throw new ServiceException(errorMessage);
-      });
-    if (pagamento === undefined) {
+    const pagamento = await this.repositoryPagamento.findBy({ transacaoId }).catch((error) => {
+      const errorMessage = `Erro ao buscar pagamento associado a transação ${transacaoId} no banco de dados: ${error}`;
+      this.logger.error(errorMessage);
+      throw new ServiceException(errorMessage);
+    });
+    if (!pagamento.length) {
       const errorPagamentoUndefined = `Nenhum pagamento associado a transação ${transacaoId} foi localizado no banco de dados`;
       this.logger.error(errorPagamentoUndefined);
-      throw new ServiceException(errorPagamentoUndefined);
+      throw new NaoEncontradoApplicationException(errorPagamentoUndefined);
     }
-    return pagamento;
+    return pagamento[0];
   }
 }

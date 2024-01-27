@@ -23,6 +23,7 @@
     "prebuild": "cp scripts/hooks/pre-commit scripts/hooks/pre-push .git/hooks/ && chmod +x .git/hooks/pre-commit .git/hooks/pre-push"
   },
   "dependencies": {
+    "@cucumber/pretty-formatter": "^1.0.0",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
@@ -37,6 +38,7 @@
     "cpf-cnpj-validator": "^1.0.3",
     "mongoose": "^8.1.0",
     "mysql2": "^3.3.3",
+    "qrcode": "^1.5.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.6.3"

@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Logger,
-  NotFoundException,
-  Param,
-  Post,
-  Query,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Inject, Logger, Param, Post, Query, ValidationPipe } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { BaseRestApi } from 'src/presentation/rest/base.api';
@@ -59,19 +48,16 @@ export class PagamentoRestApi extends BaseRestApi {
     @Query(ValidationPipe) query: BuscarEstadoPagamentoPedidoRequest,
   ): Promise<BuscarEstadoPagamentoPedidoResponse> {
     this.logger.debug(`Consultando estado do pagamento por ID do pedido: ${JSON.stringify(query)}`);
-    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((pagamento) => {
-      if (pagamento === undefined) {
-        throw new NotFoundException('Pagamento para o pedido não encontrado');
-      }
-
-      return new BuscarEstadoPagamentoPedidoResponse(pagamento);
+    return await this.service.buscarEstadoPagamentoPedido(query.pedidoId).then((estadoPagamento) => {
+      return new BuscarEstadoPagamentoPedidoResponse(estadoPagamento);
     });
   }
 
   @Post('solicitar')
   @ApiOperation({
-    summary: 'Solicita pagamento  para um pedido',
-    description: 'Registra a solicitação de pagamento para um dado pedido.',
+    summary: 'Solicita pagamento  para um pedido e gera o seu respectivo QRCode',
+    description:
+      'Registra a solicitação de pagamento para um dado pedido, gerando o código QRCode para realização do pagamento.',
   })
   @ApiOkResponse({
     description: 'Solicitação efetuada com sucesso',
@@ -82,10 +68,10 @@ export class PagamentoRestApi extends BaseRestApi {
   ): Promise<SolicitacaoPagamentoResponse> {
     this.logger.debug(`Solicitando pagamento para pedido: ${JSON.stringify(solicitacaoPagamentoRequest)}`);
 
-    const pagamento = await this.service.solicitarPagamentoPedido(
+    const [pagamento, qrCode] = await this.service.solicitarPagamentoPedido(
       solicitacaoPagamentoRequest.pedidoId,
       solicitacaoPagamentoRequest.totalPedido,
     );
-    return new SolicitacaoPagamentoResponse(pagamento);
+    return new SolicitacaoPagamentoResponse(pagamento, qrCode);
   }
 }

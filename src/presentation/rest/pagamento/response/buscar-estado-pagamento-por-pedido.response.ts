@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
-import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 
 export class BuscarEstadoPagamentoPedidoResponse {
   @ApiProperty({
@@ -14,7 +13,7 @@ export class BuscarEstadoPagamentoPedidoResponse {
   })
   public estadoPagamento: EstadoPagamento;
 
-  constructor(pagamento: Partial<Pagamento>) {
-    this.estadoPagamento = pagamento.estadoPagamento;
+  constructor(estadoPagamento: EstadoPagamento) {
+    this.estadoPagamento = estadoPagamento;
   }
 }

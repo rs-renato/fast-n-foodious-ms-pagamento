@@ -1,15 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
 import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { PagamentoResponseDto } from 'src/presentation/rest/dto/PagamentoResponseDto';
 import { Logger } from '@nestjs/common';
 
 export class SolicitacaoPagamentoResponse {
   @ApiProperty({ required: true, nullable: false, description: 'Informações do pagamento solicitado' })
-  @IsNotEmpty({ message: 'Pagamento solicitado não pode ser vazio' })
   public pagamento: PagamentoResponseDto;
 
-  constructor(pagamento: Pagamento) {
+  @ApiProperty({ required: true, nullable: false, description: 'QrCode de pagamento' })
+  public qrCode: string;
+
+  constructor(pagamento: Pagamento, qrCode: string) {
     const logger = new Logger(SolicitacaoPagamentoResponse.name);
     logger.debug(`Pagamento = ${JSON.stringify(pagamento)}`);
 
@@ -29,6 +30,7 @@ export class SolicitacaoPagamentoResponse {
       dataHoraPagamento: pagamento.dataHoraPagamento,
       id: idPagamento,
     };
-    logger.debug(`PagamentoResponseDto = ${JSON.stringify(this.pagamento)}`);
+    this.qrCode = qrCode;
+    logger.debug(`PagamentoResponseDto = ${JSON.stringify(this)}`);
   }
 }
