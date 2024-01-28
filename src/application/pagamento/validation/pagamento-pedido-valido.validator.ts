@@ -37,8 +37,8 @@ export class PagamentoPedidoValidoValidator implements PagamentoValidator {
       throw new IntegrationApplicationException(PagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
     }
 
-    if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {
-      this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE, mas é ${pedido.estadoPedido}`);
+    if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE && pedido.estadoPedido !== EstadoPedido.CHECKOUT) {
+      this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE/CHECKOUT, mas é ${pedido.estadoPedido}`);
       throw new ValidationException(PagamentoPedidoValidoValidator.PEDIDO_JA_PAGO_ERROR_MESSAGE);
     }
 

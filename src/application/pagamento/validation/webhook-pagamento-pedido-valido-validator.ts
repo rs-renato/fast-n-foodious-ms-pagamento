@@ -41,8 +41,8 @@ export class WebhookPagamentoPedidoValidoValidator implements WebhookPagamentoVa
       throw new IntegrationApplicationException(WebhookPagamentoPedidoValidoValidator.MS_PEDIDO_ERROR_MESSAGE);
     }
 
-    if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE) {
-      this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE, mas é ${pedido.estadoPedido}`);
+    if (pedido.estadoPedido !== EstadoPedido.PAGAMENTO_PENDENTE && pedido.estadoPedido !== EstadoPedido.CHECKOUT) {
+      this.logger.debug(`O estado do pedido precisa ser PAGAMENTO_PENDENTE/CHECKOUT, mas é ${pedido.estadoPedido}`);
       throw new ValidationException(WebhookPagamentoPedidoValidoValidator.PEDIDO_JA_PAGO_ERROR_MESSAGE);
     }
 
