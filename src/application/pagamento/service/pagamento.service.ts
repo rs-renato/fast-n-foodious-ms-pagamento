@@ -1,9 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
-import {
-  ConsultaPagamentoPedidoUseCase,
-  SolicitaPagamentoPedidoUseCase,
-} from 'src/application/pagamento/usecase';
+import { ConsultaPagamentoPedidoUseCase, SolicitaPagamentoPedidoUseCase } from 'src/application/pagamento/usecase';
 import { GerarQrCodePagamentoPedidoUseCase } from 'src/application/pagamento/usecase/gerar-qrcode-pagamento-pedido.usecase';
 import { WebhookPagamentoPedidoUseCase } from 'src/application/pagamento/usecase/webhook-pagamento-pedido.usecase';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
@@ -24,7 +21,8 @@ export class PagamentoService implements IPagamentoService {
   ) {}
 
   async buscarEstadoPagamentoPedido(pedidoId: number): Promise<EstadoPagamento> {
-    return await this.consultaPagamentoUsecase.buscaPagamentoPorIdPedido(pedidoId)
+    return await this.consultaPagamentoUsecase
+      .buscaPagamentoPorIdPedido(pedidoId)
       .then((pagamento) => pagamento.estadoPagamento);
   }
 
