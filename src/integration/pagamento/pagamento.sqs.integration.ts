@@ -32,7 +32,8 @@ export class PagamentoSqsIntegration {
               messages.forEach((message) => {
                 this.logger.log(`mensagem consumida: ${JSON.stringify(message)}`);
                 const body = JSON.parse(message.Body);
-                this.solicitarPagamentoPedidoUsecase.solicitaPagamento(body.pedidoId,body.totalPedido)
+                this.solicitarPagamentoPedidoUsecase
+                  .solicitaPagamento(body.pedidoId, body.totalPedido)
                   .then((pagamento) => {
                     this.logger.log(`Pagamento consumido da fila: ${JSON.stringify(pagamento)}`);
                   });
@@ -41,7 +42,7 @@ export class PagamentoSqsIntegration {
           })
           .catch(async (err) => {
             this.logger.error(`Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`);
-            await setTimeout(this.SQS_CONSUMER_TIMEOUT)
+            await setTimeout(this.SQS_CONSUMER_TIMEOUT);
           });
       }
     })();
@@ -54,7 +55,7 @@ export class PagamentoSqsIntegration {
 
     const command = new ReceiveMessageCommand({
       AttributeNames: ['CreatedTimestamp'],
-      MessageAttributeNames: ["All"],
+      MessageAttributeNames: ['All'],
       QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
       MaxNumberOfMessages: this.SQS_MAX_NUMBER_MESSAGES,
       WaitTimeSeconds: this.SQS_WAIT_TIME_SECONDS,
