@@ -6,13 +6,13 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/providers/persistence-in-memory.providers';
 import { PagamentoConstants } from 'src/shared/constants';
-import { ConsultaEstadoPagamentoPedidoUseCase } from './consulta-estado-pagamento-pedido.usecase';
+import { ConsultaPagamentoPedidoUseCase } from './consulta-pagamento-pedido.usecase';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { HttpModule } from '@nestjs/axios';
 import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
 
-describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
-  let useCase: ConsultaEstadoPagamentoPedidoUseCase;
+describe('ConsultaPagamentoPedidoUseCase', () => {
+  let useCase: ConsultaPagamentoPedidoUseCase;
   let repository: IRepository<Pagamento>;
 
   const mockedPagamento: Pagamento = {
@@ -33,7 +33,7 @@ describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
     // Desabilita a saída de log
     module.useLogger(false);
 
-    useCase = module.get<ConsultaEstadoPagamentoPedidoUseCase>(PagamentoConstants.CONSULTA_ESTADO_PAGAMENTO_USECASE);
+    useCase = module.get<ConsultaPagamentoPedidoUseCase>(PagamentoConstants.CONSULTA_PAGAMENTO_USECASE);
     repository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
   });
 
@@ -41,22 +41,22 @@ describe('ConsultaEstadoPagamentoPedidoUseCase', () => {
     it('deve buscar o estado de um pagamento por ID do pedido com sucesso', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValue([mockedPagamento]);
 
-      const result = await useCase.buscaEstadoPagamento(1);
+      const result = await useCase.buscaPagamentoPorIdPedido(1);
 
-      expect(result).toEqual(mockedPagamento.estadoPagamento);
+      expect(result.estadoPagamento).toEqual(mockedPagamento.estadoPagamento);
     });
 
     it('deve retornar NaoEncontradoApplicationException quando o pagamento não for encontrado', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValue([]);
 
-      await expect(useCase.buscaEstadoPagamento(2)).rejects.toThrow(NaoEncontradoApplicationException);
+      await expect(useCase.buscaPagamentoPorIdPedido(2)).rejects.toThrow(NaoEncontradoApplicationException);
     });
 
     it('deve lançar uma ServiceException em caso de erro no repositório', async () => {
       const error = new Error('Erro no repositório');
       jest.spyOn(repository, 'findBy').mockRejectedValue(error);
 
-      await expect(useCase.buscaEstadoPagamento(3)).rejects.toThrowError(ServiceException);
+      await expect(useCase.buscaPagamentoPorIdPedido(3)).rejects.toThrowError(ServiceException);
     });
   });
 });

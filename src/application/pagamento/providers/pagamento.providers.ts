@@ -2,7 +2,7 @@ import { Provider } from '@nestjs/common';
 
 import { PagamentoService } from 'src/application/pagamento/service/pagamento.service';
 import {
-  ConsultaEstadoPagamentoPedidoUseCase,
+  ConsultaPagamentoPedidoUseCase,
   SolicitaPagamentoPedidoUseCase,
   WebhookPagamentoPedidoUseCase,
 } from 'src/application/pagamento/usecase';
@@ -26,10 +26,10 @@ export const PagamentoProviders: Provider[] = [
     useClass: PagamentoService,
   },
   {
-    provide: PagamentoConstants.CONSULTA_ESTADO_PAGAMENTO_USECASE,
+    provide: PagamentoConstants.CONSULTA_PAGAMENTO_USECASE,
     inject: [PagamentoConstants.IREPOSITORY],
-    useFactory: (repository: IRepository<Pagamento>): ConsultaEstadoPagamentoPedidoUseCase =>
-      new ConsultaEstadoPagamentoPedidoUseCase(repository),
+    useFactory: (repository: IRepository<Pagamento>): ConsultaPagamentoPedidoUseCase =>
+      new ConsultaPagamentoPedidoUseCase(repository),
   },
   {
     provide: PagamentoConstants.SOLICITA_PAGAMENTO_PEDIDO_USECASE,
