@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
@@ -76,7 +77,7 @@ describe('PagamentoService', () => {
   beforeEach(async () => {
     // Configuração do módulo de teste
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [
         ...IntegrationProviders,
         ...PagamentoProviders,

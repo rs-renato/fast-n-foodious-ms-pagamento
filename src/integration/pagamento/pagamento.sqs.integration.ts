@@ -17,7 +17,9 @@ export class PagamentoSqsIntegration {
 
   private SQS_SOLICITAR_PAGAMENTO_REQ_URL = process.env.SQS_SOLICITAR_PAGAMENTO_REQ_URL;
   private SQS_MAX_NUMBER_MESSAGES = 1;
-  private SQS_WAIT_TIME_SECONDS = 20;
+  private SQS_WAIT_TIME_SECONDS = 5;
+  private SQS_VISIBILITY_TIMEOUT = 20;
+  private SQS_CONSUMER_TIMEOUT = 5000;
 
   constructor(private sqsClient: SQSClient, private solicitarPagamentoPedidoUsecase: SolicitaPagamentoPedidoUseCase) {}
 
@@ -30,16 +32,16 @@ export class PagamentoSqsIntegration {
               messages.forEach((message) => {
                 this.logger.log(`mensagem consumida: ${JSON.stringify(message)}`);
                 const body = JSON.parse(message.Body);
-                const pagamento = this.solicitarPagamentoPedidoUsecase.solicitaPagamento(
-                  body.pedidoId,
-                  body.totalPedido,
-                );
-                this.logger.log(`Pagamento: ${pagamento}`);
+                this.solicitarPagamentoPedidoUsecase.solicitaPagamento(body.pedidoId,body.totalPedido)
+                  .then((pagamento) => {
+                    this.logger.log(`Pagamento consumido da fila: ${JSON.stringify(pagamento)}`);
+                  });
               });
             }
           })
-          .catch((err) => {
+          .catch(async (err) => {
             this.logger.error(`Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`);
+            await setTimeout(this.SQS_CONSUMER_TIMEOUT)
           });
       }
     })();
@@ -51,10 +53,12 @@ export class PagamentoSqsIntegration {
     );
 
     const command = new ReceiveMessageCommand({
-      AttributeNames: ['All'],
+      AttributeNames: ['CreatedTimestamp'],
+      MessageAttributeNames: ["All"],
       QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
       MaxNumberOfMessages: this.SQS_MAX_NUMBER_MESSAGES,
       WaitTimeSeconds: this.SQS_WAIT_TIME_SECONDS,
+      VisibilityTimeout: this.SQS_VISIBILITY_TIMEOUT,
     });
 
     return await this.sqsClient
@@ -63,14 +67,14 @@ export class PagamentoSqsIntegration {
         this.logger.debug(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
         return response.Messages;
       })
-      .then((messages) => {
+      .then(async (messages) => {
         if (messages && messages.length) {
           this.logger.debug(`Deletando mensagem da fila: ${JSON.stringify(messages)}`);
           const command = new DeleteMessageCommand({
             QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
             ReceiptHandle: messages[0].ReceiptHandle,
           });
-          this.sqsClient.send(command);
+          await this.sqsClient.send(command);
         }
         return messages;
       })

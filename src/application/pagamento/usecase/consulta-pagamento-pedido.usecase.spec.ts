@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
 import { ServiceException } from 'src/enterprise/exception/service.exception';
 import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
@@ -26,7 +27,7 @@ describe('ConsultaPagamentoPedidoUseCase', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
     }).compile();
 

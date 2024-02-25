@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { AtualizaPedidoComoRecebidoUseCase } from './atualiza-pedido-como-recebido.usecase';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
@@ -33,7 +34,7 @@ describe('AtualizaPedidoComoRecebidoUseCase', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
     }).compile();
 
