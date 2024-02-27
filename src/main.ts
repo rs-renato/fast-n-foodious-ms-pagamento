@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { MainModule } from 'src/main.module';
 import { SwaggerConstants } from 'src/presentation/swagger/application.constants';
 import { EnvUtils } from 'src/shared/env.utils';
-import { PagamentoSqsIntegration } from 'src/integration/pagamento/pagamento.sqs.integration';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
 
 async function bootstrap(): Promise<void> {
   const logger: Logger = new Logger(MainModule.name);
@@ -37,7 +37,7 @@ async function bootstrap(): Promise<void> {
   await app.listen(serverPort);
   logger.log(`Servidor escutando na porta: ${serverPort}`);
 
-  app.get(PagamentoSqsIntegration).start();
+  app.get(SqsIntegration).start();
   logger.log(`SQS Integration iniciado`);
 }
 

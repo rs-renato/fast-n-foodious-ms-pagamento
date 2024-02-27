@@ -127,6 +127,7 @@ services:
     volumes:
       - localstack-data:/var/lib/localstack
       - "/var/run/docker.sock:/var/run/docker.sock"
+      - './scripts/localstack/init-queues.sh:/etc/localstack/init/ready.d/init-queues.sh:rw'
 volumes:
   mysql-data-produto:
   mysql-data-pedido:

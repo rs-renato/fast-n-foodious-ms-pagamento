@@ -1,23 +1,28 @@
 import {
   SQSClient,
   ReceiveMessageCommand,
-  ReceiveMessageCommandOutput,
   Message,
   DeleteMessageCommand,
+  SendMessageCommandOutput,
+  SendMessageCommand,
 } from '@aws-sdk/client-sqs';
 import { Injectable, Logger } from '@nestjs/common';
 import * as process from 'process';
 import { IntegrationApplicationException } from 'src/application/exception/integration-application.exception';
 import { SolicitaPagamentoPedidoUseCase } from 'src/application/pagamento/usecase';
+import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
+import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { setTimeout } from 'timers/promises';
 
 @Injectable()
-export class PagamentoSqsIntegration {
-  private logger = new Logger(PagamentoSqsIntegration.name);
+export class SqsIntegration {
+  private logger = new Logger(SqsIntegration.name);
 
   private SQS_SOLICITAR_PAGAMENTO_REQ_URL = process.env.SQS_SOLICITAR_PAGAMENTO_REQ_URL;
+  private SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL = process.env.SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL;
+  private SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL = process.env.SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL;
   private SQS_MAX_NUMBER_MESSAGES = 1;
-  private SQS_WAIT_TIME_SECONDS = 5;
+  private SQS_WAIT_TIME_SECONDS = 10;
   private SQS_VISIBILITY_TIMEOUT = 20;
   private SQS_CONSUMER_TIMEOUT = 5000;
 
@@ -26,7 +31,7 @@ export class PagamentoSqsIntegration {
   start(): void {
     (async () => {
       while (true) {
-        await this.processSolicitaPagamentoPedido()
+        await this.receiveSolicitaPagamentoPedido()
           .then((messages) => {
             if (messages) {
               messages.forEach((message) => {
@@ -41,17 +46,14 @@ export class PagamentoSqsIntegration {
             }
           })
           .catch(async (err) => {
-            this.logger.error(`Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`);
+            this.logger.error(`receiveSolicitaPagamentoPedido: Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`);
             await setTimeout(this.SQS_CONSUMER_TIMEOUT);
           });
       }
     })();
   }
 
-  async processSolicitaPagamentoPedido(): Promise<Message[]> {
-    this.logger.debug(
-      `processSolicitaPagamentoPedido: invocando serviço de integração em ${this.SQS_SOLICITAR_PAGAMENTO_REQ_URL}`,
-    );
+  async receiveSolicitaPagamentoPedido(): Promise<Message[]> {
 
     const command = new ReceiveMessageCommand({
       AttributeNames: ['CreatedTimestamp'],
@@ -61,6 +63,8 @@ export class PagamentoSqsIntegration {
       WaitTimeSeconds: this.SQS_WAIT_TIME_SECONDS,
       VisibilityTimeout: this.SQS_VISIBILITY_TIMEOUT,
     });
+
+    this.logger.debug(`Invocando ReceiveMessageCommand para obtenção de solicitação de pagamento: ${JSON.stringify(command)}`);
 
     return await this.sqsClient
       .send(command)
@@ -75,6 +79,7 @@ export class PagamentoSqsIntegration {
             QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
             ReceiptHandle: messages[0].ReceiptHandle,
           });
+          this.logger.debug(`Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(command)}`);
           await this.sqsClient.send(command);
         }
         return messages;
@@ -84,6 +89,31 @@ export class PagamentoSqsIntegration {
           `Erro ao processar solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
         );
         throw new IntegrationApplicationException('Não foi possível processar a solicitação de pagamento.');
+      });
+  }
+
+  async sendEstadoPagamentoPedido(pagamento: Pagamento): Promise<SendMessageCommandOutput> {
+
+    const command = new SendMessageCommand({
+      QueueUrl: pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? this.SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL : this.SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL,
+      MessageBody: JSON.stringify({
+        pagamento: pagamento,
+      }),
+    });
+
+    this.logger.debug(`Invocando SendMessageCommand para notificação de estado de pagamento do pedido: ${JSON.stringify(command)}`);
+
+    return await this.sqsClient
+      .send(command)
+      .then((response) => {
+        this.logger.log(`Resposta do publish na fila: ${JSON.stringify(response)}`);
+        return response;
+      })
+      .catch((error) => {
+        this.logger.error(
+          `Erro ao publicar solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
+        );
+        throw new IntegrationApplicationException('Não foi possível solicitar o pagamento.');
       });
   }
 }

@@ -19,6 +19,7 @@ import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/use
 import { PagamentoValidator } from '../validation/pagamento.validator';
 import { PagamentoPedidoValidoValidator } from '../validation/pagamento-pedido-valido.validator';
 import { GerarQrCodePagamentoPedidoUseCase } from 'src/application/pagamento/usecase/gerar-qrcode-pagamento-pedido.usecase';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
 
 export const PagamentoProviders: Provider[] = [
   {
@@ -72,9 +73,9 @@ export const PagamentoProviders: Provider[] = [
   },
   {
     provide: PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
-    inject: [PedidoIntegration],
-    useFactory: (pedidoIntegration: PedidoIntegration): AtualizaPedidoComoRecebidoUseCase =>
-      new AtualizaPedidoComoRecebidoUseCase(pedidoIntegration),
+    inject: [SqsIntegration],
+    useFactory: (sqsIntegration: SqsIntegration): AtualizaPedidoComoRecebidoUseCase =>
+      new AtualizaPedidoComoRecebidoUseCase(sqsIntegration),
   },
   {
     provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,

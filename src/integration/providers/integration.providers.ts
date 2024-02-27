@@ -2,7 +2,7 @@ import { SQSClient } from '@aws-sdk/client-sqs';
 import { Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SolicitaPagamentoPedidoUseCase } from 'src/application/pagamento/usecase';
-import { PagamentoSqsIntegration } from 'src/integration/pagamento/pagamento.sqs.integration';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { PagamentoConstants } from 'src/shared/constants';
 
@@ -13,12 +13,12 @@ export const IntegrationProviders: Provider[] = [
   },
   {
     inject: [ConfigService, PagamentoConstants.SOLICITA_PAGAMENTO_PEDIDO_USECASE],
-    provide: PagamentoSqsIntegration,
+    provide: SqsIntegration,
     useFactory: (
       configService: ConfigService,
       solicitaPagamentoPedidoUseCase: SolicitaPagamentoPedidoUseCase,
-    ): PagamentoSqsIntegration =>
-      new PagamentoSqsIntegration(
+    ): SqsIntegration =>
+      new SqsIntegration(
         new SQSClient({ endpoint: configService.get('AWS_SQS_ENDPOINT') }),
         solicitaPagamentoPedidoUseCase,
       ),
