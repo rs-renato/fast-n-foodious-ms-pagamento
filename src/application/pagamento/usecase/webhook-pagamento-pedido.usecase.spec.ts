@@ -71,7 +71,9 @@ describe('WebhookPagamentoPedidoUseCase', () => {
   describe('webhook', () => {
     it('should execute webhook successfully for a confirmed payment', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamento]);
-      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido').mockResolvedValueOnce(undefined);
+      jest
+        .spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido')
+        .mockResolvedValueOnce(undefined);
 
       const result = await useCase.webhook('123', 1);
 
@@ -96,7 +98,9 @@ describe('WebhookPagamentoPedidoUseCase', () => {
 
     it('should throw a ValidationException for an invalid payment state', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamento]);
-      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido').mockResolvedValueOnce(undefined);
+      jest
+        .spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido')
+        .mockResolvedValueOnce(undefined);
       mockedPagamento.estadoPagamento = EstadoPagamento.REJEITADO;
 
       await expect(useCase.webhook('123', 4)).rejects.toThrowError(ValidationException);
@@ -105,7 +109,9 @@ describe('WebhookPagamentoPedidoUseCase', () => {
 
     it('should update payment state and log when payment is confirmed', async () => {
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamento]);
-      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido').mockResolvedValueOnce(undefined);
+      jest
+        .spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido')
+        .mockResolvedValueOnce(undefined);
 
       await useCase.webhook('123', 1);
 
@@ -120,7 +126,9 @@ describe('WebhookPagamentoPedidoUseCase', () => {
         dataHoraPagamento: null,
       };
       jest.spyOn(repository, 'findBy').mockResolvedValueOnce([mockedPagamentoPendente]);
-      jest.spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido').mockResolvedValueOnce(undefined);
+      jest
+        .spyOn(atualizaPedidoComoRecebidoUseCase, 'atualizarPagamentoPedidoComoRecebido')
+        .mockResolvedValueOnce(undefined);
 
       await useCase.webhook('123', 0);
 

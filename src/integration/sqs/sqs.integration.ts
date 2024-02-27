@@ -46,7 +46,9 @@ export class SqsIntegration {
             }
           })
           .catch(async (err) => {
-            this.logger.error(`receiveSolicitaPagamentoPedido: Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`);
+            this.logger.error(
+              `receiveSolicitaPagamentoPedido: Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`,
+            );
             await setTimeout(this.SQS_CONSUMER_TIMEOUT);
           });
       }
@@ -54,7 +56,6 @@ export class SqsIntegration {
   }
 
   async receiveSolicitaPagamentoPedido(): Promise<Message[]> {
-
     const command = new ReceiveMessageCommand({
       AttributeNames: ['CreatedTimestamp'],
       MessageAttributeNames: ['All'],
@@ -64,7 +65,9 @@ export class SqsIntegration {
       VisibilityTimeout: this.SQS_VISIBILITY_TIMEOUT,
     });
 
-    this.logger.debug(`Invocando ReceiveMessageCommand para obtenção de solicitação de pagamento: ${JSON.stringify(command)}`);
+    this.logger.debug(
+      `Invocando ReceiveMessageCommand para obtenção de solicitação de pagamento: ${JSON.stringify(command)}`,
+    );
 
     return await this.sqsClient
       .send(command)
@@ -79,7 +82,11 @@ export class SqsIntegration {
             QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
             ReceiptHandle: messages[0].ReceiptHandle,
           });
-          this.logger.debug(`Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(command)}`);
+          this.logger.debug(
+            `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(
+              command,
+            )}`,
+          );
           await this.sqsClient.send(command);
         }
         return messages;
@@ -93,15 +100,19 @@ export class SqsIntegration {
   }
 
   async sendEstadoPagamentoPedido(pagamento: Pagamento): Promise<SendMessageCommandOutput> {
-
     const command = new SendMessageCommand({
-      QueueUrl: pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? this.SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL : this.SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL,
+      QueueUrl:
+        pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO
+          ? this.SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL
+          : this.SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL,
       MessageBody: JSON.stringify({
         pagamento: pagamento,
       }),
     });
 
-    this.logger.debug(`Invocando SendMessageCommand para notificação de estado de pagamento do pedido: ${JSON.stringify(command)}`);
+    this.logger.debug(
+      `Invocando SendMessageCommand para notificação de estado de pagamento do pedido: ${JSON.stringify(command)}`,
+    );
 
     return await this.sqsClient
       .send(command)
