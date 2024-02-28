@@ -28,7 +28,7 @@ export class SqsIntegration {
 
   constructor(private sqsClient: SQSClient, private solicitarPagamentoPedidoUsecase: SolicitaPagamentoPedidoUseCase) {}
 
-  start(): void {
+  startReceiveSolicitaParamentoPedido(): void {
     (async () => {
       while (true) {
         await this.receiveSolicitaPagamentoPedido()
@@ -55,7 +55,7 @@ export class SqsIntegration {
     })();
   }
 
-  async receiveSolicitaPagamentoPedido(): Promise<Message[]> {
+  private async receiveSolicitaPagamentoPedido(): Promise<Message[]> {
     const command = new ReceiveMessageCommand({
       AttributeNames: ['CreatedTimestamp'],
       MessageAttributeNames: ['All'],
@@ -117,7 +117,7 @@ export class SqsIntegration {
     return await this.sqsClient
       .send(command)
       .then((response) => {
-        this.logger.log(`Resposta do publish na fila: ${JSON.stringify(response)}`);
+        this.logger.log(`Resposta do publish na fila de notificação de estado de pagamento do pedido: ${JSON.stringify(response)}`);
         return response;
       })
       .catch((error) => {

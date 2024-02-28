@@ -19,7 +19,7 @@ export const IntegrationProviders: Provider[] = [
       solicitaPagamentoPedidoUseCase: SolicitaPagamentoPedidoUseCase,
     ): SqsIntegration =>
       new SqsIntegration(
-        new SQSClient({ endpoint: configService.get('AWS_SQS_ENDPOINT') }),
+        new SQSClient({ endpoint: configService.get('AWS_ENDPOINT') }),
         solicitaPagamentoPedidoUseCase,
       ),
   },
