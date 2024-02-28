@@ -117,7 +117,9 @@ export class SqsIntegration {
     return await this.sqsClient
       .send(command)
       .then((response) => {
-        this.logger.log(`Resposta do publish na fila de notificação de estado de pagamento do pedido: ${JSON.stringify(response)}`);
+        this.logger.log(
+          `Resposta do publish na fila de notificação de estado de pagamento do pedido: ${JSON.stringify(response)}`,
+        );
         return response;
       })
       .catch((error) => {
