@@ -1,17 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { AtualizaPedidoComoRecebidoUseCase } from './atualiza-pedido-como-recebido.usecase';
-import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
-import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { HttpModule } from '@nestjs/axios';
 import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
 import { PersistenceInMemoryProviders } from 'src/infrastructure/persistence/providers/persistence-in-memory.providers';
 import { PagamentoConstants } from 'src/shared/constants';
+import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.enum';
+import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
 
 describe('AtualizaPedidoComoRecebidoUseCase', () => {
   let useCase: AtualizaPedidoComoRecebidoUseCase;
-  let pedidoIntegration: PedidoIntegration;
+  let sqsIntegration: SqsIntegration;
 
   const pedidoDto: PedidoDto = {
     clienteId: 1,
@@ -31,9 +33,18 @@ describe('AtualizaPedidoComoRecebidoUseCase', () => {
     total: 10,
   };
 
+  const pagamento: Pagamento = {
+    dataHoraPagamento: new Date(),
+    estadoPagamento: EstadoPagamento.CONFIRMADO,
+    pedidoId: 1,
+    total: 10,
+    transacaoId: '1',
+    id: 1,
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
     }).compile();
 
@@ -41,24 +52,23 @@ describe('AtualizaPedidoComoRecebidoUseCase', () => {
     module.useLogger(false);
 
     useCase = module.get<AtualizaPedidoComoRecebidoUseCase>(PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE);
-    pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
+    sqsIntegration = module.get<SqsIntegration>(SqsIntegration);
   });
 
-  describe('atualizarPedidoComoRecebido', () => {
+  describe('atualizarPagamentoPedidoComoRecebido', () => {
     it('O pedidoDto enviado para integração com pedido tem que estar com estado "RECEBIDO"', async () => {
-      const editarPedidoSpy = jest.spyOn(pedidoIntegration, 'editarPedido').mockResolvedValue(undefined);
+      const sqsIntegrationSpy = jest.spyOn(sqsIntegration, 'sendEstadoPagamentoPedido').mockResolvedValue(undefined);
 
-      await useCase.atualizarPedidoComoRecebido(pedidoDto);
+      await useCase.atualizarPagamentoPedidoComoRecebido(pagamento);
 
-      expect(pedidoDto.estadoPedido).toEqual(EstadoPedido.RECEBIDO);
-      expect(editarPedidoSpy).toHaveBeenCalledWith(pedidoDtoComoRecebido);
+      expect(sqsIntegrationSpy).toHaveBeenCalledWith(pagamento);
     });
 
     it('deve lançar erro se pedidoIntegration.editarPedido falhar', async () => {
       const error = new Error('Erro');
-      jest.spyOn(pedidoIntegration, 'editarPedido').mockRejectedValue(error);
+      jest.spyOn(sqsIntegration, 'sendEstadoPagamentoPedido').mockRejectedValue(error);
 
-      await expect(useCase.atualizarPedidoComoRecebido(pedidoDto)).rejects.toThrowError(error);
+      await expect(useCase.atualizarPagamentoPedidoComoRecebido(pagamento)).rejects.toThrowError(error);
     });
   });
 });

@@ -2,7 +2,7 @@ import { Provider } from '@nestjs/common';
 
 import { PagamentoService } from 'src/application/pagamento/service/pagamento.service';
 import {
-  ConsultaEstadoPagamentoPedidoUseCase,
+  ConsultaPagamentoPedidoUseCase,
   SolicitaPagamentoPedidoUseCase,
   WebhookPagamentoPedidoUseCase,
 } from 'src/application/pagamento/usecase';
@@ -19,6 +19,7 @@ import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/use
 import { PagamentoValidator } from '../validation/pagamento.validator';
 import { PagamentoPedidoValidoValidator } from '../validation/pagamento-pedido-valido.validator';
 import { GerarQrCodePagamentoPedidoUseCase } from 'src/application/pagamento/usecase/gerar-qrcode-pagamento-pedido.usecase';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
 
 export const PagamentoProviders: Provider[] = [
   {
@@ -26,10 +27,10 @@ export const PagamentoProviders: Provider[] = [
     useClass: PagamentoService,
   },
   {
-    provide: PagamentoConstants.CONSULTA_ESTADO_PAGAMENTO_USECASE,
+    provide: PagamentoConstants.CONSULTA_PAGAMENTO_USECASE,
     inject: [PagamentoConstants.IREPOSITORY],
-    useFactory: (repository: IRepository<Pagamento>): ConsultaEstadoPagamentoPedidoUseCase =>
-      new ConsultaEstadoPagamentoPedidoUseCase(repository),
+    useFactory: (repository: IRepository<Pagamento>): ConsultaPagamentoPedidoUseCase =>
+      new ConsultaPagamentoPedidoUseCase(repository),
   },
   {
     provide: PagamentoConstants.SOLICITA_PAGAMENTO_PEDIDO_USECASE,
@@ -72,9 +73,9 @@ export const PagamentoProviders: Provider[] = [
   },
   {
     provide: PagamentoConstants.ATUALIZA_PEDIDO_COMO_RECEBIDO_USECASE,
-    inject: [PedidoIntegration],
-    useFactory: (pedidoIntegration: PedidoIntegration): AtualizaPedidoComoRecebidoUseCase =>
-      new AtualizaPedidoComoRecebidoUseCase(pedidoIntegration),
+    inject: [SqsIntegration],
+    useFactory: (sqsIntegration: SqsIntegration): AtualizaPedidoComoRecebidoUseCase =>
+      new AtualizaPedidoComoRecebidoUseCase(sqsIntegration),
   },
   {
     provide: PagamentoConstants.WEBHOOK_PAGAMENTO_VALIDATOR,

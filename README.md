@@ -9,9 +9,9 @@
 ![Static Badge](https://img.shields.io/badge/iac-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v1.0.x-version?logo=terraform&color=%23623CE4&labelColor=white&label=Terraform)
 
 
-# 🍔 Fast & Foodious - Pagamento ![Github Actions](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v1.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
+# 🍔 Fast & Foodious - Pagamento ![Github Actions](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v2.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
 
-Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de conclusão da Fase 04 da pós gradução em Software Architecture.
+Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de conclusão da Fase 05 da pós gradução em Software Architecture.
 [TLDR; Execução em modo produção (on premisse deprecated)](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
 
 * [Arquitetura de Solução (Cloud AWS)](#arquitetura-de-solução-cloud-aws)

@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 
 import { PagamentoConstants } from 'src/shared/constants';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
@@ -9,6 +10,7 @@ import { EstadoPagamento } from 'src/enterprise/pagamento/enum/estado-pagamento.
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { PagamentoPedidoValidoValidator } from 'src/application/pagamento/validation/pagamento-pedido-valido.validator';
 import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
+import { PagamentoProviders } from 'src/application/pagamento/providers/pagamento.providers';
 
 describe('PagamentoPedidoValidoValidator', () => {
   let validator: PagamentoPedidoValidoValidator;
@@ -50,9 +52,10 @@ describe('PagamentoPedidoValidoValidator', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [
         ...IntegrationProviders,
+        ...PagamentoProviders,
         PagamentoPedidoValidoValidator,
         {
           provide: PagamentoConstants.IREPOSITORY,

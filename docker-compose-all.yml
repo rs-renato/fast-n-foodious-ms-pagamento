@@ -116,11 +116,24 @@ services:
       - mongo-data-pagamento:/data/mongodb
     networks:
       - fast-n-foodious-network
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - './scripts/localstack/init-queues.sh:/etc/localstack/init/ready.d/init-queues.sh:rw'
 volumes:
   mysql-data-produto:
   mysql-data-pedido:
   # mysql-data-pagamento:
   mongo-data-pagamento:
+  localstack-data:
 networks:
   fast-n-foodious-network:
     driver: bridge
