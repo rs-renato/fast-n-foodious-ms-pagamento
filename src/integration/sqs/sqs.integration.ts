@@ -5,6 +5,7 @@ import {
   DeleteMessageCommand,
   SendMessageCommandOutput,
   SendMessageCommand,
+  DeleteMessageCommandOutput,
 } from '@aws-sdk/client-sqs';
 import { Injectable, Logger } from '@nestjs/common';
 import * as process from 'process';
@@ -39,8 +40,8 @@ export class SqsIntegration {
                 const body = JSON.parse(message.Body);
                 this.solicitarPagamentoPedidoUsecase
                   .solicitaPagamento(body.pedidoId, body.totalPedido)
-                  .then((pagamento) => {
-                    this.logger.log(`Pagamento consumido da fila: ${JSON.stringify(pagamento)}`);
+                  .then(async() => {
+                      await this.deleteSolicitaPagamentoPedido(message)
                   });
               });
             }
@@ -65,31 +66,15 @@ export class SqsIntegration {
       VisibilityTimeout: this.SQS_VISIBILITY_TIMEOUT,
     });
 
-    this.logger.debug(
+    this.logger.verbose(
       `Invocando ReceiveMessageCommand para obtenção de solicitação de pagamento: ${JSON.stringify(command)}`,
     );
 
     return await this.sqsClient
       .send(command)
       .then((response) => {
-        this.logger.debug(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
+        this.logger.verbose(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
         return response.Messages;
-      })
-      .then(async (messages) => {
-        if (messages && messages.length) {
-          this.logger.debug(`Deletando mensagem da fila: ${JSON.stringify(messages)}`);
-          const command = new DeleteMessageCommand({
-            QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
-            ReceiptHandle: messages[0].ReceiptHandle,
-          });
-          this.logger.debug(
-            `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(
-              command,
-            )}`,
-          );
-          await this.sqsClient.send(command);
-        }
-        return messages;
       })
       .catch((error) => {
         this.logger.error(
@@ -99,6 +84,27 @@ export class SqsIntegration {
       });
   }
 
+  private async deleteSolicitaPagamentoPedido(message: Message): Promise<DeleteMessageCommandOutput> {
+    this.logger.debug(`Deletando mensagem da fila: ${JSON.stringify(message)}`);
+    const command = new DeleteMessageCommand({
+      QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
+      ReceiptHandle: message.ReceiptHandle,
+    });
+    this.logger.debug(
+      `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(
+        command,
+      )}`,
+    );
+
+    return await this.sqsClient.send(command)
+      .catch((error) => {
+        this.logger.error(
+          `Erro ao deletar da fila a solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
+        );
+        throw new IntegrationApplicationException('Não foi possível deletar a solicitação de pagamento da fila.');
+      });
+  }
+  
   async sendEstadoPagamentoPedido(pagamento: Pagamento): Promise<SendMessageCommandOutput> {
     const command = new SendMessageCommand({
       QueueUrl:

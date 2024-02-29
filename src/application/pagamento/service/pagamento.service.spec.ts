@@ -13,11 +13,13 @@ import { HttpModule } from '@nestjs/axios';
 import { IntegrationProviders } from 'src/integration/providers/integration.providers';
 import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
 import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
+import { WebhookPagamentoPedidoUseCase } from 'src/application/pagamento/usecase';
 
 describe('PagamentoService', () => {
   let service: IPagamentoService;
   let pagamentoRepository: IRepository<Pagamento>;
   let pedidoIntegration: PedidoIntegration;
+  let webhookPagamentoPedidoUseCase: WebhookPagamentoPedidoUseCase
 
   const pagamento: Pagamento = {
     dataHoraPagamento: new Date(),
@@ -110,6 +112,7 @@ describe('PagamentoService', () => {
     pagamentoRepository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
     pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
     service = module.get<IPagamentoService>(PagamentoConstants.ISERVICE);
+    webhookPagamentoPedidoUseCase = module.get<WebhookPagamentoPedidoUseCase>(PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE)
 
     jest.spyOn(pedidoIntegration, 'getPedidoById').mockResolvedValue(pedidoDTO);
   });
@@ -152,6 +155,32 @@ describe('PagamentoService', () => {
       const pedidoId = 1;
       const totalPedido = 10;
       await expect(service.solicitarPagamentoPedido(pedidoId, totalPedido)).rejects.toThrowError(ServiceException);
+    });
+  });
+
+  describe('buscarPagamentoPedido', () => {
+    it('should return payment and QR code', async () => {
+      const [pagamento, qrCode] = await service.buscarPagamentoPedido(1);
+      expect(pagamento).toEqual(pagamento);
+      expect(qrCode).not.toBeUndefined();
+    });
+  });
+
+  describe('webhookPagamentoPedido', () => {
+    it('should return true if webhook execution is successful', async () => {
+      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(true)
+      const transacaoId = 'mockedTransactionId';
+      const estadoPagamento = EstadoPagamento.PENDENTE;
+      const result = await service.webhookPagamentoPedido(transacaoId, estadoPagamento);
+      expect(result).toEqual(true);
+    });
+
+    it('should return false if webhook execution fails', async () => {
+      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(false)
+      const transacaoId = 'mockedTransactionId';
+      const estadoPagamento = EstadoPagamento.PENDENTE;
+      const result = await service.webhookPagamentoPedido(transacaoId, estadoPagamento);
+      expect(result).toEqual(false);
     });
   });
 });
