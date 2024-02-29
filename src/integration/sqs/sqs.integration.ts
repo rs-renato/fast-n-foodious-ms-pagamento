@@ -40,8 +40,8 @@ export class SqsIntegration {
                 const body = JSON.parse(message.Body);
                 this.solicitarPagamentoPedidoUsecase
                   .solicitaPagamento(body.pedidoId, body.totalPedido)
-                  .then(async() => {
-                      await this.deleteSolicitaPagamentoPedido(message)
+                  .then(async () => {
+                    await this.deleteSolicitaPagamentoPedido(message);
                   });
               });
             }
@@ -91,20 +91,19 @@ export class SqsIntegration {
       ReceiptHandle: message.ReceiptHandle,
     });
     this.logger.debug(
-      `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(
-        command,
-      )}`,
+      `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(command)}`,
     );
 
-    return await this.sqsClient.send(command)
-      .catch((error) => {
-        this.logger.error(
-          `Erro ao deletar da fila a solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
-        );
-        throw new IntegrationApplicationException('Não foi possível deletar a solicitação de pagamento da fila.');
-      });
+    return await this.sqsClient.send(command).catch((error) => {
+      this.logger.error(
+        `Erro ao deletar da fila a solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(
+          command,
+        )}`,
+      );
+      throw new IntegrationApplicationException('Não foi possível deletar a solicitação de pagamento da fila.');
+    });
   }
-  
+
   async sendEstadoPagamentoPedido(pagamento: Pagamento): Promise<SendMessageCommandOutput> {
     const command = new SendMessageCommand({
       QueueUrl:

@@ -19,7 +19,7 @@ describe('PagamentoService', () => {
   let service: IPagamentoService;
   let pagamentoRepository: IRepository<Pagamento>;
   let pedidoIntegration: PedidoIntegration;
-  let webhookPagamentoPedidoUseCase: WebhookPagamentoPedidoUseCase
+  let webhookPagamentoPedidoUseCase: WebhookPagamentoPedidoUseCase;
 
   const pagamento: Pagamento = {
     dataHoraPagamento: new Date(),
@@ -112,7 +112,9 @@ describe('PagamentoService', () => {
     pagamentoRepository = module.get<IRepository<Pagamento>>(PagamentoConstants.IREPOSITORY);
     pedidoIntegration = module.get<PedidoIntegration>(PedidoIntegration);
     service = module.get<IPagamentoService>(PagamentoConstants.ISERVICE);
-    webhookPagamentoPedidoUseCase = module.get<WebhookPagamentoPedidoUseCase>(PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE)
+    webhookPagamentoPedidoUseCase = module.get<WebhookPagamentoPedidoUseCase>(
+      PagamentoConstants.WEBHOOK_PAGAMENTO_PEDIDO_USECASE,
+    );
 
     jest.spyOn(pedidoIntegration, 'getPedidoById').mockResolvedValue(pedidoDTO);
   });
@@ -168,7 +170,7 @@ describe('PagamentoService', () => {
 
   describe('webhookPagamentoPedido', () => {
     it('should return true if webhook execution is successful', async () => {
-      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(true)
+      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(true);
       const transacaoId = 'mockedTransactionId';
       const estadoPagamento = EstadoPagamento.PENDENTE;
       const result = await service.webhookPagamentoPedido(transacaoId, estadoPagamento);
@@ -176,7 +178,7 @@ describe('PagamentoService', () => {
     });
 
     it('should return false if webhook execution fails', async () => {
-      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(false)
+      jest.spyOn(webhookPagamentoPedidoUseCase, 'webhook').mockResolvedValue(false);
       const transacaoId = 'mockedTransactionId';
       const estadoPagamento = EstadoPagamento.PENDENTE;
       const result = await service.webhookPagamentoPedido(transacaoId, estadoPagamento);
