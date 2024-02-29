@@ -8,7 +8,6 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ValidatorUtils } from 'src/shared/validator.utils';
-import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
 import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 
