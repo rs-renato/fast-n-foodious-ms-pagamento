@@ -503,7 +503,6 @@ $ kubectl logs -f k6-stress-job-fkjv9
 # 🏛️ Estrutura Base do Projeto
 ```
 .github/                                # Configurações de pipelines CI/CD
-docs/                                   # Documentação da aplicação
 envs/                                   # Configurações de ambiente
 helm/                                   # Configuração de descriptors Helm
 k8s/                                    # Configuração de descriptors kubernetes
@@ -561,10 +560,10 @@ test/                                   # Implementações de testes
 
 ## Banco de Dados
 ### Detalhes do Banco de Dados
-[Detalhes do Banco de Dados](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/banco-de-dados.md)
+[Detalhes do Banco de Dados](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/banco-de-dados-pagamento.md)
 
 ### Modelo de Dados
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-data-model.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-data-model-pagamento.png?raw=true)
 
 ## DDD
 ### Domain Storytelling
