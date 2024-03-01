@@ -590,6 +590,22 @@ test/                                   # Implementações de testes
 #### Fluxo de Etapas dos Pedidos
 ![Fluxo-De-Etapas-Do-Pedido](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/Fluxo-De-Etapas-Do-Pedido.png?raw=true)
 
+## Saga
+### Checkout: Solicitação de Pagamento
+Integração entre microseriços de pedido e pagamento, no processo de checkout.
+![Checkout: Solicitação de Pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-checkout.png?raw=true)
+
+### Webhook: Atualização estado de Pagamento Confirmado
+Integração entre microseriços de pagamento e pedido, no processo notificação de pagamento confirmado (webhook).
+![Webhook: Pagamento Confirmado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-confirmado.png?raw=true)
+
+### Webhook: Atualização estado de Pagamento Rejeitado
+Integração entre microseriços de pagamento e pedido, no processo notificação de pagamento rejeitado (webhook).
+![Webhook: Pagamento Rejeitado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-rejeitado.png?raw=true)
+
+### Justificativa
+[Justificativa do Padrão SAGA coreografado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/saga/saga-coreografado.md)
+
 ## Links Externos
 ### Micro Serviços
 - [fast-n-foodious-ms-produto](https://github.com/rodrigo-ottero/fast-n-foodious-ms-produto)
