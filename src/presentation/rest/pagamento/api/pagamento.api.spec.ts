@@ -52,7 +52,7 @@ describe('PagamentoRestApi', () => {
         {
           provide: PagamentoConstants.ISERVICE,
           useValue: {
-            buscarPagamentoPedido: jest.fn(() =>  Promise.resolve([pagamentoSolicitado, qrCode])),
+            buscarPagamentoPedido: jest.fn(() => Promise.resolve([pagamentoSolicitado, qrCode])),
             buscarEstadoPagamentoPedido: jest.fn((pedidoId) =>
               pedidoId === 1 ? Promise.resolve(EstadoPagamento.CONFIRMADO) : Promise.reject(new Error('error')),
             ),
@@ -120,7 +120,7 @@ describe('PagamentoRestApi', () => {
     it('should return PagamentoResponseDto and QR code for a valid pedidoId', async () => {
       const pedidoId = 1;
       const result = await restApi.buscarPagamentoPorPedidoId(pedidoId);
-      
+
       expect(result.pagamento).toEqual(buscarPagamentoPedidoResponse.pagamento);
       expect(result.qrCode).toEqual(buscarPagamentoPedidoResponse.qrCode);
       expect(service.buscarPagamentoPedido).toHaveBeenCalledWith(pedidoId);
@@ -132,5 +132,5 @@ describe('PagamentoRestApi', () => {
       await expect(restApi.buscarPagamentoPorPedidoId(pedidoId)).rejects.toThrowError('Pedido not found');
       expect(service.buscarPagamentoPedido).toHaveBeenCalledWith(pedidoId);
     });
-  })
+  });
 });
