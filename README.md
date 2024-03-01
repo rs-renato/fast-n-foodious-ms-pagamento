@@ -48,6 +48,11 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
         * [Preparo de Pedidos](#preparo-de-pedidos)
         * [Entrega de Pedidos](#entrega-de-pedidos)
         * [Fluxo de etapas dos Pedidos](#fluxo-de-etapas-dos-pedidos)
+* [SAGAs](#sagas)
+    * [Checkout: Solicitação de Pagamento](#checkout-solicitação-de-pagamento)
+    * [Webhook: Atualização de estado de Pagamento Confirmado](#webhook-atualização-de-estado-de-pagamento-confirmado)
+    * [Webhook: Atualização de estado de Pagamento Rejeitado](#webhook-atualização-de-estado-de-pagamento-rejeitado)
+    * [Justificativa](#justificativa)        
 * [Links Externos](#links-externos)
 
 ## Arquitetura de Solução (Cloud AWS)
