@@ -12,7 +12,7 @@
 # 🍔 Fast & Foodious - Pagamento ![Github Actions](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v2.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
 
 Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de conclusão da Fase 05 da pós gradução em Software Architecture.
-[TLDR; Execução em modo produção (on premisse deprecated)](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
+[TLDR; Execução em modo produção (on premisse: Avaliação FIAP)](#%EF%B8%8F-execução-em-modo-produção-avaliação-fiap)
 
 * [Arquitetura de Solução (Cloud AWS)](#arquitetura-de-solução-cloud-aws)
 * [Arquitetura de Software](#arquitetura-de-software)
@@ -22,7 +22,8 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
     * [Variáveis de Ambiente](#-variáveis-de-ambiente)
     * [Execução em modo local (in-memory repository)](#%EF%B8%8F-execução-em-modo-local-in-memory-repository)
     * [Execução em modo local (mongo repository)](#%EF%B8%8F-execução-em-modo-local-mongo-repository)
-    * [**Execução em modo produção (on premisse deprecated)**](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
+    * [**Execução em modo produção (avaliação FIAP)**](#%EF%B8%8F-execução-em-modo-produção-avaliação-fiap)
+    * [Execução em modo produção (on premisse deprecated)](#%EF%B8%8F-execução-em-modo-produção-deprecated-substituído-por-aws-fargate-ecs)
         * [Docker Compose (Modo Fácil!)](#-docker-compose-modo-fácil)
         * [Docker (Modo Desbravador!)](#-docker-modo-desbravador)
         * [Kubernetes (Modo Fácil!)](#-kubernetes-modo-fácil)
@@ -39,7 +40,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
   * [Detalhes do Banco de Dados](#detalhes-do-banco-de-dados)
   * [Modelo de dados](#modelo-de-dados)
 * [DDD](#ddd)
-    * [Dicionário de Linguagem Ubíqua](/docs/dicionario-linguagem-ubiqua.md)
+    * [Dicionário de Linguagem Ubíqua](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/dicionario-linguagem-ubiqua.md)
     * [Domain Storytelling](#domain-storytelling)
         * [Auto Cadastro de Clientes](#auto-cadastro-de-clientes)
         * [Realização de Pedidos](#realização-de-pedidos)
@@ -50,20 +51,20 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 * [Links Externos](#links-externos)
 
 ## Arquitetura de Solução (Cloud AWS)
-![fast-n-foodious-aws](docs/diagramas/fast-n-foodious-aws.png)
+![fast-n-foodious-aws](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-aws.png?raw=true)
 
-![fast-n-foodious-aws-resource-mapping](docs/diagramas/fast-n-foodious-aws-resource-mapping.png)
+![fast-n-foodious-aws-resource-mapping](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-aws-resource-mapping.png?raw=true)
 
 ## Arquitetura de Software
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-clean.png)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-clean.png?raw=true)
 
 - Cloud AWS
-    - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DocumentDB, etc
+    - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DocumentDB, SQS, SES, etc
 - Arquitetura Clean & Modular
     - Camada de Application, Enterprise, Presentation e Infrastructure
     - Módulo Main, Application, Presentation e Infrastructure
 - Principais Tecnologias/Frameworks
-    - Docker, Kubernetes, Helm, Kubectl, NodeJS, NestJS, TypeORM, NPM, MongoDB, Swagger, Typescript, Jest
+    - Docker, Kubernetes, Helm, Kubectl, NodeJS, NestJS, TypeORM, NPM, MongoDB, Swagger, Typescript, Jest, LocalStack
 - Qualidade / Testes
     - Validações pré-commit/push
         - Validação de cobertura de testes
@@ -144,6 +145,39 @@ CONTAINER ID   IMAGE       COMMAND                  CREATED         STATUS      
 
 # Executa a aplicação com as variáveis locais, conectando no container do mongodb
 $ DOCUMENTDB_URI=mongodb://fnf_user:fnfpass@localhost:27017/pagamento-db NODE_ENV=local npm run start
+```
+
+### 🌟⚡️ Execução em modo produção (avaliação FIAP)
+Definitivamente, a forma mais fácil para a avaliação. Inicia todos os containers com o `docker-compose`:
+```bash
+$ docker-compose --env-file ./envs/prod.env -f docker-compose-all.yml -p "fast-n-foodious" up --build -d
+[+] Running 13/13
+ ✔ Network fast-n-foodious_fast-n-foodious-network  Created
+ ✔ Network fast-n-foodious_default                  Created
+ ✔ Volume "fast-n-foodious_mysql-data-produto"      Created
+ ✔ Volume "fast-n-foodious_mysql-data-pedido"       Created
+ ✔ Volume "fast-n-foodious_mongo-data-pagamento"    Created
+ ✔ Volume "fast-n-foodious_localstack-data"         Created
+ ✔ Container localstack                             Started
+ ✔ Container mysql-produto                          Started
+ ✔ Container mongodb                                Started
+ ✔ Container mysql-pedido                           Started
+ ✔ Container fast-n-foodious-ms-produto             Started
+ ✔ Container fast-n-foodious-ms-pagamento           Started
+ ✔ Container fast-n-foodious-ms-pedido              Started     
+```
+***Nota:** Certifique de clonar todos os projetos no mesmo diretório, pois existem referências de scripts de inicialização. Abaixo segue a estrutura raiz de pastas:*
+
+```bash
+$ tree -L 1
+.
+├── fast-n-foodious-docs
+├── fast-n-foodious-iac-compute
+├── fast-n-foodious-iac-network
+├── fast-n-foodious-iac-storage
+├── fast-n-foodious-ms-pagamento
+├── fast-n-foodious-ms-pedido
+└── fast-n-foodious-ms-produto
 ```
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
@@ -517,40 +551,40 @@ test/                                   # Implementações de testes
 
 ## Cloud AWS
 ### Cadastro de Clientes
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-aws-cadastro-clientes.png)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-aws-cadastro-clientes.png?raw=true)
 
 ### Autenticação de Cliente Identificado
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-aws-autenticacao-cliente-identificado.png)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-aws-autenticacao-cliente-identificado.png?raw=true)
 
 ### Autenticação de Cliente Anônimo
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-aws-autenticacao-cliente-anonimo.png)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-aws-autenticacao-cliente-anonimo.png?raw=true)
 
 ## Banco de Dados
 ### Detalhes do Banco de Dados
-[Detalhes do Banco de Dados](/docs/banco-de-dados.md)
+[Detalhes do Banco de Dados](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/banco-de-dados.md)
 
 ### Modelo de Dados
-![fast-n-foodious-clean](docs/diagramas/fast-n-foodious-data-model.png)
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/fast-n-foodious-data-model.png?raw=true)
 
 ## DDD
 ### Domain Storytelling
 #### Auto Cadastro de Clientes 
-![01-Auto-Cadastro-De-Clientes](docs/ddd/01-Auto-Cadastro-De-Clientes.png)
+![01-Auto-Cadastro-De-Clientes](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/01-Auto-Cadastro-De-Clientes.png?raw=true)
 
 #### Realização de Pedidos
-![02-Realizacao-De-Pedidos](docs/ddd/02-Realizacao-De-Pedidos.png)
+![02-Realizacao-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/02-Realizacao-De-Pedidos.png?raw=true)
 
 #### Pagamento de Pedidos
-![03-Pagamento-De-Pedidos](docs/ddd/03-Pagamento-De-Pedidos.png)
+![03-Pagamento-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/03-Pagamento-De-Pedidos.png?raw=true)
 
 #### Preparo de Pedidos
-![04-Preparo-De-Pedidos](docs/ddd/04-Preparo-De-Pedidos.png)
+![04-Preparo-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/04-Preparo-De-Pedidos.png?raw=true)
 
 #### Entrega de Pedidos
-![05-Entrega-De-Pedidos](docs/ddd/05-Entrega-De-Pedidos.png)
+![05-Entrega-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/05-Entrega-De-Pedidos.png?raw=true)
 
 #### Fluxo de Etapas dos Pedidos
-![Fluxo-De-Etapas-Do-Pedido](docs/ddd/Fluxo-De-Etapas-Do-Pedido.png)
+![Fluxo-De-Etapas-Do-Pedido](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/Fluxo-De-Etapas-Do-Pedido.png?raw=true)
 
 ## Links Externos
 ### Micro Serviços
