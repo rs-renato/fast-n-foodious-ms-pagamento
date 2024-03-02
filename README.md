@@ -34,6 +34,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 * [Estrutura Base do Projeto](#%EF%B8%8F-estrutura-base-do-projeto)
 * [Cloud AWS](#cloud-aws)
     * [Cadastro de Clientes](#cadastro-de-clientes)
+    * [Deleção de Clientes](#deleção-de-clientes)
     * [Autenticação de Cliente Identificado](#autenticação-de-cliente-identificado)
     * [Autenticação de Cliente Anônimo](#autenticação-de-cliente-anônimo)
 * [Banco de Dados](#banco-de-dados)
@@ -556,6 +557,9 @@ test/                                   # Implementações de testes
 ## Cloud AWS
 ### Cadastro de Clientes
 ![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-cadastro-clientes.png?raw=true)
+
+### Deleção de Clientes
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-delecao-clientes.png?raw=true)
 
 ### Autenticação de Cliente Identificado
 ![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-autenticacao-cliente-identificado.png?raw=true)
