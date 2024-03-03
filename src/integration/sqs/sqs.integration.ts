@@ -33,15 +33,15 @@ export class SqsIntegration {
     (async () => {
       while (true) {
         await this.receiveSolicitaPagamentoPedido()
-          .then(async(messages) => {
-            for (const message of messages){
+          .then(async (messages) => {
+            for (const message of messages) {
               this.logger.log(`mensagem consumida: ${JSON.stringify(message)}`);
-                const body = JSON.parse(message.Body);
-                await this.solicitarPagamentoPedidoUsecase
-                  .solicitaPagamento(body.pedidoId, body.totalPedido)
-                  .then(async () => {
-                    await this.deleteSolicitaPagamentoPedido(message);
-                  });
+              const body = JSON.parse(message.Body);
+              await this.solicitarPagamentoPedidoUsecase
+                .solicitaPagamento(body.pedidoId, body.totalPedido)
+                .then(async () => {
+                  await this.deleteSolicitaPagamentoPedido(message);
+                });
             }
           })
           .catch(async (err) => {
