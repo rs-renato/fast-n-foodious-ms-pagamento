@@ -24,7 +24,7 @@ export class SqsIntegration {
   private SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL = process.env.SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL;
   private SQS_MAX_NUMBER_MESSAGES = 1;
   private SQS_WAIT_TIME_SECONDS = 10;
-  private SQS_VISIBILITY_TIMEOUT = 20;
+  private SQS_VISIBILITY_TIMEOUT = 5;
   private SQS_CONSUMER_TIMEOUT = 5000;
 
   constructor(private sqsClient: SQSClient, private solicitarPagamentoPedidoUsecase: SolicitaPagamentoPedidoUseCase) {}
@@ -33,17 +33,15 @@ export class SqsIntegration {
     (async () => {
       while (true) {
         await this.receiveSolicitaPagamentoPedido()
-          .then((messages) => {
-            if (messages) {
-              messages.forEach((message) => {
-                this.logger.log(`mensagem consumida: ${JSON.stringify(message)}`);
+          .then(async(messages) => {
+            for (const message of messages){
+              this.logger.log(`mensagem consumida: ${JSON.stringify(message)}`);
                 const body = JSON.parse(message.Body);
-                this.solicitarPagamentoPedidoUsecase
+                await this.solicitarPagamentoPedidoUsecase
                   .solicitaPagamento(body.pedidoId, body.totalPedido)
                   .then(async () => {
                     await this.deleteSolicitaPagamentoPedido(message);
                   });
-              });
             }
           })
           .catch(async (err) => {
@@ -66,15 +64,15 @@ export class SqsIntegration {
       VisibilityTimeout: this.SQS_VISIBILITY_TIMEOUT,
     });
 
-    this.logger.verbose(
+    this.logger.debug(
       `Invocando ReceiveMessageCommand para obtenção de solicitação de pagamento: ${JSON.stringify(command)}`,
     );
 
     return await this.sqsClient
       .send(command)
       .then((response) => {
-        this.logger.verbose(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
-        return response.Messages;
+        this.logger.debug(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
+        return response.Messages || [];
       })
       .catch((error) => {
         this.logger.error(
@@ -90,7 +88,7 @@ export class SqsIntegration {
       QueueUrl: this.SQS_SOLICITAR_PAGAMENTO_REQ_URL,
       ReceiptHandle: message.ReceiptHandle,
     });
-    this.logger.debug(
+    this.logger.log(
       `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(command)}`,
     );
 
@@ -115,7 +113,7 @@ export class SqsIntegration {
       }),
     });
 
-    this.logger.debug(
+    this.logger.log(
       `Invocando SendMessageCommand para notificação de estado de pagamento do pedido: ${JSON.stringify(command)}`,
     );
 

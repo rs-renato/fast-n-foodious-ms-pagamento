@@ -20,6 +20,8 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
+  app.useLogger([process.env.NODE_ENV === 'prod' ?  'log' : 'debug']);
+
   // Configuração do swagger
   const options = new DocumentBuilder()
     .setTitle(SwaggerConstants.SWAGGER_TITLE)

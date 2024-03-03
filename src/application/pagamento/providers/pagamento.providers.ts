@@ -85,7 +85,7 @@ export const PagamentoProviders: Provider[] = [
       buscaPedidoIdUseCase: BuscaPedidoIdUseCase,
     ): WebhookPagamentoValidator[] => [
       new WebhookPagamentoTransacaoIdValidoValidator(repositoryPagamento),
-      new WebhookPagamentoPedidoValidoValidator(repositoryPagamento, buscaPedidoIdUseCase),
+      // new WebhookPagamentoPedidoValidoValidator(repositoryPagamento, buscaPedidoIdUseCase),
       new WebhookPagamentoPagamentoValidoValidator(repositoryPagamento),
     ],
   },
