@@ -187,7 +187,14 @@ $ tree -L 1
 └── fast-n-foodious-ms-produto
 ```
 Após subir todos os containers, para verificar os contratos de API, acesse a [Documentação da API (Swagger)](#-documentação-da-api-swagger). 
-Os testes funcionais (processo de negócio completo) pode ser realizado facilmente através do Postman, via Flows!
+
+Os testes funcionais (processo de negócio completo) pode ser realizado facilmente através do Postman, via Flows no workspace compartilhado!
+
+**Flow Local**
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-local.png?raw=true)
+
+**Flow AWS**
+![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-aws.png?raw=true)
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
 ***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores (`considerar a execução via docker-compose-all.yml`)*
