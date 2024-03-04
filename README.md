@@ -54,6 +54,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
     * [Webhook: Atualização de estado de Pagamento Confirmado](#webhook-atualização-de-estado-de-pagamento-confirmado)
     * [Webhook: Atualização de estado de Pagamento Rejeitado](#webhook-atualização-de-estado-de-pagamento-rejeitado)
     * [Justificativa](#justificativa)        
+* [OWASP Reposts](#owasp-reports)
 * [Links Externos](#links-externos)
 
 ## Arquitetura de Solução (Cloud AWS)
@@ -185,9 +186,11 @@ $ tree -L 1
 ├── fast-n-foodious-ms-pedido
 └── fast-n-foodious-ms-produto
 ```
+Após subir todos os containers, para verificar os contratos de API, acesse a [Documentação da API (Swagger)](#-documentação-da-api-swagger). 
+Os testes funcionais (processo de negócio completo) pode ser realizado facilmente através do Postman, via Flows!
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
-***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores (`considearar a execução via docker-compose-all.yml`)*
+***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores (`considerar a execução via docker-compose-all.yml`)*
 
 ***Nota 2:** O container da aplicação depende do mongodb estar up & running. Então seja paciente, o tempo para o container do mongodb estar disponível pode veriar, dependendo da disponibilidade de recursos e suas configurações de hardware locais.* 
 
@@ -609,6 +612,9 @@ Integração entre microseriços de pagamento e pedido, no processo notificaçã
 
 ### Justificativa
 [Justificativa do Padrão SAGA coreografado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/saga/saga-coreografado.md)
+
+## OWASP Reposts
+[Relatórios por Microserviços](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/owasp/README.md)
 
 ## Links Externos
 ### Micro Serviços
