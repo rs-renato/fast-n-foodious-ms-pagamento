@@ -6,6 +6,7 @@ awslocal sqs create-queue --endpoint-url http://localhost:4566 --queue-name webh
 awslocal sqs create-queue --endpoint-url http://localhost:4566 --queue-name webhook-pagamento-confirmado-res --attributes '{"RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:sqs-dlq\",\"maxReceiveCount\":\"3\"}","VisibilityTimeout":"1"}'
 awslocal sqs create-queue --endpoint-url http://localhost:4566 --queue-name solicitar-pagamento-req.fifo --attributes '{"FifoQueue":"true","RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:sqs-dlq.fifo\",\"maxReceiveCount\":\"3\"}","VisibilityTimeout":"1"}'
 awslocal sqs create-queue --endpoint-url http://localhost:4566 --queue-name preparacao-pedido-req.fifo --attributes '{"FifoQueue":"true","RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:sqs-dlq.fifo\",\"maxReceiveCount\":\"3\"}","VisibilityTimeout":"1"}'
+awslocal sqs create-queue --endpoint-url http://localhost:4566 --queue-name lgpd-protocolo-delecao-req.fifo --attributes '{"FifoQueue":"true","RedrivePolicy":"{\"deadLetterTargetArn\":\"arn:aws:sqs:us-east-1:000000000000:sqs-dlq.fifo\",\"maxReceiveCount\":\"3\"}","VisibilityTimeout":"1"}'
 
 awslocal sqs list-queues --endpoint-url http://localhost:4566
 
