@@ -609,15 +609,15 @@ test/                                   # Implementações de testes
 
 ## Saga
 ### Checkout: Solicitação de Pagamento
-Integração entre microseriços de pedido e pagamento, no processo de checkout.
+Integração entre micro serviços de pedido e pagamento, no processo de checkout.
 ![Checkout: Solicitação de Pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-checkout.png?raw=true)
 
 ### Webhook: Atualização estado de Pagamento Confirmado
-Integração entre microseriços de pagamento e pedido, no processo notificação de pagamento confirmado (webhook).
+Integração entre micro serviços de pagamento e pedido, no processo notificação de pagamento confirmado (webhook).
 ![Webhook: Pagamento Confirmado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-confirmado.png?raw=true)
 
 ### Webhook: Atualização estado de Pagamento Rejeitado
-Integração entre microseriços de pagamento e pedido, no processo notificação de pagamento rejeitado (webhook).
+Integração entre micro serviços de pagamento e pedido, no processo notificação de pagamento rejeitado (webhook).
 ![Webhook: Pagamento Rejeitado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-rejeitado.png?raw=true)
 
 ### Justificativa
