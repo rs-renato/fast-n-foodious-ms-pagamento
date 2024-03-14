@@ -1,4 +1,4 @@
-FROM node:18.19-alpine
+FROM node:18.16-alpine
 
 ENV TZ=America/Sao_Paulo
 
