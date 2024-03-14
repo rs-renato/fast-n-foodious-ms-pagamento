@@ -8,7 +8,6 @@ import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 import { IRepository } from 'src/enterprise/repository/repository';
 import { PagamentoConstants } from 'src/shared/constants';
 import { ValidatorUtils } from 'src/shared/validator.utils';
-import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
 import { BuscaPedidoIdUseCase } from './busca-pedido-id.usecase';
 import { AtualizaPedidoComoRecebidoUseCase } from 'src/application/pagamento/usecase/atualiza-pedido-como-recebido.usecase';
 
@@ -34,13 +33,13 @@ export class WebhookPagamentoPedidoUseCase {
     // buscar pagamento associado a transaçãoID
     const pagamento = await this.buscarPagamento(transacaoId);
 
-    // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
-    await this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
-
     // mudar status pagamento para o estado CONFIRMADO
     pagamento.estadoPagamento = estadoPagamentoEnum;
     pagamento.dataHoraPagamento = pagamento.estadoPagamento === EstadoPagamento.CONFIRMADO ? new Date() : null;
-    await this.repository.edit(pagamento);
+    await this.repository.edit(pagamento).then(() => {
+      // mudar status pedido para RECEBIDO se o pagamento foi CONFIRMADO
+      this.mudarEstadoPedidoParaRecebidoSePagamentoConfirmado(estadoPagamentoEnum, pagamento);
+    });
 
     this.logger.log(`Webhook: finalizado para transaçãoId = ${transacaoId}\n`);
     return true;
@@ -60,12 +59,10 @@ export class WebhookPagamentoPedidoUseCase {
     estadoPagamentoEnum: EstadoPagamento,
     pagamento: Pagamento,
   ): Promise<void> {
-    if (estadoPagamentoEnum === EstadoPagamento.CONFIRMADO) {
-      // buscar pedido associado a transaçãoID
-      const pedido: PedidoDto = await this.buscaPedidoIdUseCase.buscarPedidoPorId(pagamento.pedidoId);
-      this.logger.debug(`PedidoDto = ${JSON.stringify(pedido)}`);
-      await this.atualizaPedidoComoRecebidoUseCase.atualizarPedidoComoRecebido(pedido);
-    }
+    this.logger.debug(
+      `EstadoPagamento = ${JSON.stringify(estadoPagamentoEnum)}, pagamento = ${JSON.stringify(pagamento)}`,
+    );
+    await this.atualizaPedidoComoRecebidoUseCase.atualizarPagamentoPedidoComoRecebido(pagamento);
   }
 
   private async buscarPagamento(transacaoId: string): Promise<Pagamento> {

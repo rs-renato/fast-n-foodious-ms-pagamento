@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Inject, Logger, Param, Post, Query, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Logger,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  ValidationPipe,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { IPagamentoService } from 'src/application/pagamento/service/pagamento.service.interface';
 import { BaseRestApi } from 'src/presentation/rest/base.api';
@@ -7,6 +18,7 @@ import { BuscarEstadoPagamentoPedidoResponse } from 'src/presentation/rest/pagam
 import { PagamentoConstants } from 'src/shared/constants';
 import { SolicitacaoPagamentoResponse } from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
 import { SolicitacaoPagamentoRequest } from 'src/presentation/rest/pagamento/request/solicitar-pagamento-de-pedido.request';
+import { BuscarPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response/buscar-pagamento-por-pedido.response';
 
 @Controller('v1/pagamento')
 @ApiTags('Pagamento')
@@ -53,9 +65,27 @@ export class PagamentoRestApi extends BaseRestApi {
     });
   }
 
+  @Get(':pedidoId')
+  @ApiOperation({
+    summary: 'Consulta pagamento por ID do Pedido',
+    description: 'Realiza consulta do pagamento por ID do Pedido',
+  })
+  @ApiOkResponse({
+    description: 'Pagamento do PedidoID consultado com sucesso',
+    type: BuscarPagamentoPedidoResponse,
+  })
+  async buscarPagamentoPorPedidoId(
+    @Param('pedidoId', ParseIntPipe) pedidoId: number,
+  ): Promise<BuscarPagamentoPedidoResponse> {
+    this.logger.debug(`Consultando pagamento do Pedido ID: ${pedidoId}`);
+    const [pagamento, qrCode] = await this.service.buscarPagamentoPedido(pedidoId);
+    return new BuscarPagamentoPedidoResponse(pagamento, qrCode);
+  }
+
   @Post('solicitar')
   @ApiOperation({
-    summary: 'Solicita pagamento  para um pedido e gera o seu respectivo QRCode',
+    deprecated: true,
+    summary: 'Solicita pagamento para um pedido e gera o seu respectivo QRCode',
     description:
       'Registra a solicitação de pagamento para um dado pedido, gerando o código QRCode para realização do pagamento.',
   })

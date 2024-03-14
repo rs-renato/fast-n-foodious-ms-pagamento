@@ -1,18 +1,15 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { PedidoIntegration } from 'src/integration/pedido/pedido.integration';
-import { PedidoDto } from 'src/enterprise/pedido/pedido-dto';
-import { EstadoPedido } from 'src/enterprise/pedido/estado-pedido';
+import { SqsIntegration } from 'src/integration/sqs/sqs.integration';
+import { Pagamento } from 'src/enterprise/pagamento/model/pagamento.model';
 
 @Injectable()
 export class AtualizaPedidoComoRecebidoUseCase {
   private logger = new Logger(AtualizaPedidoComoRecebidoUseCase.name);
 
-  constructor(@Inject(PedidoIntegration) private pedidoIntegration: PedidoIntegration) {}
+  constructor(@Inject(SqsIntegration) private sqsIntegration: SqsIntegration) {}
 
-  async atualizarPedidoComoRecebido(pedidoDto: PedidoDto): Promise<void> {
-    this.logger.debug(`atualizarPedidoComoRecebido: pedidoDto = ${JSON.stringify(pedidoDto)}`);
-    pedidoDto.estadoPedido = EstadoPedido.RECEBIDO;
-    await this.pedidoIntegration.editarPedido(pedidoDto);
-    this.logger.debug(`Estado do pedido ${pedidoDto.id} modificado com sucesso para ${pedidoDto.estadoPedido}`);
+  async atualizarPagamentoPedidoComoRecebido(pagamento: Pagamento): Promise<void> {
+    this.logger.debug(`atualizarPagamentoPedidoComoRecebido: pagamento = ${JSON.stringify(pagamento)}`);
+    await this.sqsIntegration.sendEstadoPagamentoPedido(pagamento);
   }
 }

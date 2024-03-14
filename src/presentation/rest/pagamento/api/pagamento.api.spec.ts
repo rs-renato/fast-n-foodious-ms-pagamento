@@ -8,6 +8,7 @@ import { SolicitacaoPagamentoRequest } from 'src/presentation/rest/pagamento/req
 import { SolicitacaoPagamentoResponse } from 'src/presentation/rest/pagamento/response/solicitar-pagamento-de-pedido.response';
 import { PagamentoResponseDto } from 'src/presentation/rest/dto/PagamentoResponseDto';
 import { NaoEncontradoApplicationException } from 'src/application/exception/nao-encontrado.exception';
+import { BuscarPagamentoPedidoResponse } from 'src/presentation/rest/pagamento/response/buscar-pagamento-por-pedido.response';
 
 describe('PagamentoRestApi', () => {
   let restApi: PagamentoRestApi;
@@ -38,6 +39,11 @@ describe('PagamentoRestApi', () => {
     qrCode: qrCode,
   };
 
+  const buscarPagamentoPedidoResponse: BuscarPagamentoPedidoResponse = {
+    pagamento: pagamentoSolicitado,
+    qrCode: qrCode,
+  };
+
   beforeEach(async () => {
     // Configuração do módulo de teste
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +52,7 @@ describe('PagamentoRestApi', () => {
         {
           provide: PagamentoConstants.ISERVICE,
           useValue: {
+            buscarPagamentoPedido: jest.fn(() => Promise.resolve([pagamentoSolicitado, qrCode])),
             buscarEstadoPagamentoPedido: jest.fn((pedidoId) =>
               pedidoId === 1 ? Promise.resolve(EstadoPagamento.CONFIRMADO) : Promise.reject(new Error('error')),
             ),
@@ -106,6 +113,24 @@ describe('PagamentoRestApi', () => {
 
       expect(service.solicitarPagamentoPedido).toHaveBeenCalledTimes(1);
       expect(result).toEqual(solicitacaoPagamentoResponse);
+    });
+  });
+
+  describe('buscarPagamentoPorPedidoId', () => {
+    it('should return PagamentoResponseDto and QR code for a valid pedidoId', async () => {
+      const pedidoId = 1;
+      const result = await restApi.buscarPagamentoPorPedidoId(pedidoId);
+
+      expect(result.pagamento).toEqual(buscarPagamentoPedidoResponse.pagamento);
+      expect(result.qrCode).toEqual(buscarPagamentoPedidoResponse.qrCode);
+      expect(service.buscarPagamentoPedido).toHaveBeenCalledWith(pedidoId);
+    });
+
+    it('should throw an error for an invalid pedidoId', async () => {
+      jest.spyOn(service, 'buscarPagamentoPedido').mockRejectedValueOnce(new Error('Pedido not found'));
+      const pedidoId = 2;
+      await expect(restApi.buscarPagamentoPorPedidoId(pedidoId)).rejects.toThrowError('Pedido not found');
+      expect(service.buscarPagamentoPedido).toHaveBeenCalledWith(pedidoId);
     });
   });
 });

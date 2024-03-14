@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
 
 import { PagamentoConstants } from 'src/shared/constants';
@@ -56,7 +57,7 @@ describe('SolicitaPagamentoPedidoUseCase', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [HttpModule, ConfigModule],
       providers: [...IntegrationProviders, ...PagamentoProviders, ...PersistenceInMemoryProviders],
     }).compile();
 
