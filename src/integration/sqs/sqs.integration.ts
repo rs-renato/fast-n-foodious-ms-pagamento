@@ -25,7 +25,7 @@ export class SqsIntegration {
   private SQS_MAX_NUMBER_MESSAGES = 1;
   private SQS_WAIT_TIME_SECONDS = 1;
   private SQS_VISIBILITY_TIMEOUT = 1;
-  private SQS_CONSUMER_TIMEOUT = 2000;
+  private SQS_CONSUMER_TIMEOUT = 10000;
 
   constructor(private sqsClient: SQSClient, private solicitarPagamentoPedidoUsecase: SolicitaPagamentoPedidoUseCase) {}
 
@@ -44,7 +44,7 @@ export class SqsIntegration {
                 });
             }
           })
-          .catch(async (err) => {
+          .catch(async err => {
             this.logger.error(
               `receiveSolicitaPagamentoPedido: Erro ao consumir a mensagem da fila: ${JSON.stringify(err)}`,
             );
@@ -52,6 +52,8 @@ export class SqsIntegration {
           });
       }
     })();
+
+    this.logger.log(`SQS Integration iniciado`);
   }
 
   private async receiveSolicitaPagamentoPedido(): Promise<Message[]> {
@@ -74,7 +76,7 @@ export class SqsIntegration {
         this.logger.debug(`Resposta do receive message da fila: ${JSON.stringify(response)}`);
         return response.Messages || [];
       })
-      .catch((error) => {
+      .catch(error => {
         this.logger.error(
           `Erro ao processar solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
         );
@@ -92,7 +94,7 @@ export class SqsIntegration {
       `Invocando DeleteMessageCommand para remoção de mensagem de solicitação de pagamento: ${JSON.stringify(command)}`,
     );
 
-    return await this.sqsClient.send(command).catch((error) => {
+    return await this.sqsClient.send(command).catch(error => {
       this.logger.error(
         `Erro ao deletar da fila a solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(
           command,
@@ -125,7 +127,7 @@ export class SqsIntegration {
         );
         return response;
       })
-      .catch((error) => {
+      .catch(error => {
         this.logger.error(
           `Erro ao publicar solicitação de pagamento: ${JSON.stringify(error)} - Command: ${JSON.stringify(command)}`,
         );

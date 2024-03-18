@@ -13,8 +13,17 @@ services:
     depends_on:
       # - mysql-pagamento
       - mongodb
+      - localstack      
     networks:
       - fast-n-foodious-network
+    environment:
+      AWS_ENDPOINT: http://localstack:4566
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: overwrote-in-deployment-time
+      AWS_SECRET_ACCESS_KEY: overwrote-in-deployment-time
+      SQS_SOLICITAR_PAGAMENTO_REQ_URL: http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/solicitar-pagamento-req.fifo
+      SQS_WEBHOOK_PAGAMENTO_CONFIRMADO_RES_URL: http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/webhook-pagamento-confirmado-res
+      SQS_WEBHOOK_PAGAMENTO_REJEITADO_RES_URL: http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/webhook-pagamento-rejeitado-res
   # mysql-pagamento:
   #   image: mysql:8.0
   #   container_name: mysql-pagamento
@@ -47,10 +56,26 @@ services:
       - mongo-data-pagamento:/data/mongodb
     networks:
       - fast-n-foodious-network
-
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack:latest
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=${DEBUG:-0}
+      - SERVICES=sqs,ses
+      - MAIN_CONTAINER_NAME=localstack
+    volumes:
+      - localstack-data:/var/lib/localstack
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - './scripts/localstack/init-queues.sh:/etc/localstack/init/ready.d/init-queues.sh:rw'
+    networks:
+      - fast-n-foodious-network
 volumes:
   # mysql-data-pagamento:
   mongo-data-pagamento:
+  localstack-data:
 networks:
   fast-n-foodious-network:
     driver: bridge

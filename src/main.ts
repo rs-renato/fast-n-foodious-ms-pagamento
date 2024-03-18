@@ -40,7 +40,6 @@ async function bootstrap(): Promise<void> {
   logger.log(`Servidor escutando na porta: ${serverPort}`);
 
   app.get(SqsIntegration).startReceiveSolicitaParamentoPedido();
-  logger.log(`SQS Integration iniciado`);
 }
 
 bootstrap();

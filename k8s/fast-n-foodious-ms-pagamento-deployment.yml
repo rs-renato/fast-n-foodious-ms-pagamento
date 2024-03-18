@@ -189,3 +189,66 @@ spec:
             items:
             - key: ensure-users.sh
               path: ensure-users.sh
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localstack
+spec:
+  selector:
+    matchLabels:
+      app: localstack
+  template:
+    metadata:
+      labels:
+        app: localstack
+    spec:
+      containers:
+      - name: localstack
+        image: localstack/localstack:latest
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 4566
+        livenessProbe:
+          tcpSocket:
+            port: 4566
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          tcpSocket:
+            port: 4566
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        envFrom:
+          - configMapRef:
+              name: fast-n-foodious-ms-pagamento-env
+        env:
+          - name: DEBUG
+            value: '0'
+          - name: SERVICES
+            value: sqs,ses
+          - name: MAIN_CONTAINER_NAME
+            value: localstack
+        volumeMounts:
+          - name: fast-n-foodious-ms-pagamento-localstack-init
+            mountPath: /etc/localstack/init/ready.d
+          - name: fast-n-foodious-localstack
+            mountPath: /var/lib/localstack
+      volumes:
+        - name: fast-n-foodious-localstack
+          persistentVolumeClaim:
+            claimName: fast-n-foodious-ms-pagamento-pvc
+        - name: fast-n-foodious-ms-pagamento-localstack-init
+          configMap:
+            name: mysql-pagamento-env
+            defaultMode: 0777
+            items:
+              - key: init.sh
+                path: init-queues.sh              
