@@ -9,7 +9,7 @@
 ![Static Badge](https://img.shields.io/badge/iac-black?style=for-the-badge) ![Static Badge](https://img.shields.io/badge/v1.0.x-version?logo=terraform&color=%23623CE4&labelColor=white&label=Terraform)
 
 
-# 🍔 Fast & Foodious - Pagamento ![Github Actions](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v2.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
+# 🍔 Fast & Foodious - Pagamento ![Github Actions](https://github.com/rs-renato/fast-n-foodious-ms-pagamento/actions/workflows/ci-pipeline.yml/badge.svg?branch=main) ![Static Badge](https://img.shields.io/badge/v2.0.0-version?logo=&color=%232496ED&labelColor=white&label=fast-n-foodious-ms-pagamento)
 
 Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de conclusão da Fase 05 da pós gradução em Software Architecture.
 [TLDR; Execução em modo produção (on premisse: Avaliação FIAP)](#%EF%B8%8F-execução-em-modo-produção-avaliação-fiap)
@@ -41,7 +41,7 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
   * [Detalhes do Banco de Dados](#detalhes-do-banco-de-dados)
   * [Modelo de dados](#modelo-de-dados)
 * [DDD](#ddd)
-    * [Dicionário de Linguagem Ubíqua](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/dictionary/dicionario-linguagem-ubiqua.md)
+    * [Dicionário de Linguagem Ubíqua](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/dictionary/dicionario-linguagem-ubiqua.md)
     * [Domain Storytelling](#domain-storytelling)
         * [Auto Cadastro de Clientes](#auto-cadastro-de-clientes)
         * [Realização de Pedidos](#realização-de-pedidos)
@@ -58,12 +58,12 @@ Sistema de auto-atendimento de fast food (microsserviço pagamento). Projeto de 
 * [Links Externos](#links-externos)
 
 ## Arquitetura de Solução (Cloud AWS)
-![fast-n-foodious-aws](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws.png?raw=true)
+![fast-n-foodious-aws](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws.png?raw=true)
 
-![fast-n-foodious-aws-resource-mapping](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-resource-mapping.png?raw=true)
+![fast-n-foodious-aws-resource-mapping](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-resource-mapping.png?raw=true)
 
 ## Arquitetura de Software
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-clean.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-clean.png?raw=true)
 
 - Cloud AWS
     - API Gateway, Lambda, Cognito, Fargate, ECS, Load Balancer, RDS, DocumentDB, SQS, SES, etc
@@ -191,12 +191,12 @@ Após subir todos os containers, para verificar os contratos de API, acesse a [D
 Os testes funcionais (processo de negócio completo) pode ser realizado facilmente através do Postman, via Flows no workspace compartilhado:
 
 **Flow Local**
-![processo-negocio](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-local.png?raw=true)
+![processo-negocio](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-local.png?raw=true)
 
-Alternativamente, a [collection do postman](https://github.com/rodrigo-ottero/fast-n-foodious-docs/tree/main/postman/collections) pode ser utilizada para os testes locais.
+Alternativamente, a [collection do postman](https://github.com/rs-renato/fast-n-foodious-docs/tree/main/postman/collections) pode ser utilizada para os testes locais.
 
 **Ordem de execução**
-![ordem-exec](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-ordem-exec-local.png?raw=true)
+![ordem-exec](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/postman/flows/flow-processo-realizacao-pedidos-ordem-exec-local.png?raw=true)
 
 ### 🚨⚡️ Execução em modo produção (deprecated: substituído por AWS Fargate ECS)
 ***Nota 1:** O K8S foi substituído pelo serviço gerenciado AWS Fargate ECS. A construção da insfraestrura é realizada através de IaC (Terraform) com seus respectivos scripts em repositórios específicos de Storage, Compute e Network. A documentação abaixo apenas ilustra a solução v2.0.0 (monolito) e foi mantida aqui caso seja necessário subir a aplicação de uma maneira mais fácil para avaliação dos instrutores (`considerar a execução via docker-compose-all.yml`)*
@@ -569,76 +569,76 @@ test/                                   # Implementações de testes
 
 ## Cloud AWS
 ### Cadastro de Clientes
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-cadastro-clientes.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-cadastro-clientes.png?raw=true)
 
 ### Deleção de Clientes
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-delecao-clientes.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-delecao-clientes.png?raw=true)
 
 ### Autenticação de Cliente Identificado
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-autenticacao-cliente-identificado.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-autenticacao-cliente-identificado.png?raw=true)
 
 ### Autenticação de Cliente Anônimo
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-autenticacao-cliente-anonimo.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-autenticacao-cliente-anonimo.png?raw=true)
 
 ## Banco de Dados
 ### Detalhes do Banco de Dados
-[Detalhes do Banco de Dados](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/database/banco-de-dados-pagamento.md)
+[Detalhes do Banco de Dados](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/database/banco-de-dados-pagamento.md)
 
 ### Modelo de Dados
-![fast-n-foodious-clean](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/database/data-model-pagamento.png?raw=true)
+![fast-n-foodious-clean](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/database/data-model-pagamento.png?raw=true)
 
 ## DDD
 ### Domain Storytelling
 #### Auto Cadastro de Clientes 
-![01-Auto-Cadastro-De-Clientes](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/01-Auto-Cadastro-De-Clientes.png?raw=true)
+![01-Auto-Cadastro-De-Clientes](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/01-Auto-Cadastro-De-Clientes.png?raw=true)
 
 #### Realização de Pedidos
-![02-Realizacao-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/02-Realizacao-De-Pedidos.png?raw=true)
+![02-Realizacao-De-Pedidos](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/02-Realizacao-De-Pedidos.png?raw=true)
 
 #### Pagamento de Pedidos
-![03-Pagamento-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/03-Pagamento-De-Pedidos.png?raw=true)
+![03-Pagamento-De-Pedidos](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/03-Pagamento-De-Pedidos.png?raw=true)
 
 #### Preparo de Pedidos
-![04-Preparo-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/04-Preparo-De-Pedidos.png?raw=true)
+![04-Preparo-De-Pedidos](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/04-Preparo-De-Pedidos.png?raw=true)
 
 #### Entrega de Pedidos
-![05-Entrega-De-Pedidos](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/05-Entrega-De-Pedidos.png?raw=true)
+![05-Entrega-De-Pedidos](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/05-Entrega-De-Pedidos.png?raw=true)
 
 #### Fluxo de Etapas dos Pedidos
-![Fluxo-De-Etapas-Do-Pedido](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/ddd/Fluxo-De-Etapas-Do-Pedido.png?raw=true)
+![Fluxo-De-Etapas-Do-Pedido](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/ddd/Fluxo-De-Etapas-Do-Pedido.png?raw=true)
 
 ## Saga
 ### Checkout: Solicitação de Pagamento
 Integração entre micro serviços de pedido e pagamento, no processo de checkout.
-![Checkout: Solicitação de Pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-checkout.png?raw=true)
+![Checkout: Solicitação de Pagamento](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-checkout.png?raw=true)
 
 ### Webhook: Atualização estado de Pagamento Confirmado
 Integração entre micro serviços de pagamento e pedido, no processo notificação de pagamento confirmado (webhook).
-![Webhook: Pagamento Confirmado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-confirmado.png?raw=true)
+![Webhook: Pagamento Confirmado](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-confirmado.png?raw=true)
 
 ### Webhook: Atualização estado de Pagamento Rejeitado
 Integração entre micro serviços de pagamento e pedido, no processo notificação de pagamento rejeitado (webhook).
-![Webhook: Pagamento Rejeitado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-rejeitado.png?raw=true)
+![Webhook: Pagamento Rejeitado](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/diagramas/png/fast-n-foodious-aws-saga-webhook-pagamento-rejeitado.png?raw=true)
 
 ### Justificativa
-[Justificativa do Padrão SAGA coreografado](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/saga/saga-coreografado.md)
+[Justificativa do Padrão SAGA coreografado](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/saga/saga-coreografado.md)
 
 ## OWASP Reposts
-[Relatórios por Microserviços](https://github.com/rodrigo-ottero/fast-n-foodious-docs/blob/main/owasp/README.md)
+[Relatórios por Microserviços](https://github.com/rs-renato/fast-n-foodious-docs/blob/main/owasp/README.md)
 
 ## Links Externos
 ### Micro Serviços
-- [fast-n-foodious-ms-produto](https://github.com/rodrigo-ottero/fast-n-foodious-ms-produto)
-- [fast-n-foodious-ms-pagamento](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pagamento)
-- [fast-n-foodious-ms-pedido](https://github.com/rodrigo-ottero/fast-n-foodious-ms-pedido)
+- [fast-n-foodious-ms-produto](https://github.com/rs-renato/fast-n-foodious-ms-produto)
+- [fast-n-foodious-ms-pagamento](https://github.com/rs-renato/fast-n-foodious-ms-pagamento)
+- [fast-n-foodious-ms-pedido](https://github.com/rs-renato/fast-n-foodious-ms-pedido)
 
 ### IaC
-- [fast-n-foodious-iac-network](https://github.com/rodrigo-ottero/fast-n-foodious-iac-network)
-- [fast-n-foodious-iac-storage](https://github.com/rodrigo-ottero/fast-n-foodious-iac-storage)
-- [fast-n-foodious-iac-compute](https://github.com/rodrigo-ottero/fast-n-foodious-iac-compute)
+- [fast-n-foodious-iac-network](https://github.com/rs-renato/fast-n-foodious-iac-network)
+- [fast-n-foodious-iac-storage](https://github.com/rs-renato/fast-n-foodious-iac-storage)
+- [fast-n-foodious-iac-compute](https://github.com/rs-renato/fast-n-foodious-iac-compute)
 
 ### Documentação
-- [fast-n-foodious-docs](https://github.com/rodrigo-ottero/fast-n-foodious-docs)
+- [fast-n-foodious-docs](https://github.com/rs-renato/fast-n-foodious-docs)
 
 ### Sonar
 - [fast-n-foodious-ms-produto](https://sonarcloud.io/summary/overall?id=fast-n-foodious-org_ms-produto)
